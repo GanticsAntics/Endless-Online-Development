@@ -1,0 +1,444 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns:atg="http://atg.xbox.com" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8e114980-c1a3-4ada-ad7c-83caadf5daeb}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2c3d4c8c-5d1a-459a-a05a-a4e4b608a44e}</UniqueIdentifier>
+      <Extensions>fx;fxh;hlsl</Extensions>
+    </Filter>
+    <Filter Include="Utillities">
+      <UniqueIdentifier>{2554a20e-a056-4154-a3ae-cf5d9f3d273f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameStage">
+      <UniqueIdentifier>{32b8424e-8f68-4ee0-9cff-89acc2f13bb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{98a0eace-d877-41ab-8bf9-9fd0d29947ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\PTypes">
+      <UniqueIdentifier>{bd825148-beb6-4d50-8f9e-88c7eb9655f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Receive">
+      <UniqueIdentifier>{c86d22eb-501a-4e0f-8996-a650800febdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Send">
+      <UniqueIdentifier>{1acd82c4-40aa-4c62-8948-8c596d201baf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\CBitmapEx">
+      <UniqueIdentifier>{935cef80-824c-4ca4-8c71-9834b643ed46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\EOServ">
+      <UniqueIdentifier>{20f71f83-0f02-41ed-9a86-6060d3ac6ccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\EOMap">
+      <UniqueIdentifier>{e11ae005-450c-49b4-a2d5-127c09f8d13e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\EOMap\Experimental">
+      <UniqueIdentifier>{b2bf8c26-9f48-41da-9239-12f67d9b1d66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\EOMap\Utils">
+      <UniqueIdentifier>{304f8fe2-82a5-48b3-8102-469d08fe1df8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameStage\Map_UI_Element">
+      <UniqueIdentifier>{73d36283-d4b0-420c-88c8-aed4d866d2ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameStage\Stage_Map">
+      <UniqueIdentifier>{c536eee3-b70c-41dd-b7b2-adca7c36f2ce}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Menu.cpp">
+      <Filter>GameStage</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>GameStage</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources.cpp" />
+    <ClCompile Include="EODev.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Textbox.cpp">
+      <Filter>Utillities</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Utillities</Filter>
+    </ClCompile>
+    <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="Receive\Handler.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RAccount.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RCharacter.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RConnection.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RInit.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RLogin.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SAccount.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SCharacter.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SConnection.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SInit.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SLogin.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\ConfigFile.cpp">
+      <Filter>Utillities</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp" />
+    <ClCompile Include="CharacterModel.cpp" />
+    <ClCompile Include="include\CBitmapEx\BitmapEx.cpp">
+      <Filter>Include\CBitmapEx</Filter>
+    </ClCompile>
+    <ClCompile Include="include\EOServ\packet.cpp">
+      <Filter>Include\EOServ</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>GameStage</Filter>
+    </ClCompile>
+    <ClCompile Include="include\EOMap\eo_data.cpp">
+      <Filter>Include\EOMap</Filter>
+    </ClCompile>
+    <ClCompile Include="include\EOMap\eo_stream.cpp">
+      <Filter>Include\EOMap</Filter>
+    </ClCompile>
+    <ClCompile Include="include\EOMap\pub_structs.cpp">
+      <Filter>Include\EOMap</Filter>
+    </ClCompile>
+    <ClCompile Include="include\EOMap\util\cio\cio.cpp">
+      <Filter>Include\EOMap\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Element.cpp">
+      <Filter>Utillities</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Cursor.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\UI_MessageBox.cpp">
+      <Filter>Utillities</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_Player.cpp">
+      <Filter>GameStage\Stage_Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RWelcome.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="include\EOServ\eodata.cpp">
+      <Filter>Include\EOServ</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SWelcome.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RWalk.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RFace.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RAttack.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SAttack.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RPlayers.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RAvatar.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RRefresh.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SRefresh.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SFace.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RWarp.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SWarp.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_NPC.cpp">
+      <Filter>GameStage\Stage_Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RNpc.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RAppear.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Inventory.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_CharacterStats.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_GameHelp.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_GameSettings.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_KeyboardMacros.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_Map.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_Party.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_PassiveSkills.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_Skills.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_Talk.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_WhoIsOnline.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_News.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\UI_ScrollBar.cpp">
+      <Filter>Utillities</Filter>
+    </ClCompile>
+    <ClCompile Include="TextTools.cpp">
+      <Filter>Utillities</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RTalk.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SWalk.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\STalk.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Resources.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Menu.h">
+      <Filter>GameStage</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Button.h">
+      <Filter>Utillities</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>GameStage</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Textbox.h">
+      <Filter>Utillities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ptypes\pasync.h">
+      <Filter>Include\PTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ptypes\pinet.h">
+      <Filter>Include\PTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ptypes\pport.h">
+      <Filter>Include\PTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ptypes\pstreams.h">
+      <Filter>Include\PTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ptypes\ptime.h">
+      <Filter>Include\PTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ptypes\ptypes.h">
+      <Filter>Include\PTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Connection.h" />
+    <ClInclude Include="CharacterModel.h" />
+    <ClInclude Include="Receive\Handler.h">
+      <Filter>Receive</Filter>
+    </ClInclude>
+    <ClInclude Include="Receive\RConstants.h">
+      <Filter>Receive</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SAccount.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SCharacter.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SConnection.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SInit.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SLogin.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\ConfigFile.h">
+      <Filter>Utillities</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h" />
+    <ClInclude Include="include\CBitmapEx\BitmapEx.h">
+      <Filter>Include\CBitmapEx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOServ\packet.hpp">
+      <Filter>Include\EOServ</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>GameStage</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\eo_data.hpp">
+      <Filter>Include\EOMap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\eo_stream.hpp">
+      <Filter>Include\EOMap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\eo_types.hpp">
+      <Filter>Include\EOMap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\common.hpp">
+      <Filter>Include\EOMap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\Stdafx.h">
+      <Filter>Include\EOMap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\pub_structs.hpp">
+      <Filter>Include\EOMap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\pub_enums.hpp">
+      <Filter>Include\EOMap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\util\cio\cio.hpp">
+      <Filter>Include\EOMap\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOMap\util\cio\Stdafx.h">
+      <Filter>Include\EOMap\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Element.h">
+      <Filter>Utillities</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Cursor.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_Player.h">
+      <Filter>GameStage\Stage_Map</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EOServ\eodata.hpp">
+      <Filter>Include\EOServ</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SWelcome.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SWalk.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SAttack.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SRefresh.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SFace.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SWarp.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_NPC.h">
+      <Filter>GameStage\Stage_Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Inventory.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_CharacterStats.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_GameHelp.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_GameSettings.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_KeyboardMacros.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_Map.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_Party.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_PassiveSkills.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_Skills.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_Talk.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_WhoIsOnline.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\Map_UI_News.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\UI_ScrollBar.h">
+      <Filter>Utillities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\UI_MessageBox.h">
+      <Filter>Utillities</Filter>
+    </ClInclude>
+    <ClInclude Include="TextTools.h">
+      <Filter>Utillities</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\STalk.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CLInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </CLInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icon.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="EODev++.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

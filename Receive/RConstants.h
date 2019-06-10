@@ -1,0 +1,18 @@
+enum CharacterReply : short
+{
+	CHARACTER_EXISTS = 1,
+	CHARACTER_FULL = 2,
+	CHARACTER_NOT_APPROVED = 4,
+	CHARACTER_OK = 5,
+	CHARACTER_DELETED = 6,
+};
+
+enum AccountReply : short
+{
+	ACCOUNT_EXISTS = 1,
+	ACCOUNT_NOT_APPROVED = 2,
+	ACCOUNT_CREATED = 3,
+	ACCOUNT_CONTINUE = 4, // TODO: Check this for the real value
+	ACCOUNT_CHANGE_FAILED = 5,
+	ACCOUNT_CHANGED = 6,
+};
