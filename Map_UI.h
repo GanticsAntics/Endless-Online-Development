@@ -13,6 +13,7 @@
 #include "Map_UI_Element/Map_UI_KeyboardMacros.h"
 #include "Map_UI_Element/Map_UI_GameSettings.h"
 #include "Map_UI_Element/Map_UI_GameHelp.h"
+#include "Map_UI_Element/UI_ChatBubbleHandler.h"
 class Map_UI
 {
 public:
@@ -21,6 +22,8 @@ public:
 	World* m_world;
 	IDirect3DDevice9Ptr m_Device;
 	Textbox* ChatTextbox;
+	boost::shared_ptr<IDirect3DTexture9> HudStatsTexture;
+	bool isactive = false;
 	enum UI_ElementStage
 	{
 		UI_Element_News = 0,
@@ -36,6 +39,9 @@ public:
 		UI_Element_GameSettings,
 		UI_Element_GameHelp,
 	};
+	time_t HelpMessageTimer;
+	std::string HelpMessageTitle = "";
+	std::string HelpMessage= "";
 	UI_ElementStage UI_Stage = UI_ElementStage::UI_Element_News;
 	int Substage = 0;
 	Map_UI_News* map_news;
@@ -50,7 +56,8 @@ public:
 	Map_UI_Skills* map_skills;
 	Map_UI_Talk* map_talk;
 	Map_UI_WhoIsOnline* map_whoisonline;
-
+	UI_ChatBubbleHandler* map_ChatBubbleHandler;
+	bool StatBarDrawn[4] = { false,false,false,false };
 	int MouseX;
 	int MouseY;
 	bool MousePressed;
@@ -61,5 +68,7 @@ public:
 	void UI_SendMessage();
 	void Render();
 	void Update();
+	void DrawHUDStats();
+	void DrawHelpMessage(std::string title, std::string Message);
 	~Map_UI();
 };

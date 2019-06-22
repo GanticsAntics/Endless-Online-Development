@@ -12,15 +12,24 @@ class UI_Element
 	bool MouseClicked;
 	bool MouseOver;
 	bool AnimDirectionTopDown;
+	bool HighlightOnMouseDown = false;
+	bool IsActive = true;
+	
 public:
 	UI_Element();
+	bool GetIsActive() { return this->IsActive; }
+	void SetIsActive(bool val) { this->IsActive = val; }
 	std::pair<int, int> GetPosition() { return Position; }
 	std::pair<int, int> GetSize() { return Size; }
+	void Element_Deactivate() { this->AnimID = (int)0; this->MouseClicked = false; this->MouseOver = false; }
+	void Deactivate() { this->AnimID = (int)0; this->MouseClicked = false; this->MouseOver = false; }
 	void SetPosition(std::pair<int, int> m_pos) { this->Position = m_pos; }
 	void SetSize(std::pair<int, int> m_size) { this->Size = m_size; }
 	int GetFrameID() { return this->AnimID; }
 	bool MouseClickedOnElement() { return this->MouseClicked; }
 	bool MouseOverElement() { return this->MouseOver; }
+	void SetHighlightOnMouseDown(bool val) { this->HighlightOnMouseDown = val; }
+	bool GetHighlightOnMouseDown() { return this->HighlightOnMouseDown; }
 	bool IsAnimationSouthward() { return this->AnimDirectionTopDown; }
 	void AssignAnimationDirectionSouthward(bool yesno) { this->AnimDirectionTopDown = yesno; }
 	bool IsNewTextureForMouseOver() { return this->AnimNewTexture; }

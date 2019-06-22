@@ -32,6 +32,8 @@ void PacketHandler::HandlePacket(PacketReader reader, Game* H_game, ipstream* cl
 		CLIENT_F_HANDLE(PACKET_NPC, NPC);
 		CLIENT_F_HANDLE(PACKET_APPEAR, Appear);
 		CLIENT_F_HANDLE(PACKET_TALK, Talk);
+		CLIENT_F_HANDLE(PACKET_ITEM, Item);
+		CLIENT_F_HANDLE(PACKET_PAPERDOLL, Paperdoll);
 		default:;
 		}
 		

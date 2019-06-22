@@ -36,6 +36,7 @@ public:
 	void SetStance(PlayerStance m_Stance);
 	void MovePlayer(int FPS, int dest_x, int dest_y);
 
+	void Initialize(LPVOID* M_Game);
 	int login_time;
 	bool online;
 	bool nowhere;
@@ -53,7 +54,7 @@ public:
 	int WalkCounter = 0;
 	//Direction direction;
 	unsigned char level;
-	int exp;
+	int exp = 0;
 	short hp, tp;
 	short str, intl, wis, agi, con, cha;
 	short adj_str, adj_intl, adj_wis, adj_agi, adj_con, adj_cha;
@@ -72,29 +73,17 @@ public:
 	short maxhp, maxtp;
 	short accuracy, evade, armor;
 	short mindam, maxdam;
-	enum EquipLocation
-	{
-		Boots,
-		Accessory,
-		Gloves,
-		Belt,
-		Armor,
-		Necklace,
-		Hat,
-		Shield,
-		Weapon,
-		Ring1,
-		Ring2,
-		Armlet1,
-		Armlet2,
-		Bracer1,
-		Bracer2
-	};
-	std::list<Character_Item> inventory;
+
 	std::list<Character_Item> bank;
-	std::array<int, 15> paperdoll;
-	std::array<int, 15> cosmetic_paperdoll;
+
 	std::list<Character_Spell> spells;
+	int time = 0;
+	int Deathcounter = 0;
+	std::vector<BYTE> Damage;
+	void DealDamage(int Damage);
+	void PlayerKill();
+	bool isattacked = false;
+	void Map_PlayerRender(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR _Color = D3DCOLOR_ARGB(255, 255, 255, 255));
 	Map_Player();
 	~Map_Player();
 };

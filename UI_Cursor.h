@@ -20,6 +20,8 @@ public:
 		Special,
 		Invisible,
 	};
+	std::basic_string<wchar_t> cur_istring;
+	std::basic_string<char> scur_istring;
 	CursorType m_CursorType;
 	UI_Cursor();
 	UI_Cursor(VOID* m_Game, Map* m_Map, IDirect3DDevice9Ptr m_Device);

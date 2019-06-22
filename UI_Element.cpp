@@ -24,20 +24,31 @@ void UI_Element::UpdateElement()
 {
 	if (p_game->MouseX > this->Position.first && p_game->MouseY > this->Position.second && p_game->MouseX < (this->Position.first + this->Size.first) && p_game->MouseY < (this->Position.second + this->Size.second))
 	{
+		if (!this->HighlightOnMouseDown)
+		{
+			this->AnimID = 1;
+		}
 		this->MouseOver = true;
-		this->AnimID = 1;
 		if (p_game->MousePressed)
 		{
+			if (this->HighlightOnMouseDown)
+			{
+				this->AnimID = 1;
+			}
 			this->MouseClicked = true;
 		}
 		else
 		{
 			this->MouseClicked = false;
 		}
+
 	}
 	else
 	{
-		this->AnimID = 0;
-		this->MouseOver = false;
+		if (!this->HighlightOnMouseDown)
+		{
+			this->AnimID = 0;
+			this->MouseOver = false;
+		}
 	}
 }

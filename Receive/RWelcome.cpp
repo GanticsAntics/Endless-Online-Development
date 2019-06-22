@@ -115,6 +115,8 @@ CLIENT_F_FUNC(Welcome)
 								SWelcome::RequestFile(game->world->connection->ClientStream, 5, (LPVOID*)game);
 							}
 							
+							game->map->ClearMap();
+		
 							Map_Player* MainPlayer = new Map_Player();
 							MainPlayer->ID = World::WorldCharacterID;
 							MainPlayer->name = reader.GetBreakString();
@@ -154,10 +156,27 @@ CLIENT_F_FUNC(Welcome)
 							MainPlayer->con = reader.GetShort();
 							MainPlayer->cha = reader.GetShort();
 
-							for (int i = 0; i < 14; i++)
+
+							game->Map_UserInterface->map_inventory->paperdoll.Modifiable = true;
+							game->Map_UserInterface->map_inventory->paperdoll._name = MainPlayer->name;
+							game->Map_UserInterface->map_inventory->paperdoll._name[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._name[0]);
+							game->Map_UserInterface->map_inventory->paperdoll._home = MainPlayer->home;
+							game->Map_UserInterface->map_inventory->paperdoll._home[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._home[0]);
+							game->Map_UserInterface->map_inventory->paperdoll._class = MainPlayer->clas;
+							game->Map_UserInterface->map_inventory->paperdoll._class[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._class[0]);
+							game->Map_UserInterface->map_inventory->paperdoll._partner = MainPlayer->partner;
+							game->Map_UserInterface->map_inventory->paperdoll._partner[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._partner[0]);
+							game->Map_UserInterface->map_inventory->paperdoll._title = MainPlayer->title;
+							game->Map_UserInterface->map_inventory->paperdoll._title[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._title[0]);
+							game->Map_UserInterface->map_inventory->paperdoll._job = "Unemployed";
+							game->Map_UserInterface->map_inventory->paperdoll._job[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._job[0]);
+							game->Map_UserInterface->map_inventory->paperdoll._guild = "GM";
+							game->Map_UserInterface->map_inventory->paperdoll._guild[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._guild[0]);
+							game->Map_UserInterface->map_inventory->paperdoll._rank = "Hotdog";
+							game->Map_UserInterface->map_inventory->paperdoll._rank[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._rank[0]);
+							for (int i = 0; i < 15; i++)
 							{
-								///GetPaperdollItems Later
-								MainPlayer->paperdoll[i] = reader.GetShort();
+								game->Map_UserInterface->map_inventory->paperdoll._paperdoll[i] = reader.GetShort();
 							}
 
 							unsigned char CharGuildRank = reader.GetChar();
@@ -180,6 +199,7 @@ CLIENT_F_FUNC(Welcome)
 						}
 						case (2):
 						{
+						
 							reader.GetByte(); //Unknown
 							std::string BuildString;
 							for (int i = 0; i < 9; i++)
@@ -189,15 +209,18 @@ CLIENT_F_FUNC(Welcome)
 							game->Map_UserInterface->map_news->UI_TextScrollbar->SetInputString(BuildString);
 							int weight = reader.GetChar();
 							int maxweight = reader.GetChar();
-
-							Map_Player::Character_Item newitem;
-							std::string character_items = reader.GetBreakString();
-							for (int i = 0; i < character_items.length() / 6; i++)
+							game->Map_UserInterface->map_inventory->ClearInventory();
+							while (true)
 							{
-								int pos = i * 6;
-								short ItemID = PacketProcessor::Number(character_items[i], character_items[i + 1]);
-								int amount = PacketProcessor::Number(character_items[i + 2], character_items[i + 3], character_items[i + 4], character_items[i + 5]);
+								int index = reader.GetByte();
+								if (index == 255) { break; }
+								Map_UI_Inventory::InventoryItem newitem;
+								int Index2 = reader.GetByte();
+								newitem.id = PacketProcessor::Number(index, Index2);
+								newitem.amount = reader.GetInt();
+								game->Map_UserInterface->map_inventory->AddItem(newitem);
 							}
+		
 							std::string character_spells = reader.GetBreakString();
 							for (int i = 0; i < character_spells.length() / 4; i++)
 							{
@@ -271,6 +294,8 @@ CLIENT_F_FUNC(Welcome)
 								Map_Player* MainPlayer = game->map->m_Players[World::WorldCharacterID];
 								if (newplayer->name == MainPlayer->name)
 								{
+									game->Map_UserInterface->map_inventory->Weight = weight;
+									game->Map_UserInterface->map_inventory->MaxWeight = maxweight;
 									MainPlayer->weight = weight;
 									MainPlayer->maxweight = maxweight;
 									MainPlayer->CharacterID = newplayer->ID;
@@ -316,16 +341,26 @@ CLIENT_F_FUNC(Welcome)
 								new_npc->direction = reader.GetChar();
 								game->map->AddNPC(new_npc);
 							}
-							std::string map_items = reader.GetBreakString();
-							for (int i = 0; i < map_items.length() / 9; i++)
+							int counter = 0;
+							int remaining = reader.Remaining();
+							while (true)
 							{
-								int pos = i * 9;
-								unsigned short itemindex = PacketProcessor::Number(map_items[i], map_items[i + 1]);
-								unsigned short itemID = PacketProcessor::Number(map_items[i + 2], map_items[i + 3]);
-								unsigned char x = PacketProcessor::Number(map_items[i + 4]);
-								unsigned char y = PacketProcessor::Number(map_items[i + 5]);
-								unsigned int amount = PacketProcessor::Number(map_items[i + 6], map_items[i + 7], map_items[i + 8]);
+								int remaining = reader.Remaining();
+								if (remaining <= 1)
+								{
+									break;
+								}
+								Map::Map_Item m_item;
+
+								int ItemIndex = reader.GetShort();
+								m_item.ItemID = reader.GetShort();
+								m_item.x = reader.GetChar();
+								m_item.y = reader.GetChar();
+								m_item.amount = reader.GetThree();
+								game->map->AddItem(ItemIndex, m_item);
+								counter++;
 							}
+							counter++;
 							game->SetStage(Game::GameStage::PInGame);
 							break;
 						}

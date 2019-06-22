@@ -5,7 +5,7 @@ static LPDIRECT3DTEXTURE9 Blinker = NULL;
 
 Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, int fontSize, D3DXCOLOR labelColor, IDirect3DDevice9* m_Dev, byte _Phase, byte _Subphase)
 {
-	this->MaxLen = 0;
+	this->MaxLen = 20;
 	this->TextBounds = RECT();
 	this->focused = true;
 	this->color = labelColor;
@@ -24,7 +24,7 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, int fontSize, D3DXC
 		bmp.Create(1,14);
 		for(int i = 0; i < bmp.GetHeight();i++)
 		{
-			bmp.SetPixel(0,i,_RGB(0,0,0));
+			bmp.SetPixel(0,i,_RGB(255, 255, 255));
 		}
 		LPBYTE cabuffer;
 		DWORD cadwBufferSize = bmp.GetSize() + sizeof(BITMAPFILEHEADER) + sizeof(RGBQUAD) + sizeof(BITMAPINFOHEADER);
@@ -40,7 +40,7 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, int fontSize, D3DXC
 
 Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColor, ID3DXFont* m_font, byte _Phase, byte _Subphase)
 {
-	this->MaxLen = 0;
+	this->MaxLen = 20;
 	this->TextBounds = RECT();
 	this->focused = true;
 	this->color = labelColor;
@@ -49,8 +49,6 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColo
 	this->nonAcceptedKeyEntered = false;
 	this->blinkhidden = false;
 	this->Font = m_font;
-	this->position = m_position;
-	this->size = m_size;
 	this->position = m_position;
 	this->size = m_size;
 	this->hashkey = 0;
@@ -64,7 +62,7 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColo
 		bmp.Create(1,14);
 		for(int i = 0; i < bmp.GetHeight();i++)
 		{
-			bmp.SetPixel(0,i,_RGB(0,0,0));
+			bmp.SetPixel(0,i,_RGB(255,255,255));
 		}
 		LPBYTE cabuffer;
 		DWORD cadwBufferSize = bmp.GetSize() + sizeof(BITMAPFILEHEADER) + sizeof(RGBQUAD) + sizeof(BITMAPINFOHEADER);
@@ -92,10 +90,22 @@ void Textbox::OnKeyPress(WPARAM args)
 			if(this->text.length() > 0)
 			{
 				this->text.erase(text.length()-1,1);
+				int StrIndex = 0;
+				for (int i = 0; i < this->text.length() + 1; i++)
+				{
+					std::wstring Buildstr = this->text.substr(this->text.length() - i, i);
+					this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+					this->Rendertext = Buildstr;
+					if (this->TextBounds.right > this->size.x)
+					{
+						break;
+					}
 
+					StrIndex = i;
+				}
 				if(this->hashkey == 0)
 				{
-					this->Font->DrawText(NULL, this->text.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 					break;
 				}
 				else
@@ -112,10 +122,25 @@ void Textbox::OnKeyPress(WPARAM args)
 		}
 	case(VK_ESCAPE):
 		{
-			this->text.erase(0,text.length());
+			this->text.clear();
+			this->Rendertext.clear();
+			int StrIndex = 0;
+			for (int i = 0; i < this->text.length() + 1; i++)
+			{
+				std::wstring Buildstr = this->text.substr(this->text.length() - i, i);
+				this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+				this->Rendertext = Buildstr;
+				if (this->TextBounds.right > this->size.x)
+				{
+					break;
+				}
+
+				StrIndex = i;
+			}
+		
 				if(this->hashkey == 0)
 				{
-					this->Font->DrawText(NULL, this->text.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 					break;
 				}
 				else
@@ -133,7 +158,7 @@ void Textbox::OnKeyPress(WPARAM args)
 		{
 				if(this->hashkey == 0)
 				{
-					this->Font->DrawText(NULL, this->text.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 					break;
 				}
 				else
@@ -158,6 +183,24 @@ void Textbox::OnKeyPress(WPARAM args)
 				std::wstring temptext = this->text + L',';
 				this->text += (wchar_t)(args);
 				this->Font->DrawText(NULL, temptext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+
+				if (this->text.length() < this->MaxLen)
+				{
+					int StrIndex = 0;
+					for (int i = 0; i < this->text.length() + 1; i++)
+					{
+						std::wstring Buildstr = this->text.substr(this->text.length() - i, i);
+						this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+						this->Rendertext = Buildstr;
+						if (this->TextBounds.right > this->size.x)
+						{
+							break;
+						}
+
+						StrIndex = i;
+					}
+					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+				}
 				break;
 			}
 			else
@@ -206,10 +249,6 @@ void Textbox::OnKeyPress(WPARAM args)
 				}
 			default:break;
 			}
-			//else if(this->keyMask == this->LetterOrDigit && (args < 47 || args > 123) && (args < 64 || args > 58) && (args < 96 || args > 91))
-			{
-			//	return;
-			}
 			if(this->text.length()+1 > this->MaxLen && this->MaxLen != 0)
 			{
 				return;
@@ -217,17 +256,31 @@ void Textbox::OnKeyPress(WPARAM args)
 			if(this->hashkey == 0)
 			{
 				this->Font->DrawText(NULL, this->text.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
-
-				if(this->TextBounds.right < this->size.x)
+				if (this->text.length() < this->MaxLen)
 				{
-					this->text += (wchar_t)(args);
-					this->Font->DrawText(NULL, this->text.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
-					if(this->TextBounds.right > this->size.x)
-					{	
-						this->text.erase(text.length()-1,1);
+					if ((wchar_t)(args) == '`')
+					{
+						(args) = '~';
 					}
-				this->Font->DrawText(NULL, this->text.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->text += (wchar_t)(args);
+
+					int StrIndex = 0;
+					for (int i = 0; i < this->text.length()+1; i++)
+					{
+						std::wstring Buildstr = this->text.substr(this->text.length() - i, i);
+						this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+						this->Rendertext = Buildstr;
+						if (this->TextBounds.right > this->size.x)
+						{
+							break;
+						}
+					
+						StrIndex = i;
+					}
+					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 				}
+
+
 				break;
 			}
 			else
@@ -288,8 +341,7 @@ if(this->hashkey > 0)
 }
 else
 {
-// Draw some text 
-this->Font->DrawText(m_Sprite, this->text.c_str(), -1, &rct, 0, this->color );
+this->Font->DrawText(m_Sprite, this->Rendertext.c_str(), -1, &rct, 0, this->color );
 }
 
 if(this->focused && !this->blinkhidden)
@@ -321,6 +373,7 @@ bool Textbox::CheckCollision(int X, int Y)
 
 void Textbox::Reset()
 {
+	this->Rendertext.clear();
 	this->text.clear();
 	this->TextBounds.right = 0;
 	this->TextBounds.left = 0;

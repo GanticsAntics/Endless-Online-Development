@@ -23,26 +23,28 @@ void Game::Initialize(IDirect3DDevice9Ptr m_Device, World* _World)
 
 		this->resource = new Resource();
 		this->resource->Initialize(Device);
-		this->ScrollBarTexture = this->MessageBoxTexture = this->resource->CreateTexture(2, 29, false);
+		this->ScrollBarTexture  = this->resource->CreateTexture(2, 29, false);
+		this->TextIconTexture = this->resource->CreateTexture(2, 32, true);
 		menu = new Menu();
 		map = new Map();
+		GLoginButtonTexture = this->resource->CreateTexture(1, 15, true).Texture;
+		this->ExitGameTxt = this->resource->CreateTexture(2, 39, true);
+		this->MessageBoxTexture = this->resource->CreateTexture(1, 18, false);
+		this->BT_Message_OK = new Button(this, MessageX + 180, MessageY + 112, 0, 116, 91, 28, false, GLoginButtonTexture);
+		this->BT_ExitGame = new Button(this, 640 - 51, 0, 0, 0, 50, 53, true, this->ExitGameTxt.Texture);
+		this->BT_CharDeleteOK = new Button(this, MessageX + 180 - 92, MessageY + 112, 0, 116, 91, 28, false, GLoginButtonTexture);
+		this->BT_CharDeleteCancel = new Button(this, MessageX + 180, MessageY + 112, 0, 29, 91, 28, false, GLoginButtonTexture);
 		Map_UserInterface = new Map_UI();
 		menu->Initialize(world, Device, (LPVOID*)this);
 		map->Initialize(world, Device, (LPVOID*)this);
 		Map_UserInterface->Initialize(world, Device, (LPVOID*)this);
 
 
-		GLoginButtonTexture = this->resource->CreateTexture(1,15,true).Texture;
-		this->ExitGameTxt = this->resource->CreateTexture(2,39,true);
-		this->MessageBoxTexture  = this->resource->CreateTexture(1,18,false);
+		
 		this->MessageDragging = false;
 		this->MessageSelected = false;
 		this->MessageX = 230;
 		this->MessageY = 180;
-		this->BT_ExitGame = new Button(this, 640-51,0,0,0,50,53,true, this->ExitGameTxt.Texture);
-		this->BT_Message_OK = new Button(this, MessageX + 180,MessageY+ 112,0,116,91,28,false, GLoginButtonTexture);
-		this->BT_CharDeleteOK = new Button(this, MessageX + 180 - 92,MessageY+ 112,0,116,91,28,false, GLoginButtonTexture);
-		this->BT_CharDeleteCancel = new Button(this, MessageX + 180,MessageY+ 112,0,29,91,28,false, GLoginButtonTexture);
 		this->Closed = false;
 		this->Stage = Game::PMenu;
 		this->SubStage = 0;
@@ -94,9 +96,9 @@ void Game::Update()
 		}
 		else
 		{
-			Map_UserInterface->Update();
-			map->Update();
 			this->MapCursor.Update();
+			map->Update();
+			Map_UserInterface->Update();
 		}
 		
 		if(this->Stage > 1)
@@ -248,6 +250,18 @@ void Game::Render()
 		{
 			this->map->Render();
 			Map_UserInterface->Render();
+			this->map->ThreadLock.lock();
+			RECT rct;
+
+			rct.left = 20;
+			rct.right = 300;
+			rct.top = 32;
+			rct.bottom = 300;
+
+			this->map->Sprite->Begin(D3DXSPRITE_ALPHABLEND);
+			this->DefaultFont->DrawTextW(this->map->Sprite, this->MapCursor.cur_istring.c_str(), -1, &rct, DT_LEFT, D3DCOLOR_ARGB(255, 255, 255, 255));
+			this->map->Sprite->End();
+			this->map->ThreadLock.unlock();
 		}
 		
 		if(this->Stage > 1)
@@ -345,7 +359,7 @@ void Game::Draw(ID3DXSprite* Sprite,boost::shared_ptr<IDirect3DTexture9> Texture
 		rotcentre.y = y + (Imgh / 2);
 
 		D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,&rotcentre, Angle  * (3.14 / 180),NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y,0);
+		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y, 0.1f);
 		D3DXVECTOR3* Center = new D3DXVECTOR3(1,1,0);
 		Sprite->SetTransform(&mat);
 		Sprite->Draw(Texture.get(),NULL,Center, Pos, Color);
@@ -401,7 +415,7 @@ void Game::Draw(ID3DXSprite* Sprite, boost::shared_ptr<IDirect3DTexture9> Textur
 		SrcRect.right = 0;
 		
 		D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,NULL, NULL,NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y,0);
+		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y, 0.1f);
 		D3DXVECTOR3* Center = new D3DXVECTOR3(1,1,0);
 		Sprite->SetTransform(&mat);
 		Sprite->Draw(Texture.get(),NULL,Center, Pos, Color);
@@ -430,8 +444,8 @@ void Game::Draw(ID3DXSprite* Sprite, IDirect3DTexture9* Texture, int x, int y, D
 		SrcRect.right = 0;
 		
 		D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,NULL, NULL,NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y,0);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(1,1,0);
+		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y, 0.1f);
+		D3DXVECTOR3* Center = new D3DXVECTOR3(1,1,0 );
 		Sprite->SetTransform(&mat);
 		Sprite->Draw(Texture,NULL,Center, Pos, Color);
 		

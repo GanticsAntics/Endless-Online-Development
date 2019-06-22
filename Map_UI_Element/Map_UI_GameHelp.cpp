@@ -35,7 +35,7 @@ void Map_UI_GameHelp::Render()
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_GameHelp):
 	{
-		Ptr_GameHelp_Game->Draw(Ptr_GameHelp_MapUI->Sprite, Ptr_GameHelp_Game->resource->CreateTexture(2, 63, false).Texture, 102, 332, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+		Ptr_GameHelp_Game->Draw(Ptr_GameHelp_MapUI->Sprite, Ptr_GameHelp_Game->resource->CreateTexture(2, 63, false).Texture, 102, 332, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
 		break;
 	}
 	default:

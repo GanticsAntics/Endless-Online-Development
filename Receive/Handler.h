@@ -1,7 +1,6 @@
 #include <array>
 #include <stdexcept>
 #include "..\include\EOServ\packet.hpp"
-#include "..\Character.h"
 #include "..\Game.h"
 #include "RConstants.h"
 #include "..\include\EOServ\eodata.hpp"

@@ -47,7 +47,7 @@ public:
 	Resource::TextureData ExitGameTxt;
 	Resource::TextureData MessageBoxTexture;
 	Resource::TextureData ScrollBarTexture;
-
+	Resource::TextureData TextIconTexture;
 	Button* BT_ExitGame;
 	ID3DXFont* DefaultFont;
 	ID3DXFont* MessageFont;
@@ -59,6 +59,7 @@ public:
 	Menu* menu;
 	Map* map;
 	bool Closed;
+	bool MouseRightPressed;
 	bool MousePressed;
 	bool RAWMousePressed;
 	float  MouseX,MouseY;

@@ -39,6 +39,6 @@ public:
 	void Initialize(LPVOID* m_game);
 	void SetCharacter(byte _Gender, byte _HairStyle, byte _HairCol, byte _SkinCol, byte _direction);
 	void AlignCharacter();
-	void Render(ID3DXSprite* _Sprite, int x, int y, float depth);
+	void Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR _Color = D3DCOLOR_ARGB(255,255,255,255));
 };
 #endif

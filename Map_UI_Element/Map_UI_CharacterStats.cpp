@@ -35,7 +35,7 @@ void Map_UI_CharacterStats::Render()
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_CharacterStats):
 	{
-		Ptr_CharStats_Game->Draw(Ptr_CharStats_MapUI->Sprite, Ptr_CharStats_Game->resource->CreateTexture(2, 34, false).Texture, 102, 332, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+		Ptr_CharStats_Game->Draw(Ptr_CharStats_MapUI->Sprite, Ptr_CharStats_Game->resource->CreateTexture(2, 34, false).Texture, 102, 332, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
 		break;
 	}
 	default:

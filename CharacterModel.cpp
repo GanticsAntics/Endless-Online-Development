@@ -310,8 +310,9 @@ std::pair<int, int> RetrieveOffset(int layerindex, CharacterModel::PlayerStance 
 	return std::pair<int, int>(x, y);
 }
 
-void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
+void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m_Color)
 {
+	
 	this->AlignCharacter();
 	int IndexOffSet = 0;
 	if (this->Stance == PlayerStance::Walking) { IndexOffSet = 2; }
@@ -389,12 +390,12 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 		}
 		case(PlayerStance::GroundSitting):
 		{
-			Addint += 1;
+			//Addint += 1;
 			break;
 		}
 		case(PlayerStance::ChairSitting):
 		{
-			Addint += 1;
+			//Addint += 1;
 			break;
 		}
 		case(PlayerStance::Spelling):
@@ -434,43 +435,46 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 				{
 				case(PlayerStance::Standing):
 				{
-					_Sprite->Draw(CharacterStandTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					_Sprite->Draw(CharacterStandTexture.get(), &SrcRect, Center, Pos, m_Color);
 					break;
 				}
 				case(PlayerStance::Walking):
 				{
-					Pos->x -= ((this->Gender % 2) * 1);
-					_Sprite->Draw(CharacterWalkTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					if (this->direction == 0 || this->direction == 2)
+					{
+						Pos->x -= ((this->Gender % 2) * 1);
+					}
+					_Sprite->Draw(CharacterWalkTexture.get(), &SrcRect, Center, Pos, m_Color);
 					break;
 				}
 				case(PlayerStance::BluntAttacking):
 				{
 					Pos->x -= ((this->Gender % 2) * 1);
-					_Sprite->Draw(CharacterAttackBluntTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					_Sprite->Draw(CharacterAttackBluntTexture.get(), &SrcRect, Center, Pos, m_Color);
 					break;
 				}
 				case(PlayerStance::Spelling):
 				{
-					_Sprite->Draw(CharacterSpellTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					_Sprite->Draw(CharacterSpellTexture.get(), &SrcRect, Center, Pos, m_Color);
 					break;
 				}
 				case(PlayerStance::ChairSitting):
 				{
 					Pos->x -= ((this->Gender % 2) * 1);
-					_Sprite->Draw(CharacterSitChairTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					_Sprite->Draw(CharacterSitChairTexture.get(), &SrcRect, Center, Pos, m_Color);
 					break;
 				}
 				case(PlayerStance::GroundSitting):
 				{
 					Pos->x -= ((this->Gender % 2) * 1);
-					_Sprite->Draw(CharacterSitGroundTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					_Sprite->Draw(CharacterSitGroundTexture.get(), &SrcRect, Center, Pos, m_Color);
 					break;
 				}
 				case(PlayerStance::BowAttacking):
 				{
 					Pos->x += ((this->Gender % 2) * 1);
 					Pos->y -= ((this->Gender % 2) * 1);
-					_Sprite->Draw(CharacterAttackBowTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					_Sprite->Draw(CharacterAttackBowTexture.get(), &SrcRect, Center, Pos, m_Color);
 					break;
 				}
 				}
@@ -508,7 +512,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 					}
 				}
 				_Sprite->SetTransform(&mat);
-				_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+				_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
 				_Sprite->SetTransform(originalTransform);
 				delete Pos;
 				delete Center;
@@ -540,7 +544,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 						}
 					}
 					_Sprite->SetTransform(&mat);
-					_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
 					_Sprite->SetTransform(originalTransform);
 
 					delete Pos;
@@ -562,7 +566,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 						{
 							newdepth -= ep * 1;
 							D3DXVECTOR3* Posx = new D3DXVECTOR3(x - offsetpos.first + this->xoffset, y + this->yoffset - offsetpos.second, newdepth - layerinfo.depth);
-							_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, Addint + 1 + IndexOffSet  + (this->WeaponID * 100) +4, true).Texture.get(), NULL, Center, Posx, D3DCOLOR_ARGB(255, 255, 255, 255));
+							_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, Addint + 1 + IndexOffSet  + (this->WeaponID * 100) +4, true).Texture.get(), NULL, Center, Posx, m_Color);
 							delete Posx;
 						}
 					}
@@ -576,7 +580,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 
 				if (this->Stance != PlayerStance::ChairSitting && this->Stance != PlayerStance::GroundSitting)
 				{
-					_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
 				}
 
 				delete Pos;
@@ -620,7 +624,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 						D3DXVECTOR3 * Pos = new D3DXVECTOR3(x - offsetpos.first + this->xoffset, y - offsetpos.second + this->yoffset, newdepth - layerinfo.depth);
 						D3DXVECTOR3 * Center = new D3DXVECTOR3(0, 0, 0);
 
-						_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+						_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
 
 						delete Pos;
 						delete Center;
@@ -639,7 +643,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 						D3DXVECTOR3 * Pos = new D3DXVECTOR3(x - offsetpos.first + this->xoffset, y - offsetpos.second + this->yoffset + 30, newdepth - layerinfo.depth);
 						D3DXVECTOR3 * Center = new D3DXVECTOR3(0, 0, 0);
 
-						_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+						_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
 
 						delete Pos;
 						delete Center;
@@ -688,6 +692,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 						Pos->y -= 5;
 						Pos->x += 2;
 						Addint += 1;
+						TextureIndex++;
 					}
 					TextureIndex -= 2;
 				}
@@ -698,11 +703,12 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 						Pos->x += 2;
 						Pos->y -= 5;
 						Addint += 1;
+						TextureIndex++;
 					}
 					TextureIndex -= 4;
 				}
 
-				_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+				_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
 
 				delete Pos;
 				delete Center;
@@ -734,7 +740,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 					Pos->y -= ((this->Gender % 2) * 1);
 				}
 
-				_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+				_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
 
 				delete Pos;
 				delete Center;
@@ -752,7 +758,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 					D3DXVECTOR3 * Center = new D3DXVECTOR3(0, 0, 0);
 
 					//Fuck hats
-					//_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					//_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
 
 					delete Pos;
 					delete Center;
@@ -769,3 +775,4 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth)
 	delete ScaleCntre;
 	delete originalTransform;
 }
+

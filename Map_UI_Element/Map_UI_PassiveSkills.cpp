@@ -35,7 +35,7 @@ void Map_UI_PassiveSkills::Render()
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_PassiveSkills):
 	{
-		Ptr_PassiveSkills_Game->Draw(Ptr_PassiveSkills_MapUI->Sprite, Ptr_PassiveSkills_Game->resource->CreateTexture(2, 62, false).Texture, 102, 332, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+		Ptr_PassiveSkills_Game->Draw(Ptr_PassiveSkills_MapUI->Sprite, Ptr_PassiveSkills_Game->resource->CreateTexture(2, 62, false).Texture, 102, 332, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
 		break;
 	}
 	default:

@@ -3,7 +3,7 @@
 #include "..\Game.h"
 
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeighht, int m_BarHeight, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeighht, int m_BarHeight, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, boost::shared_ptr<IDirect3DTexture9> m_IconTexture)
 {
 	this->p_container = NULL;
 	this->TextOrElement = false;
@@ -13,12 +13,12 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHe
 	this->ElementHeight = m_ElementHeighht;
 	this->BarHeight = m_BarHeight;
 	this->p_ScrollbarTexture = m_ScrollbarTexture;
-
+	this->p_IconTexture = m_IconTexture;
 	this->UI_Scrollbar_Button_Top = new Button(m_Game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
 	this->UI_Scrollbar_Button_Bottom = new Button(m_Game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
 };
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, boost::shared_ptr<IDirect3DTexture9> m_IconTexture)
 {
 	this->p_container = NULL;
 	this->TextOrElement = true;
@@ -32,12 +32,13 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeig
 	this->ScrollbarReferenceFont = m_ScrollbarReferenceFont;
 	this->TextX = m_XtextlocationRelativeToX;
 	this->TextY = m_YtextlocationRelativeToY;
+	this->p_IconTexture = m_IconTexture;
 	this->UI_Scrollbar_Button_Top = new Button(m_Game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
 	this->UI_Scrollbar_Button_Bottom = new Button(m_Game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
 };
 
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, boost::shared_ptr<IDirect3DTexture9> m_IconTexture)
 {
 	this->p_container = m_container;
 	this->TextOrElement = true;
@@ -51,6 +52,7 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeig
 	this->ScrollbarReferenceFont = m_ScrollbarReferenceFont;
 	this->TextX = m_XtextlocationRelativeToX;
 	this->TextY = m_YtextlocationRelativeToY;
+	this->p_IconTexture = m_IconTexture;
 	this->UI_Scrollbar_Button_Top = new Button(m_Game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
 	this->UI_Scrollbar_Button_Bottom = new Button(m_Game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
 };
@@ -98,7 +100,11 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 	}
 	if (this->p_container == NULL)
 	{
-		this->Lineindex = ((float)(this->SubText.size()) * (float)(this->BarPercent));
+		this->Lineindex = ((float)(this->SubText.size() - 5) * (float)(this->BarPercent));
+		if (this->Lineindex < 0)
+		{
+			this->Lineindex = 0;
+		}
 	}
 	else
 	{
@@ -107,7 +113,11 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 		{
 			counter += p_container->at(i).MessageLength;
 		}
-		this->Lineindex = (float)counter * (float)this->BarPercent;
+		this->Lineindex = ((float)counter - 5) * (float)this->BarPercent;
+		if (this->Lineindex < 0)
+		{
+			this->Lineindex = 0;
+		}
 	}
 	bool mousepressed = false;
 
@@ -126,15 +136,15 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 	{
 		if (this->p_container == NULL)
 		{
+			if (this->Lineindex > this->SubText.size() - 5)
+			{
+				this->Lineindex = this->SubText.size() - 5;
+			}
 			if (this->Lineindex < 0)
 			{
 				this->Lineindex = 0;
 			}
-			if (this->Lineindex > this->SubText.size())
-			{
-				this->Lineindex = this->SubText.size();
-			}
-			this->BarPercent = (float)(this->Lineindex) / (float)(this->SubText.size());
+			this->BarPercent = (float)(this->Lineindex) / (float)(this->SubText.size() - 5);
 			this->Barpos = (float)(this->BarPercent) * (float)(this->BarHeight - 32);
 		}
 		else
@@ -145,15 +155,17 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 			{
 				counter += p_container->at(i).MessageLength;
 			}
+			if (this->Lineindex > counter - 5)
+			{
+				this->Lineindex = counter - 5;
+			}
 			if (this->Lineindex < 0)
 			{
 				this->Lineindex = 0;
 			}
-			if (this->Lineindex > counter)
-			{
-				this->Lineindex = counter;
-			}
-			this->BarPercent = (float)(this->Lineindex) / (float)(counter);
+			
+
+			this->BarPercent = (float)(this->Lineindex) / (float)(counter - 5);
 			this->Barpos = ((float)(this->BarPercent) * (float)(this->BarHeight - 32));
 		}
 	}
@@ -198,6 +210,16 @@ void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 				{
 					break;
 				}
+
+				RECT IconSrcRect;
+				IconSrcRect.left = 0;
+				IconSrcRect.top = this->p_container->at(i).Chat_Icon*13;
+				IconSrcRect.bottom = IconSrcRect.top+13;
+				IconSrcRect.right = 12;
+				D3DXVECTOR3* IconPos = new D3DXVECTOR3(this->x + this->TextX - 18, this->y + this->TextY + count*16, 0);
+				D3DXVECTOR3* IconCentre = new D3DXVECTOR3(0, 0, 0);
+				_Sprite->Draw(p_IconTexture.get(), &IconSrcRect, Center, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+
 				RECT rct;
 				rct.left = this->x + this->TextX;
 				rct.right = this->x + this->TextX + this->ElementWidth;

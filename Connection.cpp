@@ -8,7 +8,7 @@
 USING_PTYPES
 pt::ipstream* ClientStream;
 PacketHandler* Packethandler;
-const int maxtoken = 4090;
+
 pt::string IP;
 int Conport;
 bool Connection::ConnectionDropped;
@@ -238,10 +238,11 @@ void Connection::execute()
 						if (familyID == 255 && ActionID == 255 && ConnectionAccepted)
 						{
 							int ID = reader->GetByte();
-							if (ID == FileType::Map)
+							if (ID <= FileType::Map)
 							{
 								Connection::FileContainer filecont;
-								filecont.File_Type = (FileType)ID;
+								filecont.File_Type = FileType::Map;
+	
 								Game* gme = (Game*)V_Game;
 								filecont.ID = gme->map->MapID;
 								std::string str = reader->GetEndString();
@@ -276,7 +277,10 @@ void Connection::execute()
 								delete st;
 							}
 							World::DebugPrint(reportstr.c_str());
-							Packethandler->HandlePacket(*reader, (Game*)V_Game, ClientStream);
+							Game* game = (Game*)V_Game;
+							//game->map->ThreadLock.lock();
+							Packethandler->HandlePacket(*reader, game, ClientStream);
+							//game->map->ThreadLock.unlock();
 						}
 
 						delete reader;

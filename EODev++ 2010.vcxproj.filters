@@ -36,9 +36,6 @@
     <Filter Include="Include\EOMap">
       <UniqueIdentifier>{e11ae005-450c-49b4-a2d5-127c09f8d13e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\EOMap\Experimental">
-      <UniqueIdentifier>{b2bf8c26-9f48-41da-9239-12f67d9b1d66}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include\EOMap\Utils">
       <UniqueIdentifier>{304f8fe2-82a5-48b3-8102-469d08fe1df8}</UniqueIdentifier>
     </Filter>
@@ -103,7 +100,6 @@
     <ClCompile Include="Utilities\ConfigFile.cpp">
       <Filter>Utillities</Filter>
     </ClCompile>
-    <ClCompile Include="Character.cpp" />
     <ClCompile Include="CharacterModel.cpp" />
     <ClCompile Include="include\CBitmapEx\BitmapEx.cpp">
       <Filter>Include\CBitmapEx</Filter>
@@ -243,6 +239,24 @@
     <ClCompile Include="Send\STalk.cpp">
       <Filter>Send</Filter>
     </ClCompile>
+    <ClCompile Include="Send\SItem.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RItem.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SDoor.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Send\SPaperdoll.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive\RPaperdoll.cpp">
+      <Filter>Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_Element\UI_ChatBubbleHandler.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -304,7 +318,6 @@
     <ClInclude Include="Utilities\ConfigFile.h">
       <Filter>Utillities</Filter>
     </ClInclude>
-    <ClInclude Include="Character.h" />
     <ClInclude Include="include\CBitmapEx\BitmapEx.h">
       <Filter>Include\CBitmapEx</Filter>
     </ClInclude>
@@ -424,6 +437,18 @@
     </ClInclude>
     <ClInclude Include="Send\STalk.h">
       <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SItem.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SDoor.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SPaperdoll.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_Element\UI_ChatBubbleHandler.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

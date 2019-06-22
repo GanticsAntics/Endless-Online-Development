@@ -10,6 +10,7 @@ class UI_Scrollbar
 	Button* UI_Scrollbar_Button_Top;
 	Button* UI_Scrollbar_Button_Bottom;
 	boost::shared_ptr<IDirect3DTexture9> p_ScrollbarTexture;
+	boost::shared_ptr<IDirect3DTexture9> p_IconTexture;
 	std::vector<TextTools::ChatContainer>* p_container;
 	ID3DXFont* ScrollbarReferenceFont;
 	std::string FullText = "";
@@ -30,9 +31,9 @@ class UI_Scrollbar
 	int ScrollBarFPSCounter = 0;
 public:
 	D3DCOLOR TextCol = D3DCOLOR_ARGB(255, 0, 0, 0);
-	UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeight, int m_BarHeight, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game);
-	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont);
-	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont);
+	UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeight, int m_BarHeight, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, boost::shared_ptr<IDirect3DTexture9> p_IconTexture);
+	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, boost::shared_ptr<IDirect3DTexture9> p_IconTexture);
+	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, boost::shared_ptr<IDirect3DTexture9> p_IconTexture);
 	float BarPercent = 0;
 	
 	//std::string GetCroppedString() { return this->SubText; }
@@ -43,7 +44,7 @@ public:
 	{
 		if (p_container == NULL)
 		{
-			this->Lineindex = this->SubText.size() - 6;
+			this->Lineindex = this->SubText.size();
 			if (this->Lineindex < 0)
 			{
 				this->Lineindex = 0;
@@ -58,7 +59,7 @@ public:
 			{
 				counter += p_container->at(i).MessageLength;
 			}
-			this->Lineindex = counter - 5;
+			this->Lineindex = counter;
 
 			if (this->Lineindex < 0)
 			{

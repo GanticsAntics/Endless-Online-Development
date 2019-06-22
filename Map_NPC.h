@@ -19,6 +19,14 @@ public:
 	int yoffset = 0;
 	int xoffset = 0;
 	int WalkCounter = 0;
+
+	bool isattacked = false;
+	int time = 0;
+
+	int Deathcounter = 0;
+	std::vector<BYTE> Damage;
+
+	void NPCKill();
 	enum NPC_Stance
 	{
 		Standing,
@@ -31,8 +39,9 @@ public:
 	void Initialize(LPVOID* m_game);
 	void SetStance(NPC_Stance m_Stance);
 	void MoveNPC(int FPS, int DestX,int DestY);
+	void DealDamage(short HpLeft, int damage);
 	void Update(int FPS);
-	void Render(ID3DXSprite* _Sprite, int x, int y, float depth);
+	void Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m_color = D3DCOLOR_ARGB(255,255,255,255));
 	~Map_NPC();
 };
 

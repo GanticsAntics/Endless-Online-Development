@@ -28,31 +28,36 @@ Button::Button(VOID* m_Game, int _X, int _Y, int _ImgWidth, int _ImgHeight, boos
 };
 void Button::Update(int MouseX, int MouseY, bool MousePressed)
 {
-	this->UpdateElement();
+	if (this->GetIsActive())
+	{
+		this->UpdateElement();
+	}
 };
 
 void Button::Draw(ID3DXSprite* _Sprite)
 {
+	if (this->GetIsActive())
+	{
 		D3DXMATRIX mat;
 		RECT SrcRect;
 		SrcRect.left = this->ImgX;
 		SrcRect.top = this->ImgY;
 		SrcRect.bottom = this->ImgY + this->GetSize().second;
 		SrcRect.right = this->ImgX + this->GetSize().first;
-		if(this->IsAnimationSouthward())
+		if (this->IsAnimationSouthward())
 		{
-		SrcRect.top = this->ImgY + (this->GetFrameID() * this->GetSize().second);
-		SrcRect.bottom = this->ImgY + (this->GetFrameID() + 1) * (this->GetSize().second);
+			SrcRect.top = this->ImgY + (this->GetFrameID() * this->GetSize().second);
+			SrcRect.bottom = this->ImgY + (this->GetFrameID() + 1) * (this->GetSize().second);
 		}
 		else
 		{
-		SrcRect.left = this->ImgX + (this->GetFrameID() * this->GetSize().first);
-		SrcRect.right = this->ImgX + ((this->GetFrameID() + 1) * (this->GetSize().first));
+			SrcRect.left = this->ImgX + (this->GetFrameID() * this->GetSize().first);
+			SrcRect.right = this->ImgX + ((this->GetFrameID() + 1) * (this->GetSize().first));
 		}
-		
-		D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,NULL, NULL,NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(this->GetPosition().first, this->GetPosition().second,0);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(0,0,0);
+
+		D3DXMatrixTransformation2D(&mat, NULL, NULL, NULL, NULL, NULL, NULL);
+		D3DXVECTOR3* Pos = new D3DXVECTOR3(this->GetPosition().first, this->GetPosition().second, 0.05);
+		D3DXVECTOR3* Center = new D3DXVECTOR3(0, 0, 0);
 		_Sprite->SetTransform(&mat);
 
 		if (this->IsNewTextureForMouseOver())
@@ -68,18 +73,20 @@ void Button::Draw(ID3DXSprite* _Sprite)
 		}
 		else
 		{
-			
-			_Sprite->Draw(this->GetTexture().get(), &SrcRect,Center, Pos, D3DCOLOR_ARGB(255,255,255,255));
+
+			_Sprite->Draw(this->GetTexture().get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
 
-		
+
 		delete Pos;
 		delete Center;
+	}
 };
 
 void Button::Deactivate()
 {
 	this->MouseClickProccessed();
+
 }
 
 void Button::Release()

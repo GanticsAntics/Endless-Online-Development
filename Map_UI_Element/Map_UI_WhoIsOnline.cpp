@@ -35,7 +35,7 @@ void Map_UI_WhoIsOnline::Render()
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_WhoIsOnline):
 	{
-		Ptr_WhoIsOnline_Game->Draw(Ptr_WhoIsOnline_MapUI->Sprite, Ptr_WhoIsOnline_Game->resource->CreateTexture(2, 36, false).Texture, 102, 332, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+		Ptr_WhoIsOnline_Game->Draw(Ptr_WhoIsOnline_MapUI->Sprite, Ptr_WhoIsOnline_Game->resource->CreateTexture(2, 36, false).Texture, 102, 332, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
 		break;
 	}
 	default:

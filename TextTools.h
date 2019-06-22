@@ -5,18 +5,30 @@ class TextTools
 public:
 	static int GetTextWidth(std::string szText, ID3DXFont* pFont);
 	static std::vector<std::string> SnipTextToWidth(std::string szText, int m_width, ID3DXFont* pFont);
+	static std::string SnipMessageTextToWidth(std::string szText, int m_width, ID3DXFont* pFont);
+	enum ChatIndex
+	{
+		Public,
+		Whisper1,
+		Whisper2,
+		Global,
+		Guild,
+		System,
+		Announcements
+	};
 	struct ChatContainer
 	{
+		int Chat_Icon = 0;
 		int MessageLength = 1;
-		int ChatIndex = 0;
+		ChatIndex ChatIndex = ChatIndex::Public;
 		std::string CharacterName;
 		std::vector<std::string> Message;
 		D3DCOLOR message_col = D3DCOLOR_ARGB(255,0,0,0);
 	};
-	static std::vector<ChatContainer>* AllChat;
+	static std::vector<ChatContainer>* ChatGroups[6];
 	static std::string SnipChatBoxTextToWidth(std::vector<ChatContainer>* szText, int m_width, ID3DXFont* pFont);
-	static void AppendChat(int ChatIndex, int m_width, std::string playername, std::string m_message, ID3DXFont* pFont);
-	static void AppendChat(int ChatIndex, int m_width, std::string playername, std::string m_message, ID3DXFont* pFont, D3DCOLOR message_col);
+	static void AppendChat(ChatIndex m_ChatIndex, int m_width, int iconindex, std::string playername, std::string m_message, ID3DXFont* pFont);
+	static void AppendChat(ChatIndex m_ChatIndex, int m_width, int iconindex, std::string playername, std::string m_message, ID3DXFont* pFont, D3DCOLOR message_col);
 	//static void AppendChat(ChatContainer m_message);
 	TextTools();
 	~TextTools();

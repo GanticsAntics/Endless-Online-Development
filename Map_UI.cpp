@@ -1,8 +1,11 @@
-#include "stdafx.h"
+	#include "stdafx.h"
 #include "Map_UI.h"
 #include "Game.h"
 #include "include/CBitmapEx/BitmapEx.h"
 #include "Send/STalk.h"
+#include <time.h>
+#include <iostream>
+#include <iomanip>
 Map_UI::Map_UI()
 {
 	D3DXVECTOR2 Pos;
@@ -43,13 +46,25 @@ void Map_UI::UI_SendMessage()
 	if (this->ChatTextbox->text != L"")
 	{
 		std::string message = ws2s(this->ChatTextbox->text);
-		STalk::SendTalk(UI_Game->world->connection->ClientStream, message, UI_Game);
-		this->ChatTextbox->TextBounds = RECT();
-		this->ChatTextbox->text.clear();
-		std::string playername = UI_Game->map->m_Players[World::WorldCharacterID]->name;
-		playername[0] = std::toupper(playername[0]);
-		TextTools::AppendChat(0, 380, playername, message, UI_Game->MessageFont);
-		UI_Game->Map_UserInterface->map_talk->UI_TextScrollbar->BottomLineIndex();
+		if (message[0] == '~')
+		{
+			message.erase(0,1);
+			STalk::SendGlobal(UI_Game->world->connection->ClientStream, message, UI_Game);
+			this->ChatTextbox->Reset();
+			std::string playername = UI_Game->map->m_Players[World::WorldCharacterID]->name;
+			playername[0] = std::toupper(playername[0]);
+			TextTools::AppendChat(TextTools::ChatIndex::Global, 380, 4, playername, message, UI_Game->MessageFont);
+			UI_Game->Map_UserInterface->map_talk->UI_ChatScrollbars[TextTools::ChatIndex::Global]->BottomLineIndex();
+		}
+		else
+		{
+			STalk::SendTalk(UI_Game->world->connection->ClientStream, message, UI_Game);
+			this->ChatTextbox->Reset();
+			std::string playername = UI_Game->map->m_Players[World::WorldCharacterID]->name;
+			playername[0] = std::toupper(playername[0]);
+			TextTools::AppendChat(TextTools::ChatIndex::Public, 380, 0, playername, message, UI_Game->MessageFont);
+			UI_Game->Map_UserInterface->map_talk->UI_ChatScrollbars[0]->BottomLineIndex();
+		}
 	}
 }
 LPDIRECT3DTEXTURE9 TX_UI_Mask = NULL;
@@ -72,16 +87,17 @@ void Map_UI::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_g
 	this->map_skills = new Map_UI_Skills(this, m_game);
 	this->map_talk = new Map_UI_Talk(this, m_game);
 	this->map_whoisonline = new Map_UI_WhoIsOnline(this, m_game);
+	this->map_ChatBubbleHandler = new UI_ChatBubbleHandler(this, m_game);
 	D3DXVECTOR2 Pos;
 	Pos.x = 107;
 	Pos.y = 309;
 
 	D3DXVECTOR2 Size;
-	Size.x = 340;
+	Size.x = 460;
 	Size.y = 30;
 	Textbox m_ChatTextbox =  Textbox(Pos, Size, D3DCOLOR_ARGB(255, 0, 0, 0), UI_Game->MessageFont, Game::GameStage::PInGame, 0);
 	m_ChatTextbox.blinkhidden = false;
-	m_ChatTextbox.MaxLen = 200;
+	m_ChatTextbox.MaxLen = 100;
 	m_ChatTextbox.nonAcceptedKeyEntered = true;
 	m_ChatTextbox.acceptspace = true;
 	m_ChatTextbox.acceptsReturn = true;
@@ -131,10 +147,13 @@ void Map_UI::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_g
 	
 	free(buffer);
 	__deallocate(bitmapEx);
+
+	HudStatsTexture = UI_Game->resource->CreateTexture(2, 58, true).Texture;
 }
 
 void Map_UI::Update()
 {
+	UI_Game->map->ThreadLock.lock();
 	this->MouseX = UI_Game->MouseX;
 	this->MouseY = UI_Game->MouseY;
 	this->FPS = UI_Game->FPS;
@@ -152,18 +171,24 @@ void Map_UI::Update()
 	this->map_skills->Update();
 	this->map_talk->Update();
 	this->map_whoisonline->Update();
-	UI_Game->world->SetFocusedTextbox(this->ChatTextbox);
+	this->map_ChatBubbleHandler->Update();
+	if (this->isactive)
+	{
+		UI_Game->world->SetFocusedTextbox(this->ChatTextbox);
+	}
+	UI_Game->map->ThreadLock.unlock();
 }
 
 void Map_UI::Render()
 {
+	UI_Game->map->ThreadLock.lock();
 	this->Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_DEPTH_FRONTTOBACK);
 	UI_Game->Draw(this->Sprite, TX_UI_Mask, 1, 1, D3DCOLOR_ARGB(255, 255, 255, 255));
-	UI_Game->Draw(this->Sprite, UI_Game->resource->CreateTexture(2, 1, true).Texture, 1, 1, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+	UI_Game->Draw(this->Sprite, UI_Game->resource->CreateTexture(2, 1, true).Texture, 1, 1, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
 	/*UI_Game->Draw(this->Sprite, UI_Game->resource->CreateTexture(2, 22, false).Texture, 9, 54, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
 	UI_Game->Draw(this->Sprite, UI_Game->resource->CreateTexture(2, 23, true).Texture, 99, 9, 0, D3DCOLOR_ARGB(255, 255, 255, 255));*/
-	UI_Game->Draw(this->Sprite, UI_Game->resource->CreateTexture(2, 21, true).Texture, 1, 1, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
-	UI_Game->Draw(this->Sprite, UI_Game->resource->CreateTexture(2, 20, true).Texture, 18, 310, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+	UI_Game->Draw(this->Sprite, UI_Game->resource->CreateTexture(2, 21, true).Texture, 1, 1, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
+	UI_Game->Draw(this->Sprite, UI_Game->resource->CreateTexture(2, 20, true).Texture, 18, 310, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
 
 	this->map_news->Render();
 	this->map_inventory->Render();
@@ -177,9 +202,107 @@ void Map_UI::Render()
 	this->map_skills->Render();
 	this->map_talk->Render();
 	this->map_whoisonline->Render();
+	this->map_ChatBubbleHandler->Render();
 	ChatTextbox->Render(this->Sprite);
+	DrawHUDStats();
+	
+	if (this->HelpMessageTitle != "")
+	{
+		time_t curtime = clock();
+		if (curtime - this->HelpMessageTimer < 4000)
+		{
+			D3DCOLOR col = D3DCOLOR_XRGB(0, 0, 0);
+			RECT BoxRect = { 0,0 ,0,0 };
+			BoxRect.left = 70;
+			BoxRect.top = 454;
+			BoxRect.bottom = BoxRect.top + 30;
+			BoxRect.right = BoxRect.left + 400;
+			std::string drawmessage = this->HelpMessageTitle+ " " + this->HelpMessage;
+			UI_Game->MessageFont->DrawTextA(this->Sprite, drawmessage.c_str(), -1, &BoxRect, NULL, col);
+		}
+		else
+		{
+			this->HelpMessageTitle = "";
+			this->HelpMessage != "";
+		}
+	}
+	auto t = std::time(nullptr);
+	auto tm = *std::localtime(&t);
+	
+	D3DCOLOR col = D3DCOLOR_XRGB(0, 0, 0);
+	RECT BoxRect = { 0,0 ,0,0 };
+	BoxRect.left = 572;
+	BoxRect.top = 454;
+	BoxRect.bottom = BoxRect.top + 30;
+	BoxRect.right = BoxRect.left + 400;
+
+	std::ostringstream oss;
+	oss << std::put_time(&tm, "%H-%M-%S");
+	auto str = oss.str();
+
+	UI_Game->MessageFont->DrawTextA(this->Sprite, str.c_str(), -1, &BoxRect, NULL, col);
 	this->Sprite->End();
 
+	UI_Game->map->ThreadLock.unlock();
+}
+void Map_UI::DrawHUDStats()
+{
+	RECT IconSrcRect;
+	IconSrcRect.left = 0;
+	IconSrcRect.top = 0;
+	IconSrcRect.bottom = 14;
+	IconSrcRect.right = 439;
+	D3DXVECTOR3* IconPos = new D3DXVECTOR3(105,8, 0.1f);
+	D3DXVECTOR3* IconCentre = new D3DXVECTOR3(0, 0, 0);
+	this->Sprite->Draw(HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+	//UI_Game->map->ThreadLock.lock();
+	float hp = (float)UI_Game->map->m_Players[World::WorldCharacterID]->hp;
+	float maxhp = (float)UI_Game->map->m_Players[World::WorldCharacterID]->maxhp;
+	IconSrcRect.left = 0;
+	IconSrcRect.top = 14;
+	IconSrcRect.bottom = IconSrcRect.top + 14;
+
+	IconSrcRect.right = 25 + (hp / maxhp)*85;
+	this->Sprite->Draw(HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+
+	float tp = (float)UI_Game->map->m_Players[World::WorldCharacterID]->tp;
+	float maxtp = (float)UI_Game->map->m_Players[World::WorldCharacterID]->maxtp;
+	IconSrcRect.left = 110;
+	IconSrcRect.top = 14;
+	IconSrcRect.bottom = IconSrcRect.top + 14;
+	IconSrcRect.right = IconSrcRect.left  + 25 + (tp / maxtp) * 85;
+	IconPos->x = IconSrcRect.left + 105;
+	this->Sprite->Draw(HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+	
+
+	float sp = 100;
+	float maxsp = 100;
+	IconSrcRect.left = 110*2;
+	IconSrcRect.top = 14;
+	IconSrcRect.bottom = IconSrcRect.top + 14;
+	IconSrcRect.right = IconSrcRect.left + 25 + (sp / maxsp) * 85;
+	IconPos->x = IconSrcRect.left + 105;
+	this->Sprite->Draw(HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+
+
+	float exp = (float)UI_Game->map->m_Players[World::WorldCharacterID]->exp - (std::round(std::pow(double(UI_Game->map->m_Players[World::WorldCharacterID]->level + 0), 3.0) * 133.1));
+	float exptnl = std::round(std::pow((UI_Game->map->m_Players[World::WorldCharacterID]->level + 1), 3.0) * 133.1)- std::round(std::pow((UI_Game->map->m_Players[World::WorldCharacterID]->level), 3.0) * 133.1);
+	IconSrcRect.left = 110 * 3;
+	IconSrcRect.top = 14;
+	IconSrcRect.bottom = IconSrcRect.top + 14;
+	IconSrcRect.right = IconSrcRect.left + 25 + (exp / exptnl) * 85;
+	IconPos->x = IconSrcRect.left + 105;
+	this->Sprite->Draw(HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+	delete IconPos;
+	delete IconCentre;
+	//UI_Game->map->ThreadLock.unlock();
+}
+
+void Map_UI::DrawHelpMessage(std::string title, std::string Message)
+{
+	this->HelpMessageTimer = clock();
+	this->HelpMessageTitle = "["+title+"]";
+	this->HelpMessage = Message;
 }
 Map_UI::~Map_UI()
 {

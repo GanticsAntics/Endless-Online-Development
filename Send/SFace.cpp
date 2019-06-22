@@ -13,7 +13,7 @@
 void SFace::SendFace(pt::ipstream* ClientStream, int Direction,LPVOID game)
 {
 	Game* gme = (Game*)game;
-	PacketBuilder builder = PacketBuilder(PACKET_ATTACK, PACKET_USE);
+	PacketBuilder builder = PacketBuilder(PACKET_FACE, PACKET_PLAYER);
 	int procDirection = Direction;
 	if (Direction == 1)
 	{

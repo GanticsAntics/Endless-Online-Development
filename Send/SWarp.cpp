@@ -19,3 +19,10 @@ void SWarp::AcceptWarp(pt::ipstream* ClientStream,int MapID, int x, int y ,LPVOI
 	builder.AddChar(y);
 	World::Send(gme,ClientStream,builder);
 }
+void SWarp::AcceptFile(pt::ipstream* ClientStream, LPVOID game)
+{
+	Game* gme = (Game*)game;
+	PacketBuilder builder = PacketBuilder(PACKET_WARP, PACKET_TAKE);
+
+	World::Send(gme, ClientStream, builder);
+}

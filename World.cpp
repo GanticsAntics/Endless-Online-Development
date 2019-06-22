@@ -133,7 +133,7 @@ void World::RenderTextBoxes(ID3DXSprite* m_Sprite, byte phase, byte subphase)
 	TextType::iterator i;
 	for(i = this->TextBoxLst.begin(); i != this->TextBoxLst.end();i++)
 	{
-		if(i->Phase == phase && i->SubPhase == subphase)
+		if(i->Phase == phase && i->SubPhase == subphase && i->Phase < Game::GameStage::PInGame)
 		{
 			i->Render(m_Sprite);
 		}
@@ -177,9 +177,9 @@ void World::Send(LPVOID game, pt::ipstream* stream, PacketBuilder builder)
 	try
 	{
 		gme->world->RawPacketCount = (gme->world->RawPacketCount + 1) % 10;
-		
+
 		std::string str = builder.Get();
-		
+
 		if ((gme->world->RawPacketCount + gme->world->PacketCount) >= 253)
 		{
 			int seqval = ((gme->world->RawPacketCount + gme->world->PacketCount));
@@ -187,15 +187,11 @@ void World::Send(LPVOID game, pt::ipstream* stream, PacketBuilder builder)
 			seqdat = gme->world->PProcessor.ENumber(seqval).data();
 			builder.InsertByte(0, seqdat[1]);
 			builder.InsertByte(0, seqdat[0]);
-
-			//str.insert(0, 1, seqdat[1]);
-			//str.insert(4, 1, seqdat[0]);
 		}
 		else
 		{
 			unsigned char seqval = gme->world->PProcessor.Number((gme->world->RawPacketCount + gme->world->PacketCount + 2));
 			builder.InsertByte(0, seqval);
-			//str.insert(0, 1, seqval);
 		}
 		str = gme->world->PProcessor.Encode(builder.Get());
 		std::string reportstr = "Sending : ";
@@ -204,10 +200,10 @@ void World::Send(LPVOID game, pt::ipstream* stream, PacketBuilder builder)
 		{
 			char* st = new char[8];
 			_itoa(str[i], st, 10);
-			if(i == 2)
+			if (i == 2)
 			{
 				reportstr += "[" + PacketProcessor::GetActionName(PacketAction(str[i] + 128)) + "]";
-			} 
+			}
 			else if (i == 3)
 			{
 				reportstr += "[" + PacketProcessor::GetFamilyName(PacketFamily(str[i] + 131)) + "]";
@@ -221,12 +217,12 @@ void World::Send(LPVOID game, pt::ipstream* stream, PacketBuilder builder)
 		}
 		World::DebugPrint(reportstr.c_str());
 
-		int Sent = stream->write(str.c_str(),str.length());
+		int Sent = stream->write(str.c_str(), str.length());
 		stream->flush();
-	} 
-	catch(...)
+	}
+	catch (...)
 	{
-		World::ThrowMessage("Could not find server","The game server could not be found,\nplease try again at a later time."); 
+		World::ThrowMessage("Could not find server", "The game server could not be found,\nplease try again at a later time.");
 		stream->close();
 		World::Connected = false;
 	}

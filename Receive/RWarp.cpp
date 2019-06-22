@@ -20,15 +20,32 @@ CLIENT_F_FUNC(Warp)
 					}
 					else if (ID == 2)//warp to a new map
 					{
-						reader.GetByte();
-						reader.GetThree();
-						reader.GetByte();
-						reader.GetShort();
+						std::array<eo2_byte, 4U> MapRID;
+						for (int i = 0; i < 4; i++)
+						{
+							MapRID[i] = reader.GetByte();
+						}
+						unsigned int MapFileSize = reader.GetThree();
+						game->map->LoadMap(MapID);
 						x = reader.GetChar();
 						y = reader.GetChar();
+						game->map->ThreadLock.lock();
+						if (game->map->m_emf.rid != MapRID || game->map->m_emf.MapFileSize != MapFileSize)
+						{
+							World::DebugPrint("Requesting Map Data File. . .");
+							game->map->IsVisible = false;
+							Connection::FileContainer m_FileContainer;
+							m_FileContainer.File_Type = Connection::FileType::Map;
+							m_FileContainer.ID = MapID;
+							game->world->connection->FileQueue.push_back(m_FileContainer);
+							SWarp::AcceptFile(game->world->connection->ClientStream, (LPVOID*)game);
+						}
+						game->map->ThreadLock.unlock();
 					}
-					SWarp::AcceptWarp(game->world->connection->ClientStream, MapID, x, y, (LPVOID)game);
-					
+					//if (ID != 2)//warp to a new map
+					{
+						SWarp::AcceptWarp(game->world->connection->ClientStream, MapID, x, y, (LPVOID)game);
+					}
 					break;
 				}
 			case PACKET_AGREE:
@@ -40,10 +57,13 @@ CLIENT_F_FUNC(Warp)
 				int CharacterSize = reader.GetChar();
 				reader.GetByte();
 				game->map->ThreadLock.lock();
-				game->map->LoadMap(MapID);
 				Map_Player* MainPlayer = game->map->m_Players[World::WorldCharacterID];
+				int exp = MainPlayer->exp;	
 				game->map->ThreadLock.unlock();
+				//game->map->LoadMap(MapID);
+
 				game->map->ClearMap();
+			
 				for (int i = 0; i < CharacterSize; i++)
 				{
 					Map_Player* newplayer = new Map_Player();
@@ -107,9 +127,10 @@ CLIENT_F_FUNC(Warp)
 					unsigned char is_hideinvisible = reader.GetChar();
 					reader.GetByte();
 
-					if (newplayer->name == MainPlayer->name)
+					if (newplayer->ID == World::WorldCharacterID)
 					{
-						MainPlayer->CharacterID = newplayer->CharacterID;
+						MainPlayer->exp = exp;
+						MainPlayer->CharacterID = World::WorldCharacterID;
 						MainPlayer->mapid = newplayer->mapid;
 						MainPlayer->x = newplayer->x;
 						MainPlayer->y = newplayer->y;
@@ -151,15 +172,21 @@ CLIENT_F_FUNC(Warp)
 					new_npc->direction = reader.GetChar();
 					game->map->AddNPC(new_npc);
 				}
-				std::string map_items = reader.GetBreakString();
-				for (int i = 0; i < map_items.length() / 9; i++)
+				while (true)
 				{
-					int pos = i * 9;
-					unsigned short itemindex = PacketProcessor::Number(map_items[i], map_items[i + 1]);
-					unsigned short itemID = PacketProcessor::Number(map_items[i + 2], map_items[i + 3]);
-					unsigned char x = PacketProcessor::Number(map_items[i + 4]);
-					unsigned char y = PacketProcessor::Number(map_items[i + 5]);
-					unsigned int amount = PacketProcessor::Number(map_items[i + 6], map_items[i + 7], map_items[i + 8]);
+					int remaining = reader.Remaining();
+					if (remaining <= 1)
+					{
+						break;
+					}
+					Map::Map_Item m_item;
+
+					int ItemIndex = reader.GetShort();
+					m_item.ItemID = reader.GetShort();
+					m_item.x = reader.GetChar();
+					m_item.y = reader.GetChar();
+					m_item.amount = reader.GetThree();
+					game->map->AddItem(ItemIndex, m_item);
 				}
 				break;
 			}

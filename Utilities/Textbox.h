@@ -4,16 +4,17 @@
 class Textbox
 {
 public:
-	enum KeyType
-    {
-        None = 0,
-        Letter = 1,
-        Digit = 2,
-        LetterOrDigit = Letter | Digit,
-        Punctuation = 4,
-        Separator = 8,
-        Control = 16
-    };
+		enum KeyType
+		{
+			None = 0,
+			Letter = 1,
+			Digit = 2,
+			LetterOrDigit = Letter | Digit,
+			Punctuation = 4,
+			Separator = 8,
+			Control = 16
+		};
+
 		RECT TextBounds;
 		byte Phase;
 		byte SubPhase;
@@ -29,6 +30,7 @@ public:
 		wchar_t hashkey;
         int textBoxInnerWidth;
 		D3DXCOLOR color;
+		std::basic_string<wchar_t> Rendertext;
 		std::basic_string<wchar_t> text;
 		D3DXVECTOR2 position, size;
 		Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, int fontSize, D3DXCOLOR labelColor, IDirect3DDevice9* m_Dev, byte _Phase, byte _Subphase);

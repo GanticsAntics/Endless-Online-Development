@@ -35,7 +35,7 @@ void Map_UI_Skills::Render()
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_Skills):
 	{
-		Ptr_Skills_Game->Draw(Ptr_Skills_MapUI->Sprite, Ptr_Skills_Game->resource->CreateTexture(2, 62, false).Texture, 102, 332, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+		Ptr_Skills_Game->Draw(Ptr_Skills_MapUI->Sprite, Ptr_Skills_Game->resource->CreateTexture(2, 62, false).Texture, 102, 332, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
 		break;
 	}
 	default:

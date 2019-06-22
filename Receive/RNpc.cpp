@@ -12,6 +12,9 @@ CLIENT_F_FUNC(NPC)
 					int Index = reader.GetShort();
 					int Damage = reader.GetThree();
 					double HpLeft = reader.GetShort(); //As a percent?
+					game->map->ThreadLock.lock();
+					game->map->m_NPCs[Index]->DealDamage(HpLeft,Damage);
+					game->map->ThreadLock.unlock();
 					break;
 				}
 			case PACKET_PLAYER:
@@ -25,6 +28,10 @@ CLIENT_F_FUNC(NPC)
 					int PlayerID = reader.GetShort();
 					int Damage = reader.GetThree();
 					int procDirection = NpcDir;
+					game->map->ThreadLock.lock();
+					//game->map->m_Players[PlayerID]->hp -= Damage;
+					game->map->m_Players[PlayerID]->DealDamage(Damage);
+					game->map->ThreadLock.unlock();
 					if (NpcDir == 1)
 					{
 						procDirection = 3;
@@ -75,27 +82,29 @@ CLIENT_F_FUNC(NPC)
 
 				if (reader.Remaining() > 0)
 				{
+					
 					int NPCDropUID = reader.GetShort();
 					int NPCDropItemID = reader.GetShort();
 					int x = reader.GetChar();
 					int y = reader.GetChar();
 					int ItemAmount = reader.GetInt();
 					int damage = reader.GetThree();
+					if (NPCDropUID > 0)
+					{
+						game->map->AddItem(NPCDropUID, NPCDropItemID, x, y, ItemAmount);
+					}
+					game->map->m_NPCs.at(NPCIndex)->DealDamage(0, damage);
+					game->map->KillNPC(NPCIndex);
 				}
-				game->map->KillNPC(NPCIndex);
-				/*int Index = reader.GetByte();
-				if (Index != -1) ///NPC Death Drop
+				if (KillerID == 0)
 				{
-					int PlayerID = reader.GetShort();
-					int Dir = reader.GetChar();
-					int NPCIndex = reader.GetShort();
-					game->map->RemoveNPC(Dir);
+					game->map->RemoveNPC(NPCIndex);
 				}
-				else 
+				else
 				{
-
-				}*/
-
+					//game->map->m_NPCs.at(NPCIndex)->DealDamage(0, game->map->m_NPCs.at(NPCIndex)->MaxHP - game->map->m_NPCs.at(NPCIndex)->HP);
+					//game->map->KillNPC(NPCIndex);
+				}
 			}
 			default:
 				return false;

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Map_Player.h"
 #include "World.h"
+#include "Game.h"
+Game* m_p_Game;
 
 Map_Player::Map_Player()
 {
@@ -10,7 +12,11 @@ Map_Player::Map_Player()
 Map_Player::~Map_Player()
 {
 }
-
+void Map_Player::Initialize(LPVOID* M_Game)
+{
+	m_p_Game = (Game*)M_Game;
+	this->Deathcounter = 0;
+}
 void Map_Player::SetStance(PlayerStance m_Stance)
 {
 	this->Stance = m_Stance;
@@ -50,7 +56,7 @@ void Map_Player::MovePlayer(int FPS, int dest_x, int dest_y)
 	int move_direction = this->FindWalkDirection(dest_x, dest_y);
 	this->direction = move_direction;
 	moveFPS++;
-	if (moveFPS > FPS / 8)
+	if (moveFPS > FPS / 8.5)
 	{
 		switch (move_direction)
 		{
@@ -115,13 +121,47 @@ void Map_Player::MovePlayer(int FPS, int dest_x, int dest_y)
 		this->SetStance(CharacterModel::PlayerStance::Standing);
 	}
 }
+
+void Map_Player::DealDamage(int Damage)
+{
+	this->hp -= Damage;
+	std::string p_Damage = to_string(Damage);
+	this->Damage.clear();
+	this->time = 0;
+	for (int i = 0; i < p_Damage.size(); i++)
+	{
+		BYTE damage = p_Damage[i];
+		this->Damage.push_back(damage);
+	}
+	std::reverse(this->Damage.begin(), this->Damage.end());
+	this->isattacked = true;
+}
+
+void Map_Player::PlayerKill()
+{
+	this->SetStance(Map_Player::PlayerStance::Standing);
+	this->Deathcounter += 1;
+}
 void Map_Player::Update(int FPS)
 {
 	if (this->destination_x >= 0 || this->destination_y >= 0)
 	{
 		MovePlayer(FPS, destination_x, destination_y);
 	}
-
+	if (this->Damage.size() > 0)
+	{
+		this->time++;
+	}
+	if (this->Deathcounter > 0)
+	{
+		Deathcounter++;
+	}
+	if (this->time > FPS / 2.5)
+	{
+		this->Damage.clear();
+		this->time = 0;
+		this->isattacked = false;
+	}
 	fpscounter++;
 	switch (this->Stance)
 	{
@@ -133,7 +173,7 @@ void Map_Player::Update(int FPS)
 		}
 		case(PlayerStance::Walking):
 		{
-			if (fpscounter > (FPS / 8))
+			if (fpscounter > (FPS / 8.5))
 			{
 				this->frame_ID++;
 				if (this->frame_ID > 3)
@@ -147,7 +187,12 @@ void Map_Player::Update(int FPS)
 		}
 		case(PlayerStance::BluntAttacking):
 		{
-			if (fpscounter > (FPS / 4))
+			if (this->frame_ID == 0 && fpscounter > (FPS / 5))
+			{
+				this->frame_ID++;
+				fpscounter = 0;
+			}
+			if (fpscounter > (FPS / 3))
 			{
 				this->frame_ID++;
 				if (this->frame_ID > 1)
@@ -161,7 +206,7 @@ void Map_Player::Update(int FPS)
 		}
 		case(PlayerStance::BowAttacking):
 		{
-			if (fpscounter > (FPS))
+			if (fpscounter > (FPS / 3))
 			{
 				this->frame_ID++;
 				if (this->frame_ID > 0)
@@ -194,5 +239,78 @@ void Map_Player::Update(int FPS)
 			fpscounter = 0;
 			break;
 		}
+	}
+}
+
+void Map_Player::Map_PlayerRender(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m_Color)
+{
+	this->Render(_Sprite, x, y, depth, m_Color);
+
+	if (this->isattacked)
+	{
+		int _x = this->x;
+		int _y = this->y;
+		RECT IconSrcRect;
+		IconSrcRect.left = 0;
+		IconSrcRect.top = 28;
+		IconSrcRect.bottom = IconSrcRect.top + 7;
+		IconSrcRect.right = 40;
+		int scalex = 1;
+
+		if (this->direction == 1 || this->direction == 2)
+		{
+			scalex = -1;
+		}
+		D3DXVECTOR3* IconPos = new D3DXVECTOR3(x + 6 - 35 / 2 + this->xoffset * scalex, y + this->yoffset + 50 - 70, 0);
+		D3DXVECTOR3* IconCentre = new D3DXVECTOR3(0, 0, 0);
+
+		_Sprite->Draw(m_p_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+
+		float HPPercent = (float)this->hp / (float)this->maxhp;
+		int hpcolormultiplier = 0;
+		if (HPPercent < 0.7f)
+		{
+			hpcolormultiplier++;
+		}
+		if (HPPercent < 0.4f)
+		{
+			hpcolormultiplier++;
+		}
+		IconSrcRect.left = 0;
+		IconSrcRect.top = 35 + (hpcolormultiplier * 7);
+		IconSrcRect.bottom = IconSrcRect.top + 7;
+		IconSrcRect.right = HPPercent * 40;
+		m_p_Game->map->Sprite->Draw(m_p_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+		IconPos->y -= 14;
+		IconPos->x += 20;
+		IconPos->x += (this->Damage.size() * 9) / 2;
+		IconPos->y -= (7 * ((float)this->time / ((float)m_p_Game->FPS / 2.5)));
+		for (int i = 0; i < this->Damage.size(); i++)
+		{
+			BYTE damage = this->Damage[i] - 48;
+
+			IconSrcRect.left = 40 + (damage * 9);
+			IconSrcRect.top = 28;
+			IconSrcRect.bottom = IconSrcRect.top + 12;
+			IconSrcRect.right = IconSrcRect.left + 9;
+			if (damage == 0 && this->Damage.size() == 1)
+			{
+				IconSrcRect.left = 132;
+				IconSrcRect.top = 28;
+				IconSrcRect.bottom = IconSrcRect.top + 12;
+				IconSrcRect.right = IconSrcRect.left + 30;
+				IconPos->x -= 18;
+			}
+			else
+			{
+				IconPos->x -= 9;
+			}
+
+			float alpha = 255 - (160 * ((float)this->time / ((float)m_p_Game->FPS / 2.5)));
+			m_p_Game->map->Sprite->Draw(m_p_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB((int)alpha, 255, 255, 255));
+
+		}
+		delete IconPos;
+		delete IconCentre;
 	}
 }

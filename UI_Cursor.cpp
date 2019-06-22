@@ -3,7 +3,7 @@
 #include "Game.h"
 #include <stdio.h>      /* printf */
 #include <math.h>       /* floor */
-
+#include "Send/SItem.h"
 Game* p_Game;
 UI_Cursor::UI_Cursor()
 {
@@ -35,14 +35,74 @@ void UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 	{
 		return;
 	}
-	//this->p_Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_DEPTH_FRONTTOBACK);
 	D3DXMATRIX mat;
 	RECT SrcRect;
 
-	p_Game->DrawTextW(cur_istring.c_str(), 10, 32, D3DCOLOR_ARGB(200, 255, 255, 255));
+	int Height = 0;
+	std::string Name = "";
 
 	if (this->m_CursorType != CursorType::Invisible)
-	{
+	{	//p_Map->ThreadLock.lock();
+		for (std::map<int, Map_NPC*>::iterator NPC = this->p_Map->m_NPCs.begin(); NPC != this->p_Map->m_NPCs.end(); ++NPC)
+		{
+			if (NPC->second->x == x && NPC->second->y == y)
+			{
+				Name = p_Game->ENF_File->data[NPC->second->ID].name;
+				Name[0] = std::toupper(Name[0]);
+				Height = p_Game->resource->GetImageInfo(21,( p_Game->ENF_File->data[NPC->second->ID].graphic - 1)*40 + 1, true).Height;
+				this->m_CursorType = CursorType::Object;
+				break;
+			}
+		}
+
+		for (std::map<int, Map_Player*>::iterator player = this->p_Map->m_Players.begin(); player != this->p_Map->m_Players.end(); ++player)
+		{
+			if (player->second->x == x && player->second->y == y)
+			{
+				Name = player->second->name;
+				Name[0] = std::toupper(Name[0]);
+				Height = 65;
+				if (player->second->Stance == Map_Player::PlayerStance::ChairSitting || player->second->Stance == Map_Player::PlayerStance::GroundSitting)
+				{
+					Height = 45;
+				}
+				this->m_CursorType = CursorType::Object;
+				break;
+			}
+		}
+		for (std::map<int, Map::Map_Item>::iterator m_item = this->p_Map->m_Items.begin(); m_item != this->p_Map->m_Items.end(); ++m_item)
+		{
+			if (m_item->second.x == x && m_item->second.y == y)
+			{
+				std::string Itemname = World::EIF_File->Get(m_item->second.ItemID).name;
+				std::string Amount = to_string(m_item->second.amount) + " ";
+				Name = Amount + Itemname;
+				if (m_item->second.ItemID > 1)
+				{
+					Amount = to_string(m_item->second.amount);
+					Name = Itemname + " x " + Amount;
+				}
+				Name[0] = std::toupper(Name[0]);
+				Height = 16;
+				this->m_CursorType = CursorType::Object;
+				if (p_Game->MousePressed)
+				{
+					SItem::SendPickup(p_Game->world->connection->ClientStream,m_item->first, p_Game);
+				}
+				break;
+			}
+		}
+		//p_Map->ThreadLock.unlock();
+		if (!p_Game->RAWMousePressed)
+		{
+			if (p_Game->Map_UserInterface->map_inventory->childMPindex >= 0)
+			{
+				int x = this->x;
+				int y = this->y;
+				SItem::SendDrop(p_Game->world->connection->ClientStream, p_Game->Map_UserInterface->map_inventory->childMPindex, 1, x, y, p_Game);
+				p_Game->Map_UserInterface->map_inventory->childMPindex = -1;
+			}
+		}
 		SrcRect.bottom = 32;
 		SrcRect.left = 0 + (64 * this->m_CursorType);
 		SrcRect.right = 64 + (64 * this->m_CursorType);
@@ -61,26 +121,37 @@ void UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 		m_sprite->Draw(p_Game->resource->CreateTexture(2, 24, true).Texture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
 		delete Pos;
 		delete Center;
+		if (Name != "")
+		{
+			RECT rct;
 
-		/*RECT rct;
-		rct.left = x;
-		rct.right = x + 100;
-		rct.top = y;
-		rct.bottom = y + 100;
+			if (p_Game->map->m_Players[World::WorldCharacterID]->direction == 0 || p_Game->map->m_Players[World::WorldCharacterID]->direction == 3)
+			{
+				rct.left = mx - 16 - (p_Game->map->m_Players[World::WorldCharacterID]->xoffset);
+				rct.right = rct.left + 100;
+				rct.top = my - Height - (p_Game->map->m_Players[World::WorldCharacterID]->yoffset);
+				rct.bottom = rct.top + 20;
+			}
+			else
+			{
+				rct.left = mx - 16 + (p_Game->map->m_Players[World::WorldCharacterID]->xoffset);
+				rct.right = rct.left + 100;
+				rct.top = my - Height - (p_Game->map->m_Players[World::WorldCharacterID]->yoffset);
+				rct.bottom = rct.top + 20;
+			}
 
-		std::basic_string<wchar_t> Game_istring;
-		Game_istring.clear();
-		std::wstring newstr = std::to_wstring(depth).c_str();
-		Game_istring += newstr.substr(0, 4);
+			std::basic_string<wchar_t> Game_istring;
+			Game_istring.clear();
+			std::wstring newstr = std::to_wstring(depth).c_str();
+			Game_istring += newstr.substr(0, 4);
 
-		p_Game->MessageFont->DrawText(m_sprite, Game_istring.c_str(), -1, &rct, 0, D3DCOLOR_ARGB(255, 255, 255, 255));*/
+			p_Game->MessageFont->DrawTextA(m_sprite, Name.c_str(), -1, &rct, DT_CENTER, D3DCOLOR_ARGB(255, 255, 255, 255));
 
+		}
 	}
-	
 
 
 	//this->p_Sprite->End();
-
 
 }
 
@@ -122,10 +193,16 @@ std::pair<int, int> ScreenCordToMap(std::pair<int, int> m_loc)
 	//# See the final result
 	return std::pair<int, int>(x2, y2);
 }
+
+static const wchar_t* SpecNames[] = { L"None",	L"Wall",L"ChairDown",L"ChairLeft",L"ChairRight",L"ChairUp",L"ChairDownRight",L"ChairUpLeft",L"ChairAll",L"Unknown1", L"Unknown2", L"Chest",L"Unknown3",L"Unknown4",L"Unknown5",L"Unknown6",L"Unknown7",L"Unknown8",L"Unknown9",L"BankVault",L"NPCBoundary",L"MapEdge",L"FakeWall",L"Board1",L"Board2" ,L"Board3" ,L"Board4" ,L"Board5" ,L"Board6" ,L"Board7" ,L"Board8" ,L"Jukebox" ,L"Jump" ,L"Water",L"SpecUnknown7" ,L"Arena" ,L"AmbientSource" ,L"Spikes1",L"Spikes2",L"Spikes3" };
 void UI_Cursor::Update()
 {
 	int MouseX = p_Game->MouseX + this->p_Map->xoff;
 	int MouseY = p_Game->MouseY + this->p_Map->yoff;
+	if (!p_Game->Map_UserInterface->MouseHeld)
+	{
+		p_Game->Map_UserInterface->map_inventory->childMPindex = -1;
+	}
 	hideme = false;
 	if (p_Game->MouseY > 308 || p_Game->MouseY < 12)
 	{
@@ -139,7 +216,9 @@ void UI_Cursor::Update()
 	if (y < 0 || y >= this->p_Map->m_emf.header.height) { y = -1; }
 	if (x >= 0 && y >= 0)
 	{
+		this->p_Map->ThreadLock.lock();
 		Full_EMF::TileMeta tmeta = this->p_Map->m_emf.meta(x, y);
+		
 		switch (tmeta.spec)
 		{
 		case(EMF_Tile_Spec::None):
@@ -172,24 +251,9 @@ void UI_Cursor::Update()
 		{
 			this->m_CursorType = CursorType::Object;
 		}
-	}
-	for (std::map<int, Map_NPC*>::iterator NPC = this->p_Map->m_NPCs.begin(); NPC != this->p_Map->m_NPCs.end(); ++NPC)
-	{
-		if (NPC->second->x == x && NPC->second->y == y)
-		{
-			this->m_CursorType = CursorType::Object;
-			break;
-		}
+		this->p_Map->ThreadLock.unlock();
 	}
 
-	for (std::map<int, Map_Player*>::iterator player = this->p_Map->m_Players.begin(); player != this->p_Map->m_Players.end(); ++player)
-	{
-		if (player->second->x == x && player->second->y == y)
-		{
-			this->m_CursorType = CursorType::Object;
-			break;
-		}
-	}
 
 	cur_istring.clear();
 	wchar_t xstr[12];
@@ -197,7 +261,49 @@ void UI_Cursor::Update()
 	_itow_s(x, xstr, 12, 10);
 	cur_istring += xstr;
 	wchar_t ystr[12];
-	cur_istring += L": Mouse Y = ";
+	cur_istring += L": MouseY = ";
 	_itow_s(y, ystr, 12, 10);
 	cur_istring += ystr;
+	cur_istring += L"\nMapWarpSpec= ";
+	this->p_Map->ThreadLock.lock();
+	if (this->x >=0 && this->y >= 0)
+	{
+		Full_EMF::TileMeta tmeta = this->p_Map->m_emf.meta(x, y);
+		if (((int)tmeta.spec + 1)>= 0 && ((int)tmeta.spec + 1) <= 36)
+		{
+			cur_istring += SpecNames[(int)tmeta.spec + 1];
+		}
+	}
+	else
+	{
+		cur_istring += SpecNames[0];
+	}
+	if (this->x >= 0 && this->y >= 0)
+	{
+		Full_EMF::TileMeta tmeta = this->p_Map->m_emf.meta(x, y);
+		EMF_Warp ewarp = tmeta.warp;
+		
+		if (ewarp.door == 1)
+		{
+			cur_istring += L"\nMapWarp = ";
+			cur_istring += L"Door";
+		}
+		else if(ewarp.warp_map > 0)
+		{
+			cur_istring += L"\nMapWarp = ";
+			cur_istring += L"Warp";
+		}
+		cur_istring += L"\nTileSpec = ";
+		cur_istring += L"[" + to_wstring((int)tmeta.spec) + L"]";
+	
+		std::array<eo_short,9> GFX_array = this->p_Map->m_emf.gfx(x,y);
+		cur_istring += L"\nGFX = ";
+		for (int i = 0; i < 9; i++)
+		{
+			cur_istring += L"[" + to_wstring(GFX_array[i]) + L"]";
+		}
+		cur_istring += L"\nFillTile = " + to_wstring(this->p_Map->m_emf.header.fill_tile);
+	}
+	this->p_Map->ThreadLock.unlock();
+
 }

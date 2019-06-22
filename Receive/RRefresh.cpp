@@ -11,6 +11,7 @@ CLIENT_F_FUNC(Refresh)
 				reader.GetByte();
 				game->map->ThreadLock.lock();
 				Map_Player* MainPlayer = game->map->m_Players[World::WorldCharacterID];
+				int exp = MainPlayer->exp;
 				game->map->ThreadLock.unlock();
 				game->map->ClearMap();
 				for (int i = 0; i < numberofplayers; i++)
@@ -76,9 +77,10 @@ CLIENT_F_FUNC(Refresh)
 					unsigned char is_hideinvisible = reader.GetChar();
 					reader.GetByte();
 
-					if (newplayer->name == MainPlayer->name)
+					if (newplayer->ID == World::WorldCharacterID)
 					{
-						MainPlayer->CharacterID = newplayer->CharacterID;
+						MainPlayer->exp = exp;
+						//MainPlayer->CharacterID = newplayer->CharacterID;
 						MainPlayer->mapid = newplayer->mapid;
 						MainPlayer->x = newplayer->x;
 						MainPlayer->y = newplayer->y;
@@ -100,6 +102,7 @@ CLIENT_F_FUNC(Refresh)
 						MainPlayer->SetStance(newplayer->Stance);
 						//game->map->CharacterID = MainPlayer->CharacterID;
 						game->map->AddPlayer(MainPlayer);
+						//game->map->m_Players[World::WorldCharacterID] = MainPlayer;
 					}
 					else
 					{
@@ -121,15 +124,21 @@ CLIENT_F_FUNC(Refresh)
 					game->map->AddNPC(new_npc);
 				}
 
-				std::string map_items = reader.GetBreakString();
-				for (int i = 0; i < map_items.length() / 9; i++)
+				while (true)
 				{
-					int pos = i * 9;
-					unsigned short itemindex = PacketProcessor::Number(map_items[i], map_items[i + 1]);
-					unsigned short itemID = PacketProcessor::Number(map_items[i + 2], map_items[i + 3]);
-					unsigned char x = PacketProcessor::Number(map_items[i + 4]);
-					unsigned char y = PacketProcessor::Number(map_items[i + 5]);
-					unsigned int amount = PacketProcessor::Number(map_items[i + 6], map_items[i + 7], map_items[i + 8]);
+					int remaining = reader.Remaining();
+					if (remaining <= 1)
+					{
+						break;
+					}
+					Map::Map_Item m_item;
+
+					int ItemIndex = reader.GetShort();
+					m_item.ItemID = reader.GetShort();
+					m_item.x = reader.GetChar();
+					m_item.y = reader.GetChar();
+					m_item.amount = reader.GetThree();
+					game->map->AddItem(ItemIndex, m_item);
 				}
 			
 				break;

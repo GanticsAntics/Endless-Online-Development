@@ -936,7 +936,7 @@ void Menu::Update()
 
 void Menu::Render()
 {
-	    this->Sprite->Begin(D3DXSPRITE_ALPHABLEND);
+	    this->Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_DEPTH_FRONTTOBACK);
 		game->Draw(this->Sprite,this->BgTex.Texture,1,1,D3DCOLOR_ARGB(255,255,255,255) );
 
 		switch(game->Stage)
@@ -1017,7 +1017,7 @@ void Menu::Render()
 					BT_CC_Delete3->Draw(this->Sprite);
 					for(int i =0; i < game->AccountCharacterSize;i++)
 					{
-						this->CSModels[i].Render(Sprite,400,80+(i*125), 1.0);
+						this->CSModels[i].Render(Sprite,400,80+(i*125), 0.1f);
 					}			
 					if(this->CSModels[0].admin >0)
 					{
@@ -1059,7 +1059,7 @@ void Menu::Render()
 						 }
 					case(1):
 						 {
-							game->Draw(this->Sprite,this->CreateCharTex.Texture, 158, 129, D3DCOLOR_ARGB(255,255,255,255) );
+							game->Draw(this->Sprite,this->CreateCharTex.Texture, 158, 129, 0.05f, D3DCOLOR_ARGB(255,255,255,255) );
 							this->BT_CreateCharCancel->Draw(this->Sprite);
 							this->BT_CreateCharOK->Draw(this->Sprite);
 							this->BT_CC_Gender->Draw(this->Sprite);
@@ -1072,7 +1072,7 @@ void Menu::Render()
 							this->BT_CCP_HairMod->Draw(this->Sprite);
 							this->BT_CCP_SkinCol->Draw(this->Sprite);
 
-							this->CCModel->Render(Sprite,430,225,1);
+							this->CCModel->Render(Sprite,430,225,0.03f);
 							break;
 						 }
 					case(2):

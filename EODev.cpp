@@ -90,7 +90,33 @@ int WINAPI WinMain(HINSTANCE hInstance,
 // Enter the infinite message loop
 while(TRUE)
 {
-
+	if (GetForegroundWindow() == hWnd)
+	{
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			world->HandleKeyInput(VK_LEFT, game.Stage, game.SubStage);
+		}
+		if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			world->HandleKeyInput(VK_UP, game.Stage, game.SubStage);
+		}
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			world->HandleKeyInput(VK_DOWN, game.Stage, game.SubStage);
+		}
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			world->HandleKeyInput(VK_RIGHT, game.Stage, game.SubStage);
+		}
+		if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+		{
+			world->HandleKeyInput(VK_CONTROL, game.Stage, game.SubStage);
+		}
+		if (GetAsyncKeyState(VK_F3) & 0x8000)
+		{
+			world->HandleKeyInput(VK_F3, game.Stage, game.SubStage);
+		}
+	}
 	
     // Check to see if any messages are waiting in the queue
     while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -106,8 +132,14 @@ while(TRUE)
 
 	game.Update();
 	game.Render();
-	if(game.MousePressed)
-	{ game.MousePressed = false;}
+	if (game.MousePressed)
+	{
+		game.MousePressed = false;
+	}
+	if (game.MouseRightPressed)
+	{
+		game.MouseRightPressed = false;
+	}
     // Run game code here
     // ...
     // ...
@@ -120,6 +152,9 @@ while(TRUE)
 // this is the main message handler for the program
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	
+
+
     // sort through and find what code to run for the message given
     switch(message)
     {
@@ -132,7 +167,10 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			}
 		case WM_KEYDOWN:
 		{
-			world->HandleKeyInput(wParam, game.Stage, game.SubStage);
+			if (wParam < 0x25 && wParam > 0x28)
+			{
+				world->HandleKeyInput(wParam, game.Stage, game.SubStage);
+			}
 			break;
 		}
 		case WM_CHAR :
@@ -192,6 +230,12 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 				return 0;
 				
 			}
+		case WM_RBUTTONDOWN:
+		{
+			game.MouseRightPressed = true;
+			return 0;
+
+		}
 		case WM_LBUTTONUP:
 			{
 				game.MousePressed = false;
@@ -223,16 +267,23 @@ void initD3D(HWND hWnd)
     d3dpp.hDeviceWindow = hWnd;    // set the window to be used by Direct3D
 	d3dpp.BackBufferHeight = ResY;
 	d3dpp.BackBufferWidth = ResX;
-	d3dpp.BackBufferFormat =  D3DFMT_X8R8G8B8;
+	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
     // create a device class using this information and information from the d3dpp stuct
     d3d->CreateDevice(D3DADAPTER_DEFAULT,
                       D3DDEVTYPE_HAL,
                       hWnd,
-                      D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+		D3DCREATE_HARDWARE_VERTEXPROCESSING,
                       &d3dpp,
                       &d3ddev);
 	d3ddev->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 	d3ddev->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+	d3ddev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	d3ddev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
+	d3ddev->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
+	d3ddev->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	d3ddev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_INVSRCALPHA);
+	d3ddev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCALPHA);
 	//d3ddev->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 }
 
