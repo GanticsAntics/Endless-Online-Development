@@ -20,9 +20,9 @@
 #include<fstream>
 #include <iostream>     // 
 // BOOST libs 
-#include <boost\smart_ptr.hpp>
-#include <boost\ptr_container\ptr_container.hpp>
-#include <boost\lexical_cast\lexical_cast_old.hpp>
+//#include <boost\smart_ptr.hpp>
+//#include <boost\ptr_container\ptr_container.hpp>
+//#include <boost\lexical_cast\lexical_cast_old.hpp>
 
 // TODO: reference additional headers your program requires here
 #include <d3d9.h>

@@ -17,6 +17,7 @@ public:
 		EIF = 6,
 		ENF,
 		ESF,
+		PlayerList = 11,
 		ECF = 12
 	};
 	struct FileContainer

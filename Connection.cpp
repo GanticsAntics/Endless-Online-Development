@@ -249,6 +249,39 @@ void Connection::execute()
 								ProcessFile(str.c_str(), filecont);
 								gme->map->LoadMap(filecont.ID);
 							}
+							else if (ID == 9)
+							{
+								//FriendsList
+								
+								int numberofplayers = reader->GetShort();
+								reader->GetByte();
+								World::OnlinePlayers.clear();
+								std::vector<World::OnlinePlayerContainer> Sortedcontainer;
+								for (int i = 0; i < numberofplayers; i++)
+								{
+									World::OnlinePlayerContainer _player;
+									_player._Name = reader->GetBreakString();
+									_player._Name[0] = toupper(_player._Name[0]);
+									_player._Title = reader->GetBreakString();
+									reader->GetByte();
+									_player._Icon = reader->GetChar();
+									_player._ClassID = reader->GetChar();
+									_player._GuildTag = reader->GetBreakString();
+									
+									int insertindex = 0;
+									for (int j = 0; j < Sortedcontainer.size(); j++)
+									{
+										if ((int)Sortedcontainer[j]._Name[0] <= (int)_player._Name[0])
+										{
+											insertindex = j + 1;
+										}
+										else { break; }
+									}
+									Sortedcontainer.insert(Sortedcontainer.begin() + insertindex, _player);
+								}
+								World::OnlinePlayers = Sortedcontainer;
+								World::DebugPrint("Player list recieved!");
+							}
 							else
 							{
 								Connection::FileContainer filecont;
@@ -258,8 +291,11 @@ void Connection::execute()
 								ProcessFile(str.c_str(), filecont);
 							}
 							
-							
-							FileQueue.pop_front();
+							if (ID != 9 && ID != 11)
+							{
+								FileQueue.pop_front();
+							}
+
 						}
 						else
 						{

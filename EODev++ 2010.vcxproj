@@ -32,6 +32,7 @@
     <RootNamespace>EmptyProject</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath11)</VCTargetsPath>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -48,7 +49,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -109,7 +110,7 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
     <ExecutablePath>$(DXSDK_DIR)Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)include;$(DXSDK_DIR)Include;C:\Boost\include\boost-1_70;C:\Boost\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(SolutionDir)include;$(DXSDK_DIR)Include;C:\Boost\include\boost-1_70;C:\Boost\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'">
@@ -459,6 +460,7 @@
     <ClCompile Include="Map_UI_Inventory.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Map_UI_SelectPlayer.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Receive\Handler.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -553,6 +555,9 @@
     <ClCompile Include="Send\SPaperdoll.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Send\SPlayers.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Send\SRefresh.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -621,6 +626,7 @@
     <ClInclude Include="Map_UI_Element\Map_UI_WhoIsOnline.h" />
     <ClInclude Include="Map_UI_Element\UI_ChatBubbleHandler.h" />
     <ClInclude Include="Map_UI_Inventory.h" />
+    <ClInclude Include="Map_UI_SelectPlayer.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Receive\Handler.h" />
     <ClInclude Include="Receive\RConstants.h" />
@@ -635,6 +641,7 @@
     <ClInclude Include="Send\SItem.h" />
     <ClInclude Include="Send\SLogin.h" />
     <ClInclude Include="Send\SPaperdoll.h" />
+    <ClInclude Include="Send\SPlayers.h" />
     <ClInclude Include="Send\SRefresh.h" />
     <ClInclude Include="Send\STalk.h" />
     <ClInclude Include="Send\SWalk.h" />

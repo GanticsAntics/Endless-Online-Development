@@ -17,6 +17,8 @@ CLIENT_F_FUNC(Item)
 					game->map->m_Players[World::WorldCharacterID]->weight = weight;
 					game->map->m_Players[World::WorldCharacterID]->maxweight = maxweight;
 					game->Map_UserInterface->map_inventory->AddItem(newitem);
+					EIF_Data m_item = World::EIF_File->Get(newitem.id );
+					game->Map_UserInterface->DrawHelpMessage("Notification", "You picked up " + std::to_string(newitem.amount) + "x " + m_item.name);
 					
 					break;
 				}
@@ -40,9 +42,33 @@ CLIENT_F_FUNC(Item)
 					game->Map_UserInterface->map_inventory->RemoveItem(invitem);
 					game->map->m_Players[World::WorldCharacterID]->weight = weight;
 					game->map->m_Players[World::WorldCharacterID]->maxweight = maxweight;
+
+					EIF_Data m_item = World::EIF_File->Get(invitem.id);
+					game->Map_UserInterface->DrawHelpMessage("Notification", "You dropped " + std::to_string(invitem.amount) + "x " + m_item.name);
 				}
 
 				game->map->AddItem(ItemIndex, m_item);
+
+				break;
+			}
+			case PACKET_JUNK:
+			{
+				Map::Map_Item m_item;
+				m_item.ItemID = reader.GetShort();
+				m_item.amount = reader.GetThree();
+				int CharacterHasItem = reader.GetInt();
+				int weight = reader.GetChar();
+				int maxweight = reader.GetChar();
+
+				//if (CharacterHasItem == 0)
+				{
+					Map_UI_Inventory::InventoryItem invitem;
+					invitem.amount = m_item.amount;
+					invitem.id = m_item.ItemID;
+					game->Map_UserInterface->map_inventory->RemoveItem(invitem);
+					game->map->m_Players[World::WorldCharacterID]->weight = weight;
+					game->map->m_Players[World::WorldCharacterID]->maxweight = maxweight;
+				}
 
 				break;
 			}

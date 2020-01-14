@@ -6,7 +6,7 @@ static int stupid_hash(int i)
 return 110905 + (i % 9 + 1) * ((11092004 - i) % ((i % 11 + 1) * 119)) * 119 + i % 2004;
 }
 
-using boost::lexical_cast;
+//using lexical_cast;
  void SInit::SendInit(pt::ipstream* ClientStream)
 {
 	
@@ -33,9 +33,9 @@ using boost::lexical_cast;
 	fileSystemName,
 	ARRAYSIZE(fileSystemName));
 
-	std::string str = lexical_cast<std::string>(serialNumber);
-	builder.AddChar(str.length());
-	builder.AddString(str);
+	std::string serial = std::to_string(serialNumber);
+	builder.AddChar(serial.length());
+	builder.AddString(serial);
 	std::string strr = builder.Get();
 	ClientStream->write(strr.c_str(),strr.length());
 	try

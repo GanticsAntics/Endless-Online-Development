@@ -101,7 +101,7 @@ Resource::TextureData Resource::CreateTexture(DWORD ModuleID, int GFXID, bool Bl
 				Resource::TextureData texturedat;
 				texturedat.GfxID = ModuleID;
 				texturedat.TextureID = GFXID;
-				texturedat.Texture = boost::shared_ptr<IDirect3DTexture9>(text);
+				texturedat.Texture = std::shared_ptr<IDirect3DTexture9>(text);
 				dat.Data =  texturedat;
 				dat.BitmapInfo = info;
 				this->Modules[ModuleID].data[GFXID] = dat;
@@ -145,7 +145,7 @@ Resource::TextureData Resource::CreateTexture(DWORD ModuleID, int GFXID, bool Bl
 				Resource::TextureData texturedat;
 				texturedat.GfxID = ModuleID;
 				texturedat.TextureID = GFXID + 1000000;
-				texturedat.Texture = boost::shared_ptr<IDirect3DTexture9>(text);
+				texturedat.Texture = std::shared_ptr<IDirect3DTexture9>(text);
 				dat.Data = texturedat;
 				dat.BitmapInfo = info;
 				this->Modules[ModuleID].data[GFXID + 1000000] = dat;

@@ -80,7 +80,10 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColo
 void Textbox::OnKeyDown(WPARAM args)
 {
 }
-
+void Textbox::UpdateBlinkerOffset()
+{
+	this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+}
 void Textbox::OnKeyPress(WPARAM args)
 {
 	switch(args)

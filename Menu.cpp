@@ -11,11 +11,11 @@ IDirect3DDevice9* Device;
 Game* game;
 IDirect3DTexture9* TX_TxtBox;
 IDirect3DTexture9* TX_CATxtBox;
-boost::shared_ptr<IDirect3DTexture9> MenuButtonTexture;
-boost::shared_ptr<IDirect3DTexture9> LoginButtonTexture;
-boost::shared_ptr<IDirect3DTexture9> LoginModificationTexture;
-boost::shared_ptr<IDirect3DTexture9> CharacterModificationTexture;
-boost::shared_ptr<IDirect3DTexture9> AccountCreateTexture;
+std::shared_ptr<IDirect3DTexture9> MenuButtonTexture;
+std::shared_ptr<IDirect3DTexture9> LoginButtonTexture;
+std::shared_ptr<IDirect3DTexture9> LoginModificationTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterModificationTexture;
+std::shared_ptr<IDirect3DTexture9> AccountCreateTexture;
 std::string WCharToCharStr(std::basic_string<wchar_t> str);
 int Menu::SrvrCharID = 0;
 int Menu::SrvrDeleteID = 0;
@@ -425,34 +425,15 @@ void Menu::TabPressed()
 		}
 	}
 }
-bool ShowBlinker = false;
-int BlinkCount = 0;
+
 void Menu::Update()
 {
-	BlinkCount++;
 	if(LastDeleteRequest > -1 && game->MsgID == 1)
 	{
 		SCharacter::DeletePlayer(game->world->connection->ClientStream,LastDeleteRequest,(LPVOID*)this);
 		LastDeleteRequest = -1;
 		game->MsgID = 0;
 	}
-	if(BlinkCount > game->FPS / 2)
-		{
-			Textbox* box = world->GetFocusedTextbox();
-				
-			if(ShowBlinker)
-			{
-				ShowBlinker = false; 
-				box->blinkhidden = true;
-			} 
-			else 
-			{
-				ShowBlinker = true ; 
-				box->blinkhidden = false;
-			}
-
-			BlinkCount = 0;
-		}
 
 	if(game->Stage == 0 || game->Stage == 1||game->Stage == 3)
 	{

@@ -42,6 +42,9 @@ public:
 	bool nowhere;
 	unsigned int CharacterID;
 	//AdminLevel admin;
+	std::string guildname;
+	std::string guildtag;
+	std::string guildrank;
 	std::string real_name;
 	std::string title;
 	std::string home;

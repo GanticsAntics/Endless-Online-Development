@@ -8,7 +8,10 @@ Map_UI_News::Map_UI_News(void* m_UIElement, void* m_Game)
 	Ptr_News_Game = (Game*)m_Game;
 	//imgw = 16,16
 	this->UI_TextScrollbar = new UI_Scrollbar(568, 351, 450, 117, -465, 0, 82, "",Ptr_News_Game->ScrollBarTexture.Texture, m_Game, Ptr_News_Game->MessageFont, Ptr_News_Game->TextIconTexture.Texture);
-}
+	this->UI_TextScrollbar->SetButtonsEnabled(true);
+	this->UI_TextScrollbar->SetVertical(true);
+	
+}	
 int ScrollBarFPSCounter = 0;
 void Map_UI_News::Update()
 {

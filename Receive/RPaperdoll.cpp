@@ -214,6 +214,7 @@ CLIENT_F_FUNC(Paperdoll)
 					Map_UI_Inventory::InventoryItem item;
 					item.amount = 1;
 					item.id = ItemID;
+
 					game->Map_UserInterface->map_inventory->RemoveItem(item);
 					game->map->ChangeAvatar(PlayerID, ShoeID, HatID, WeaponID, ShieldID, ArmorID);
 				}

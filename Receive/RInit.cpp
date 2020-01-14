@@ -31,26 +31,7 @@ CLIENT_F_FUNC(Init)
 
 			int PCVal = EIFVAL1 * 7 - 13 + EIFVAL2;
 			bool FindFlag = false;
-			/*for (int i = 0; i <= 1757; i++)
-			{
-				int imax = (i + 13) / 7;
-				int imin = std::max<int>(0, (i - 252 + 13 + 6) / 7);
 
-				for (int ii = imin; ii < imax; ii++)
-				{
-					unsigned char s1 = ii;
-					unsigned char s2 = i - ii * 7 + 13;
-					if (s1 == EIFVAL1 && s2 == EIFVAL2)
-					{
-						PCVal = i;
-						FindFlag = true;
-						break;
-					}
-					if (FindFlag) { break; }
-				}
-			}*/
-			//pt::string strs = "PCVAL = " + PCVal;
-			//World::DebugPrint(strs);
 			game->world->PacketCount = PCVal;
 			game->world->RawPacketCount = 0;
             emulti_d = reader.GetByte();

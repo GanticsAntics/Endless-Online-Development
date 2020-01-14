@@ -81,12 +81,11 @@ CLIENT_F_FUNC(NPC)
 				int NPCIndex = reader.GetShort();
 
 				if (reader.Remaining() > 0)
-				{
-					
+				{	
 					int NPCDropUID = reader.GetShort();
 					int NPCDropItemID = reader.GetShort();
-					int x = reader.GetChar();
-					int y = reader.GetChar();
+					int x =	reader.GetChar();
+			        int y =	reader.GetChar();
 					int ItemAmount = reader.GetInt();
 					int damage = reader.GetThree();
 					if (NPCDropUID > 0)

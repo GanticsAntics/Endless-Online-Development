@@ -28,3 +28,12 @@ void SItem::SendDrop(pt::ipstream* ClientStream, int ID, int amount, int x, int 
 	builder.AddChar(y);
 	World::Send(gme, ClientStream, builder);
 }
+
+void SItem::SendJunk(pt::ipstream* ClientStream, int ID, int amount, LPVOID game)
+{
+	Game* gme = (Game*)game;
+	PacketBuilder builder = PacketBuilder(PACKET_ITEM, PACKET_JUNK);
+	builder.AddShort(ID);
+	builder.AddInt(amount);
+	World::Send(gme, ClientStream, builder);
+}

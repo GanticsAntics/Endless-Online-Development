@@ -28,10 +28,10 @@ void Map::Do_Open(const char* filename)
 	m_map_filename = filename;
 
 	cio::stream file(filename);
+	this->IsVisible = false;
 	if (!file)
 	{
 		World::DebugPrint("Failed to load Map file");
-		this->IsVisible = false;
 		return;
 	}
 	file.seek_reverse(0);
@@ -45,7 +45,7 @@ void Map::Do_Open(const char* filename)
 		RID[i] = checkrid[i];
 	}
 	file.seek(0);
-	shared_ptr<char[]> data(new char[filesize]);
+	std::shared_ptr<char[]> data(new char[filesize]);
 	file.read(data.get(), filesize);
 	
 	
@@ -55,13 +55,12 @@ void Map::Do_Open(const char* filename)
 	m_emf.unserialize(reader);
 	m_emf.rid = RID;
 	m_emf.MapFileSize = filesize;
-	this->IsVisible = true;
-	//m_emf.header.width -= 1;
-	//m_emf.header.height -= 1;
+	//this->IsVisible = true;
 	this->ThreadLock.unlock();
 }
 void Map::LoadMap(int ID)
 {
+	ClearMap();
 	int mapid = ID;
 	this->MapID = ID;
 	wchar_t* st = new wchar_t[8];
@@ -84,8 +83,11 @@ void Map::LoadMap(int ID)
 	MapAnimIndex = 0;
 	this->xoff = 0;
 	this->yoff = 0;
+	this->ThreadLock.lock();
+	this->MakeLUTs(m_emf.header.width, m_emf.header.height);
+	this->ThreadLock.unlock();
 }
-int MapID = 5;
+
 void Map::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_game)
 {
 	world = _world;
@@ -112,24 +114,14 @@ void Map::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_game
 	// your new String
 	std::string str_proc(Path.begin(), Path.end());
 	this->Do_Open(str_proc.c_str());
-	//this->newemf = new EMF_File();
-	/*this->m_Players.resize(1);
-	this->m_Players[0] = new Map_Player();
-	this->m_Players[0]->Initialize(m_game);
-	this->m_Players[0]->x = 10;
-	this->m_Players[0]->y = 4;
-	this->m_Players[0]->ArmorID = (std::rand() % 25);
-	this->m_Players[0]->HairCol = (std::rand() % 5);
-	this->m_Players[0]->HairStyle = (std::rand() % 20);
-	this->m_Players[0]->WeaponID = (std::rand() % 25);
-	this->m_Players[0]->ShoeID = (std::rand() % 25);
-	this->m_Players[0]->SkinCol = (std::rand() % 5);*/
+	
 }
 //std::vector<int> PlayerRemoveQueue;
 void Map::ClearMap()
 {
 	this->ThreadLock.lock();
 	Map_Player* MainPlayer = m_Players[World::WorldCharacterID];
+	
 	for (auto p : m_Players)
 	{
 		if (p.first != World::WorldCharacterID)
@@ -142,6 +134,17 @@ void Map::ClearMap()
 		delete  p.second;
 	}
 	m_Players.clear();
+	if (MainPlayer)
+	{
+		MainPlayer->x = 0;
+		MainPlayer->y = 0;
+		MainPlayer->destination_x = -1;
+		MainPlayer->destination_y = -1;
+		MainPlayer->xoffset = 0;
+		MainPlayer->yoffset = 0;
+		MainPlayer->WalkCounter = 0;
+		MainPlayer->SetStance(Map_Player::PlayerStance::Standing);
+	}
 	m_Players[World::WorldCharacterID] = MainPlayer;
 	m_NPCs.clear();
 	m_Items.clear();
@@ -300,6 +303,12 @@ void Map::WalkNPC(int ID, int direction, int DestX, int DestY)
 		if (m_NPCs.count(m_NPCID) > 0 )
 		{
 			this->ThreadLock.lock();
+			if (DestX > this->m_emf.header.width || DestY > this->m_emf.header.height)
+			{
+				//this->RemoveNPC(m_NPCID);
+				this->ThreadLock.unlock();
+				return;
+			}
 			this->m_NPCs[m_NPCID]->x = FromX;
 			this->m_NPCs[m_NPCID]->y = FromY;
 			this->m_NPCs[m_NPCID]->SetStance(Map_NPC::NPC_Stance::Walking);
@@ -465,6 +474,44 @@ void Map::OnKeyPress(WPARAM args)
 	}
 }
 
+void Map::MakeLUTs(int _Width, int _Height)
+{
+	this->OrderLUT = std::vector<Coord>(_Width * _Height);
+
+	int i = 0;
+	int j = 0;
+	int x = 0;
+	int y = 0;
+
+	LUTMap.clear();
+	LUTMap.resize(_Width);
+
+	for (i = 0; i < LUTMap.size(); i++)
+	{
+		LUTMap[i].resize(_Height);
+	}
+
+	for (i = 0; i < _Width * _Height; ++i)
+	{
+		OrderLUT[i].x = x;
+		OrderLUT[i].y = y;
+		LUTMap[x][y] = i;
+		x++;
+		y--;
+		if (y == -1 || x > _Width-1)
+		{
+			j++;
+			y = j;
+			x = 0;
+			if (j > _Height-1)
+			{
+				y = _Height - 1;
+				x = j - (_Height - 1);
+			}
+		}
+	}
+}
+
 int Map_RenderFPS = 0;
 ///Endshittycommand
 struct LayerInfo
@@ -504,7 +551,7 @@ void Map::Render()
 	{ 6,   32,   0, 0.8f - epi * 2 }, // Right Wall
 	{ 7,   32, -64, 0.8f - epi * 1 }, // Roof
 	{ 3,   32, -32, 0.8f - epi * 2 }, // Top
-	{ 22, -54 + 32, -42 + 30, 0.8f - epi * 0  }, // Shadow
+	{ 22, -54 + 32, -42 + 30, 0.9f - epi * 0  }, // Shadow
 	{ 5,    0,   0, 0.8f - epi * 0 }, // Overlay 2
 	};
 	this->ThreadLock.lock();
@@ -514,7 +561,7 @@ void Map::Render()
 		return;
 	}
 	int PlayerIndex = World::WorldCharacterID;
-	///Tempcommandtofollowplayer
+	
 	if (m_Players.count(PlayerIndex) > 0)
 	{
 		this->xpos = this->m_Players[PlayerIndex]->x;
@@ -543,16 +590,17 @@ void Map::Render()
 
 	int RenderWidth = emfh.width;
 	int RenderHeight = emfh.height -1;
-	int PlayerMinX = this->m_Players[World::WorldCharacterID]->x ;
+	int PlayerMinX = this->m_Players[World::WorldCharacterID]->x;
 	if (PlayerMinX < 0) { PlayerMinX = 0; }
 	int PlayerMinY = this->m_Players[World::WorldCharacterID]->y;
 	if (PlayerMinY < 0) { PlayerMinY = 0; }
-	int PlayerMaxX = this->m_Players[World::WorldCharacterID]->x + RenderWidth;
+	int PlayerMaxX = this->m_Players[World::WorldCharacterID]->x;
 	if (PlayerMaxX > RenderWidth) { PlayerMaxX = RenderWidth; }
-	int PlayerMaxY = this->m_Players[World::WorldCharacterID]->y + RenderHeight;
+	int PlayerMaxY = this->m_Players[World::WorldCharacterID]->y;
 	if (PlayerMaxY > RenderHeight) { PlayerMaxY = RenderHeight; }
-	int  startsuboffset = (this->FindDepthOffset(PlayerMinX, PlayerMinY, RenderWidth, RenderHeight));
-	int  endsuboffset = (this->FindDepthOffset(PlayerMaxX, PlayerMaxY, RenderWidth, RenderHeight));
+	int  startsuboffset = this->LUTMap[PlayerMinX][PlayerMinY];
+	int  endsuboffset = this->LUTMap[PlayerMaxX][PlayerMaxY];
+
 	for (int i = 0; i < RenderWidth + RenderHeight; ++i)
 	{
 		int x, y;
@@ -582,7 +630,8 @@ void Map::Render()
 				|| tilex > 700 || tiley > 500)
 				continue;
 			Full_EMF::TileMeta tmeta = this->m_emf.meta(x, y);
-			float varo = 195;// ((float)this->FindDepthOffset(x, y, RenderWidth, RenderHeight)) / (float)(endsuboffset) * (float)195;
+			float dist = sqrt(((PlayerMaxX - x) * (PlayerMaxX - x)) + ((PlayerMaxY - y) * (PlayerMaxY - y)));
+			float varo = 195;//(dist) / (float)(35) * (float)195;
 			int var = 60 + varo;
 			if (tile > 0)
 			{
@@ -661,7 +710,7 @@ void Map::Render()
 					continue;
 
 				depth = layer_info[layer].depth;
-				depth -= (this->FindDepthOffset(x, y, RenderWidth, RenderHeight) * ep);
+				depth -= (this->LUTMap[x][y] * ep);
 				if (tile > 0)
 				{
 					D3DXIMAGE_INFO tile_gfx = map_game->resource->GetImageInfo(layer_info[layer].file, tile, true);
@@ -674,29 +723,44 @@ void Map::Render()
 					if (layer == 3 || layer == 4)
 					{
 						D3DXIMAGE_INFO imginfo = map_game->resource->GetImageInfo(layer_info[layer].file, tile, true);
-						int frameno = imginfo.Width / 32;
+						int frameno = 4;//imginfo.Width / 32;
+						int framewidth = imginfo.Width / 4;
+						if(imginfo.Width <= 32)
+						{
+							frameno = 1;
+						}
 						if (frameno > 1)
 						{
 							RECT SrcRect;
 							SrcRect.top = 0;
-							SrcRect.left = 0 + (32 * (this->MapAnimIndex % frameno));
-							SrcRect.right = 32 + (32 * (this->MapAnimIndex % frameno));
+							SrcRect.left = 0 + (framewidth * (this->MapAnimIndex % frameno));
+							SrcRect.right = framewidth + (framewidth * (this->MapAnimIndex % frameno));
 							SrcRect.bottom = SrcRect.top + imginfo.Height;
 
-							D3DXVECTOR3* Pos = new D3DXVECTOR3(tilex + imginfo.Width - 32, tiley, depth);
+							D3DXVECTOR3* Pos = new D3DXVECTOR3(tilex + imginfo.Width - framewidth + 32, tiley, depth);
 							D3DXVECTOR3* Center = new D3DXVECTOR3(1, 1, 0);
 							this->Sprite->Draw(map_game->resource->CreateTexture(layer_info[layer].file, tile, true).Texture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+							//Pos->z -= 0.1;
+							//this->Sprite->Draw(map_game->resource->CreateTexture(layer_info[layer].file, tile, true).Texture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(150, 255, 255, 255));
+
 							delete Pos;
 							delete Center;
 						}
 						else
 						{
+							//float varo = ((float)this->LUTMap[x][y]) / (float)(endsuboffset) * (float)50;
+							//int var = 50 + varo;
 							map_game->Draw(this->Sprite, map_game->resource->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(255, 255, 255, 255));
+							//map_game->Draw(this->Sprite, map_game->resource->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(var, 0, 0, 0));
+							//map_game->Draw(this->Sprite, map_game->resource->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth - 0.1, D3DCOLOR_ARGB(150, 255, 255, 255));
+
 						}
 					}
 					else
 					{
 						map_game->Draw(this->Sprite, map_game->resource->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(255, 255, 255, 255));
+						//map_game->Draw(this->Sprite, map_game->resource->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth - 0.1, D3DCOLOR_ARGB(150, 255, 255, 255));
+
 					}
 				
 				}
@@ -736,7 +800,7 @@ void Map::Render()
 				continue;
 
 			depth = layer_info[8].depth;
-			depth -= (this->FindDepthOffset(x, y, RenderWidth, RenderHeight) * ep);
+			depth -= (this->LUTMap[x][y] * ep);
 			if (tile > 0)
 			{
 				map_game->Draw(this->Sprite, map_game->resource->CreateTexture(layer_info[5].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(50, 255, 255, 255));
@@ -774,7 +838,7 @@ void Map::Render()
 				|| tilex > 700 || tiley > 500)
 				continue;
 			depth = layer_info[7].depth;
-			depth -= (this->FindDepthOffset(x, y, RenderWidth, RenderHeight) * ep);
+			depth -= (this->LUTMap[x][y] * ep);
 			if (tile > 0)
 			{
 				map_game->Draw(this->Sprite, map_game->resource->CreateTexture(layer_info[7].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(50, 255, 255, 255));
@@ -785,7 +849,7 @@ void Map::Render()
 	for (std::map<int, Map_Player*>::iterator player = this->m_Players.begin(); player != m_Players.end(); ++player)
 	{
 		depth = layer_info[layer].depth;
-		depth -= (this->FindDepthOffset(player->second->x, player->second->y,RenderWidth ,RenderHeight ) * ep);
+		depth -= (this->LUTMap[player->second->x][player->second->y] * ep);
 		if (rendering)
 		{
 			int xoffsp = layer_info[layer].xoff - xoff;
@@ -793,12 +857,13 @@ void Map::Render()
 			int tilexp = xoffsp + (player->second->x * 32) - (player->second->y * 32);
 			int tileyp = yoffsp + (player->second->x * 16) + (player->second->y * 16);
 			player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, depth);
+		//	player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, depth - 0.1);
 		}
 	}
 	for (std::map<int, Map_NPC*>::iterator NPC = this->m_NPCs.begin(); NPC != m_NPCs.end(); ++NPC)
 	{
 		depth = layer_info[layer].depth;
-		depth -= (this->FindDepthOffset(NPC->second->x, NPC->second->y, RenderWidth, RenderHeight) * ep);
+		depth -= (this->LUTMap[NPC->second->x][NPC->second->y] * ep);
 		if (rendering)
 		{
 			next_depth();
@@ -807,13 +872,14 @@ void Map::Render()
 			int tilexp = xoffsp + (NPC->second->x * 32) - (NPC->second->y * 32);
 			int tileyp = yoffsp + (NPC->second->x * 16) + (NPC->second->y * 16);
 			NPC->second->Render(this->Sprite, tilexp, tileyp, depth);
+			//NPC->second->Render(this->Sprite, tilexp, tileyp, depth);
 		}
 	}
 
 	for (std::map<int, Map_Item>::iterator m_item = this->m_Items.begin(); m_item != m_Items.end(); ++m_item)
 	{
 		depth = layer_info[layer].depth;
-		depth -= (this->FindDepthOffset(m_item->second.x, m_item->second.y, RenderWidth, RenderHeight) * ep);
+		depth -= (this->LUTMap[m_item->second.x][m_item->second.y] * ep);
 
 		int xoffs = -xoff + 32;
 		int yoffs = -yoff + 16;
@@ -834,11 +900,11 @@ void Map::Render()
 			{
 				graphic = 274;
 			}
-			else if (m_item->second.amount <= 10000)
+			else if (m_item->second.amount <= 100000)
 			{
 				graphic = 276;
 			}
-			else if (m_item->second.amount <= 100000)
+			else //if (m_item->second.amount <= 100000)
 			{
 				graphic = 278;
 			}

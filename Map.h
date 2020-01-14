@@ -37,7 +37,14 @@ public:
 			unsigned char y = -1;
 			unsigned int amount = -1;
 	};
+	struct Coord
+	{
+		int x;
+		int y;
+	};
 	std::map<int, Map_Item> m_Items;
+	std::vector<Coord> OrderLUT;
+	std::vector<std::vector<int>> LUTMap;
 	void AddItem(int m_Index, unsigned short m_ItemID, unsigned char m_x, unsigned char m_y, unsigned int m_amount)
 	{
 		this->ThreadLock.lock();
@@ -57,7 +64,9 @@ public:
 	}
 	void RemoveItem(int Index) { this->ThreadLock.lock(); this->m_Items.erase(Index); this->ThreadLock.unlock();
 	}
+
 	int FindDepthOffset(int X, int Y, int Width, int Height);
+	void MakeLUTs(int _Width, int _Height);
 	void OnKeyPress(WPARAM args);
 	void RemovePlayer(int ID);
 	void AddPlayer(Map_Player* m_Player);

@@ -135,6 +135,9 @@ CLIENT_F_FUNC(Welcome)
 							MainPlayer->exp = reader.GetInt();
 							MainPlayer->usage = reader.GetInt();
 
+							MainPlayer->guildname = GuildName;
+							MainPlayer->guildrank = GuildRank;
+							MainPlayer->guildtag = CharacterPaddedGuildTag;
 							MainPlayer->hp = reader.GetShort();
 							MainPlayer->maxhp = reader.GetShort();
 							MainPlayer->tp = reader.GetShort();
@@ -192,7 +195,7 @@ CLIENT_F_FUNC(Welcome)
 
 							short PlayerUsage = reader.GetShort();
 							reader.GetByte();
-							game->map->m_Players.clear();
+							
 							game->map->AddPlayer(MainPlayer);
 							SWelcome::LoginWelcome(game->world->connection->ClientStream, MainPlayer->CharacterID, (LPVOID*)game);
 							break;
@@ -210,6 +213,10 @@ CLIENT_F_FUNC(Welcome)
 							int weight = reader.GetChar();
 							int maxweight = reader.GetChar();
 							game->Map_UserInterface->map_inventory->ClearInventory();
+							Map_UI_Inventory::InventoryItem newitem;
+							newitem.id = 1;
+							newitem.amount = 0;
+							game->Map_UserInterface->map_inventory->AddItem(newitem);
 							while (true)
 							{
 								int index = reader.GetByte();
@@ -256,7 +263,8 @@ CLIENT_F_FUNC(Welcome)
 								newplayer->direction = procDirection;
 
 								reader.GetChar(); // Unknown
-								reader.GetFixedString(3);//PaddedGuildTag
+								
+								newplayer->guildtag = reader.GetFixedString(3);//PaddedGuildTag
 								newplayer->level = reader.GetChar();
 								newplayer->Gender = reader.GetChar();
 								newplayer->HairStyle = reader.GetChar() - 1;
@@ -296,6 +304,8 @@ CLIENT_F_FUNC(Welcome)
 								{
 									game->Map_UserInterface->map_inventory->Weight = weight;
 									game->Map_UserInterface->map_inventory->MaxWeight = maxweight;
+									MainPlayer->guildtag = newplayer->guildtag;
+									
 									MainPlayer->weight = weight;
 									MainPlayer->maxweight = maxweight;
 									MainPlayer->CharacterID = newplayer->ID;
@@ -362,6 +372,8 @@ CLIENT_F_FUNC(Welcome)
 							}
 							counter++;
 							game->SetStage(Game::GameStage::PInGame);
+							game->Map_UserInterface->isactive = true;
+							game->map->IsVisible = true;
 							break;
 						}
 					}

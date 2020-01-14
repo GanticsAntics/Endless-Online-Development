@@ -4,6 +4,8 @@
 #include <stdio.h>      /* printf */
 #include <math.h>       /* floor */
 #include "Send/SItem.h"
+#include "Map_UI_Element/Map_UI_SelectPlayer.h"
+
 Game* p_Game;
 UI_Cursor::UI_Cursor()
 {
@@ -49,6 +51,7 @@ void UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 			{
 				Name = p_Game->ENF_File->data[NPC->second->ID].name;
 				Name[0] = std::toupper(Name[0]);
+			
 				Height = p_Game->resource->GetImageInfo(21,( p_Game->ENF_File->data[NPC->second->ID].graphic - 1)*40 + 1, true).Height;
 				this->m_CursorType = CursorType::Object;
 				break;
@@ -61,6 +64,7 @@ void UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 			{
 				Name = player->second->name;
 				Name[0] = std::toupper(Name[0]);
+				Name += "  " + player->second->guildtag;
 				Height = 65;
 				if (player->second->Stance == Map_Player::PlayerStance::ChairSitting || player->second->Stance == Map_Player::PlayerStance::GroundSitting)
 				{
@@ -99,8 +103,27 @@ void UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 			{
 				int x = this->x;
 				int y = this->y;
-				SItem::SendDrop(p_Game->world->connection->ClientStream, p_Game->Map_UserInterface->map_inventory->childMPindex, 1, x, y, p_Game);
-				p_Game->Map_UserInterface->map_inventory->childMPindex = -1;
+				if(abs((p_Game->map->m_Players[World::WorldCharacterID]->x - x)) < 2 && abs((p_Game->map->m_Players[World::WorldCharacterID]->y - y)) < 2)
+				{ 
+					int amount = 0;
+					for (int i = 0; i < p_Game->Map_UserInterface->map_inventory->inventory.size(); i++)
+					{
+						if (p_Game->Map_UserInterface->map_inventory->inventory[i].id == p_Game->Map_UserInterface->map_inventory->childMPindex)
+						{
+							amount = p_Game->Map_UserInterface->map_inventory->inventory[i].amount;
+						}
+					}
+					if (amount == 1)
+					{
+						SItem::SendDrop(p_Game->world->connection->ClientStream, p_Game->Map_UserInterface->map_inventory->childMPindex, 1, x, y, p_Game);
+						p_Game->Map_UserInterface->map_inventory->childMPindex = -1;
+					}
+					else if (amount > 1)
+					{
+						p_Game->Map_UserInterface->map_inventory->DisplayDropDialogye(true, amount, p_Game->Map_UserInterface->map_inventory->childMPindex, x, y);
+						p_Game->Map_UserInterface->map_inventory->childMPindex = -1;
+					}
+				}
 			}
 		}
 		SrcRect.bottom = 32;

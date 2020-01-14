@@ -2,7 +2,7 @@
 #include "Utilities\Button.h"
 #include "Game.h"
 
-Button::Button(VOID* m_Game, int _X, int _Y, int _ImgX, int _ImgY, int _ImgWidth, int _ImgHeight, bool _ClipDown, boost::shared_ptr<IDirect3DTexture9> _Texture)
+Button::Button(VOID* m_Game, int _X, int _Y, int _ImgX, int _ImgY, int _ImgWidth, int _ImgHeight, bool _ClipDown, std::shared_ptr<IDirect3DTexture9> _Texture)
 {
 	this->SetPosition(std::pair<int, int>(_X, _Y));
 	this->ImgX = _ImgX;
@@ -13,7 +13,7 @@ Button::Button(VOID* m_Game, int _X, int _Y, int _ImgX, int _ImgY, int _ImgWidth
 	this->AssignTexture(_Texture);
 	this->Initialize(m_Game);
 };
-Button::Button(VOID* m_Game, int _X, int _Y, int _ImgWidth, int _ImgHeight, boost::shared_ptr<IDirect3DTexture9> _Texture_1, boost::shared_ptr<IDirect3DTexture9> _Texture_2)
+Button::Button(VOID* m_Game, int _X, int _Y, int _ImgWidth, int _ImgHeight, std::shared_ptr<IDirect3DTexture9> _Texture_1, std::shared_ptr<IDirect3DTexture9> _Texture_2)
 {
 	this->SetPosition(std::pair<int, int>(_X, _Y));
 	this->ImgX = 0;

@@ -22,7 +22,7 @@ public:
 	World* m_world;
 	IDirect3DDevice9Ptr m_Device;
 	Textbox* ChatTextbox;
-	boost::shared_ptr<IDirect3DTexture9> HudStatsTexture;
+	std::shared_ptr<IDirect3DTexture9> HudStatsTexture;
 	bool isactive = false;
 	enum UI_ElementStage
 	{

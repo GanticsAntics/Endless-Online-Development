@@ -307,7 +307,7 @@ void UI_ChatBubbleHandler::RenderChatBubble(BubbleContainer _Message, int Index)
 			int rx = (Ptr_ChatBubble_Game->map->m_NPCs[_Message._PlayerID]->x - Ptr_ChatBubble_Game->map->xpos);
 			int ry = (Ptr_ChatBubble_Game->map->m_NPCs[_Message._PlayerID]->y - Ptr_ChatBubble_Game->map->ypos);
 			int x = (rx * 32) - (ry * 32) + 280 + 32 - (sizeX / 2);
-			int y = (ry * 16) + (rx * 16) + 170 - 65 - sizeY;
+			int y = (ry * 16) + (rx * 16) + 170 - 70 - sizeY;
 
 				if (Ptr_ChatBubble_Game->map->m_NPCs[_Message._PlayerID]->direction == 1 || Ptr_ChatBubble_Game->map->m_NPCs[_Message._PlayerID]->direction == 2)
 				{

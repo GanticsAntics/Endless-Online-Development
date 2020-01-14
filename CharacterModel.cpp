@@ -3,14 +3,14 @@
 
 ///Horidly programmed charaacter alignments..
 Game* _game;
-boost::shared_ptr<IDirect3DTexture9> CharacterStandTexture;
-boost::shared_ptr<IDirect3DTexture9> CharacterWalkTexture;
-boost::shared_ptr<IDirect3DTexture9> CharacterAttackBluntTexture;
-boost::shared_ptr<IDirect3DTexture9> CharacterSpellTexture;
-boost::shared_ptr<IDirect3DTexture9> CharacterSitChairTexture;
-boost::shared_ptr<IDirect3DTexture9> CharacterSitGroundTexture;
-boost::shared_ptr<IDirect3DTexture9> CharacterAttackBowTexture;
-boost::shared_ptr<IDirect3DTexture9> CharacterEmoteTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterStandTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterWalkTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterAttackBluntTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterSpellTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterSitChairTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterSitGroundTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterAttackBowTexture;
+std::shared_ptr<IDirect3DTexture9> CharacterEmoteTexture;
 void CharacterModel::Initialize(LPVOID* m_game)
 {
 	this->admin =  0;
@@ -186,8 +186,8 @@ static constexpr LayerInfo layer_info[8] = {
 	{ LayerType::Hat       ,16,   4,13,  4,13,    4,13,    4,13,    4,13,   4,13,   4,13,   4,13,   4,13,  4,13,   4,13,  ep * 3 }, // Hat
 	{ LayerType::Shoes     ,12,   8,-37, 8,-36,  8,-36,    8,-36,   8,-36,   8,-37, 11,-36,  8,-37,   8,-36,   4,-39,   4, -50,  ep * 2 }, // Shoes
 	{ LayerType::Armour    ,14,   8,12,  8,13,    8,13,    8,13,    8,13,   8,12,   11,13,   8,12,   13,11,   3,1,   3, 1,  ep * 2 }, // Armor
-	{ LayerType::BackHair  ,10,   6,13,  6,13,    6,13,    6,13,    6,13,   6,13,   11,9,    6,13,   6,13,   1,-4,   1,-4,  ep * 1 }, // BackHair
-	{ LayerType::FrontHair ,10,   6,13,  6,13,    6,13,    6,13,    6,13,   6,13,   11,9,   6,13,    6,13,   1,-4,   1,-4,  ep * 3 }, // FrontHair
+	{ LayerType::BackHair  ,10,   6,13,  6,13,    6,13,    6,13,    6,13,   6,13,   10,8,    6,13,   6,13,   1,-4,   1,-4,  ep * 1 }, // BackHair
+	{ LayerType::FrontHair ,10,   6,13,  6,13,    6,13,    6,13,    6,13,   6,13,   10,8,   6,13,    6,13,   1,-4,   1,-4,  ep * 3 }, // FrontHair
 };
 
 ///Pulls the offset positions of player sprite tiles.
@@ -496,6 +496,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3D
 
 				D3DXVECTOR3* Pos = new D3DXVECTOR3(xpos - offsetpos.first + this->xoffset, y - offsetpos.second + this->yoffset, idepth - layerinfo.depth);
 				D3DXVECTOR3 * Center = new D3DXVECTOR3(0, 0, 0);
+
 				if (this->Stance == PlayerStance::BowAttacking)
 				{
 					if ((this->direction == 1 || this->direction == 3))
@@ -510,6 +511,12 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3D
 					{
 						Pos->y -= 2;
 					}
+					if (this->frame_ID == 1)
+					{
+						//Pos->x += ((this->Gender % 2) * 1);
+						Pos->y -= ((this->Gender % 2) * 2);
+					}
+
 				}
 				_Sprite->SetTransform(&mat);
 				_Sprite->Draw(_game->resource->CreateTexture(layerinfo.file - this->Gender, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_Color);
@@ -541,6 +548,11 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3D
 						if (this->frame_ID == 1 && (this->direction == 1 || this->direction == 3))
 						{
 							Pos->y -= 2;
+						}
+						if (this->frame_ID == 1)
+						{
+							Pos->x -= ((this->Gender % 2) * 2);
+							Pos->y -= ((this->Gender % 2) * 1);
 						}
 					}
 					_Sprite->SetTransform(&mat);

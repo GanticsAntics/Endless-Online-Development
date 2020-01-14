@@ -61,7 +61,7 @@ CLIENT_F_FUNC(Warp)
 				int exp = MainPlayer->exp;	
 				game->map->ThreadLock.unlock();
 				//game->map->LoadMap(MapID);
-
+				
 				game->map->ClearMap();
 			
 				for (int i = 0; i < CharacterSize; i++)
@@ -90,7 +90,8 @@ CLIENT_F_FUNC(Warp)
 					newplayer->direction = procDirection;
 
 					reader.GetChar(); // Unknown
-					reader.GetFixedString(3);//PaddedGuildTag
+					
+					newplayer->guildtag = reader.GetFixedString(3);//PaddedGuildTag
 					newplayer->level = reader.GetChar();
 					newplayer->Gender = reader.GetChar();
 					newplayer->HairStyle = reader.GetChar() - 1;
@@ -131,6 +132,7 @@ CLIENT_F_FUNC(Warp)
 					{
 						MainPlayer->exp = exp;
 						MainPlayer->CharacterID = World::WorldCharacterID;
+						MainPlayer->guildtag = newplayer->guildtag;
 						MainPlayer->mapid = newplayer->mapid;
 						MainPlayer->x = newplayer->x;
 						MainPlayer->y = newplayer->y;
@@ -152,13 +154,14 @@ CLIENT_F_FUNC(Warp)
 						MainPlayer->SetStance(newplayer->Stance);
 						//game->map->CharacterID = MainPlayer->CharacterID;
 						game->map->AddPlayer(MainPlayer);
+					
 					}
 					else
 					{
 						game->map->AddPlayer(newplayer);
 					}
 				}
-
+				
 				while (true)
 				{
 					int index = reader.GetChar();
@@ -188,6 +191,7 @@ CLIENT_F_FUNC(Warp)
 					m_item.amount = reader.GetThree();
 					game->map->AddItem(ItemIndex, m_item);
 				}
+				game->map->IsVisible = true;
 				break;
 			}
 			default:

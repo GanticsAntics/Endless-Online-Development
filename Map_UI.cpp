@@ -103,7 +103,7 @@ void Map_UI::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_g
 	m_ChatTextbox.acceptsReturn = true;
 	m_ChatTextbox.SetKeyMask(Textbox::KeyType::None);
 	this->ChatTextbox = UI_Game->world->RegisterTextBox(m_ChatTextbox);
-
+	
 	UI_Mask.Create(640, 480);
 	UI_Mask.Clear(_RGB(100,0,0));
 	UI_Mask.MakeTransparent(_RGB(100, 0, 0));

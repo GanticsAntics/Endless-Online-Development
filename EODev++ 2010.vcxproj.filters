@@ -257,6 +257,12 @@
     <ClCompile Include="Map_UI_Element\UI_ChatBubbleHandler.cpp">
       <Filter>GameStage\Map_UI_Element</Filter>
     </ClCompile>
+    <ClCompile Include="Send\SPlayers.cpp">
+      <Filter>Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_UI_SelectPlayer.cpp">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -448,6 +454,12 @@
       <Filter>Send</Filter>
     </ClInclude>
     <ClInclude Include="Map_UI_Element\UI_ChatBubbleHandler.h">
+      <Filter>GameStage\Map_UI_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Send\SPlayers.h">
+      <Filter>Send</Filter>
+    </ClInclude>
+    <ClInclude Include="Map_UI_SelectPlayer.h">
       <Filter>GameStage\Map_UI_Element</Filter>
     </ClInclude>
   </ItemGroup>

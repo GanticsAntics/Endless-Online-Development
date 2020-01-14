@@ -20,7 +20,7 @@ int TextTools::GetTextWidth(std::string szText, ID3DXFont* pFont)
 	return rcRect.right - rcRect.left;
 }
 
-std::vector<TextTools::ChatContainer>* TextTools::ChatGroups[6] = { new std::vector<TextTools::ChatContainer>(),new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() };
+std::vector<TextTools::ChatContainer>* TextTools::ChatGroups[8] = { new std::vector<TextTools::ChatContainer>(), new std::vector<TextTools::ChatContainer>(),new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>(),new std::vector<TextTools::ChatContainer>() };
 std::string TextTools::SnipMessageTextToWidth(std::string szText, int width, ID3DXFont* pFont)
 {
 	RECT rcRect = { 0,0,0,0 };

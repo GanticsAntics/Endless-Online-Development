@@ -18,6 +18,7 @@ ENF* World::ENF_File;
 EIF* World::EIF_File;
 ESF* World::ESF_File;
 ECF* World::ECF_File;
+std::vector<World::OnlinePlayerContainer> World::OnlinePlayers;
 World::World(LPVOID _Game)
 {
 	Wgame = (Game*)_Game;
@@ -127,9 +128,29 @@ void World::MassTextBoxReset()
 	}
 	
 }
+int BlinkCount = 0;
+bool ShowBlinker = false;
 void World::RenderTextBoxes(ID3DXSprite* m_Sprite, byte phase, byte subphase)
 {
 
+	BlinkCount++;
+	if (BlinkCount > Wgame->FPS / 2)
+	{
+		Textbox* box = this->GetFocusedTextbox();
+
+		if (ShowBlinker)
+		{
+			ShowBlinker = false;
+			box->blinkhidden = true;
+		}
+		else
+		{
+			ShowBlinker = true;
+			box->blinkhidden = false;
+		}
+
+		BlinkCount = 0;
+	}
 	TextType::iterator i;
 	for(i = this->TextBoxLst.begin(); i != this->TextBoxLst.end();i++)
 	{

@@ -15,7 +15,7 @@ class Resource
 		public:
 			int TextureID;
 			int GfxID;
-			boost::shared_ptr<IDirect3DTexture9> Texture;
+			std::shared_ptr<IDirect3DTexture9> Texture;
 		};
 
 		/*
@@ -41,7 +41,7 @@ class Resource
 		Module LoadModule(int file);
 		HRESULT CreateSprite(IDirect3DDevice9Ptr Device, ID3DXSprite* Sprite);
 		HRESULT Initialize(IDirect3DDevice9Ptr Device);
-		typedef boost::ptr_map<int,Module> ModuleType;
+		typedef std::map<int,Module> ModuleType;
 		ModuleType Modules;
 		TextureData CreateTexture(DWORD ModuleID, int GFXID, bool BlackIsTransparent);
 		D3DXIMAGE_INFO GetImageInfo(DWORD ModuleID, int GFXID, bool Transparent);

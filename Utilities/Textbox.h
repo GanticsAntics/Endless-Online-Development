@@ -37,6 +37,7 @@ public:
 		Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColor, ID3DXFont* m_font, byte _Phase, byte _Subphase);
 		ID3DXFont* Font;
 		KeyType GetKeyType(char c);
+		void UpdateBlinkerOffset();
 		void OnKeyDown(WPARAM args);
 		void OnKeyPress(WPARAM args);
 		void Render(ID3DXSprite* m_Sprite);

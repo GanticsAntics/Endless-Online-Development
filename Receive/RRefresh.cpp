@@ -40,7 +40,7 @@ CLIENT_F_FUNC(Refresh)
 					newplayer->direction = procDirection;
 
 					reader.GetChar(); // Unknown
-					reader.GetFixedString(3);//PaddedGuildTag
+					newplayer->guildtag = reader.GetFixedString(3);//PaddedGuildTag
 					newplayer->level = reader.GetChar();
 					newplayer->Gender = reader.GetChar();
 					newplayer->HairStyle = reader.GetChar() - 1;
@@ -81,6 +81,7 @@ CLIENT_F_FUNC(Refresh)
 					{
 						MainPlayer->exp = exp;
 						//MainPlayer->CharacterID = newplayer->CharacterID;
+						MainPlayer->guildtag = newplayer->guildtag;
 						MainPlayer->mapid = newplayer->mapid;
 						MainPlayer->x = newplayer->x;
 						MainPlayer->y = newplayer->y;

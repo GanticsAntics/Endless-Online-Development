@@ -3,7 +3,7 @@
 #include "..\Game.h"
 
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeighht, int m_BarHeight, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, boost::shared_ptr<IDirect3DTexture9> m_IconTexture)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeighht, int m_BarHeight, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, std::shared_ptr<IDirect3DTexture9> m_IconTexture)
 {
 	this->p_container = NULL;
 	this->TextOrElement = false;
@@ -18,7 +18,7 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHe
 	this->UI_Scrollbar_Button_Bottom = new Button(m_Game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
 };
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, boost::shared_ptr<IDirect3DTexture9> m_IconTexture)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, std::shared_ptr<IDirect3DTexture9> m_IconTexture)
 {
 	this->p_container = NULL;
 	this->TextOrElement = true;
@@ -38,7 +38,7 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeig
 };
 
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, boost::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, boost::shared_ptr<IDirect3DTexture9> m_IconTexture)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, std::shared_ptr<IDirect3DTexture9> m_IconTexture)
 {
 	this->p_container = m_container;
 	this->TextOrElement = true;
@@ -58,37 +58,73 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeig
 };
 void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseHeld, int FPS)
 {
-	this->UI_Scrollbar_Button_Bottom->Update(MouseX, MouseY, MousePressed);
-	this->UI_Scrollbar_Button_Top->Update(MouseX, MouseY, MousePressed);
+	if (this->Buttonsenabled)
+	{
+		this->UI_Scrollbar_Button_Bottom->Update(MouseX, MouseY, MousePressed);
+		this->UI_Scrollbar_Button_Top->Update(MouseX, MouseY, MousePressed);
+	}
 	if (!MouseHeld)
 	{
 		this->Selected = false;
 	}
 	if (this->Selected)
 	{
-		this->Barpos = MouseY - this->y - 24;
-		if (this->Barpos < 0)
+		if (this->IsVertical)
 		{
-			this->Barpos = 0;
+			this->Barpos = MouseY - this->y - 24;
+			if (this->Barpos < 0)
+			{
+				this->Barpos = 0;
+			}
+			if (this->Barpos > this->BarHeight - 32)
+			{
+				this->Barpos = this->BarHeight - 32;
+			}
 		}
-		if (this->Barpos > this->BarHeight - 32)
+		else
 		{
-			this->Barpos = this->BarHeight - 32;
+			this->Barpos = MouseX - this->x - 24;
+			if (this->Barpos < 0)
+			{
+				this->Barpos = 0;
+			}
+			if (this->Barpos > this->BarHeight - 32)
+			{
+				this->Barpos = this->BarHeight - 32;
+			}
 		}
 	}
-	if (MouseX > this->x && MouseX < this->x + 16)
+	if (this->IsVertical)
 	{
-		if (MouseY > this->y + 24 && MouseY < this->y + this->BarHeight - 8)
+		if (MouseX > this->x && MouseX < this->x + 16)
 		{
-			if (MouseHeld)
+			if (MouseY > this->y + 24 && MouseY < this->y + this->BarHeight - 8)
 			{
-				this->Barpos = MouseY - this->y - 24;
-				this->Selected = true;
+				if (MouseHeld)
+				{
+					this->Selected = true;
+				}
+			}
+		}
+	}
+	else
+	{
+		if (MouseX > this->x && MouseX < this->x + this->BarHeight )
+		{
+			if (MouseY > this->y && MouseY < this->y + 16)
+			{
+				if (MouseHeld)
+				{
+					this->Selected = true;
+				}
 			}
 		}
 	}
 	this->BarPercent = (float)(this->Barpos) / (float)(this->BarHeight - 32);
-
+	if (this->TextOrElement)
+	{
+		this->MaxIndex = this->SubText.size();
+	}
 	ScrollBarFPSCounter++;
 	if (ScrollBarFPSCounter > FPS / 4 || this->SubText.size() > 0)
 	{
@@ -100,7 +136,7 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 	}
 	if (this->p_container == NULL)
 	{
-		this->Lineindex = ((float)(this->SubText.size() - 5) * (float)(this->BarPercent));
+		this->Lineindex = (this->MaxIndex - (this->Numberoflines - 1)) * (float)(this->BarPercent);
 		if (this->Lineindex < 0)
 		{
 			this->Lineindex = 0;
@@ -113,7 +149,7 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 		{
 			counter += p_container->at(i).MessageLength;
 		}
-		this->Lineindex = ((float)counter - 5) * (float)this->BarPercent;
+		this->Lineindex = ((float)counter - (this->Numberoflines - 1)) * (float)(this->BarPercent );
 		if (this->Lineindex < 0)
 		{
 			this->Lineindex = 0;
@@ -136,28 +172,28 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 	{
 		if (this->p_container == NULL)
 		{
-			if (this->Lineindex > this->SubText.size() - 5)
+			if (this->Lineindex > this->MaxIndex - (this->Numberoflines - 1))
 			{
-				this->Lineindex = this->SubText.size() - 5;
+				this->Lineindex = this->MaxIndex - (this->Numberoflines - 1);
 			}
 			if (this->Lineindex < 0)
 			{
 				this->Lineindex = 0;
 			}
-			this->BarPercent = (float)(this->Lineindex) / (float)(this->SubText.size() - 5);
+			this->BarPercent = (float)(this->Lineindex) / (float)(this->MaxIndex -(this->Numberoflines - 1));
 			this->Barpos = (float)(this->BarPercent) * (float)(this->BarHeight - 32);
 		}
 		else
 		{
 
 			int counter = 0;
-			for (int i = 0; i < p_container->size(); i++)
+			for (int i = 0; i < p_container->size() ; i++)
 			{
-				counter += p_container->at(i).MessageLength;
+				counter += p_container->at(i).MessageLength ;
 			}
-			if (this->Lineindex > counter - 5)
+			if (this->Lineindex > counter - (this->Numberoflines - 1))
 			{
-				this->Lineindex = counter - 5;
+				this->Lineindex = counter - (this->Numberoflines - 1);
 			}
 			if (this->Lineindex < 0)
 			{
@@ -165,7 +201,7 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 			}
 			
 
-			this->BarPercent = (float)(this->Lineindex) / (float)(counter - 5);
+			this->BarPercent = (float)(this->Lineindex) / (float)(counter - (this->Numberoflines - 1));
 			this->Barpos = ((float)(this->BarPercent) * (float)(this->BarHeight - 32));
 		}
 	}
@@ -173,21 +209,28 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 
 void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 {
-	this->UI_Scrollbar_Button_Bottom->Draw(_Sprite);
-	this->UI_Scrollbar_Button_Top->Draw(_Sprite);
+	if (this->Buttonsenabled)
+	{
+		this->UI_Scrollbar_Button_Bottom->Draw(_Sprite);
+		this->UI_Scrollbar_Button_Top->Draw(_Sprite);
+	}
+	RECT SrcRect;
+	SrcRect.left = 0;
+	SrcRect.top = 0;
+	SrcRect.bottom = 15;
+	SrcRect.right = 16;
+	D3DXVECTOR3* Pos = new D3DXVECTOR3(x, y + 16 + this->Barpos, 0);
+	D3DXVECTOR3* Center = new D3DXVECTOR3(0, 0, 0);
+	if (!this->IsVertical)
+	{
+		Pos->x = x + 16 + this->Barpos;
+		Pos->y = y;
+	}
+
+
+	_Sprite->Draw(this->p_ScrollbarTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
 	if (this->TextOrElement)
 	{
-		RECT SrcRect;
-		SrcRect.left = 0;
-		SrcRect.top = 0;
-		SrcRect.bottom = 15;
-		SrcRect.right = 16;
-
-
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(x, y + 16 + this->Barpos, 0);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(0, 0, 0);
-
-		_Sprite->Draw(this->p_ScrollbarTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
 		if (this->p_container != NULL)
 		{
 			int index = 0;

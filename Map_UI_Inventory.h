@@ -81,8 +81,8 @@ public:
 		InventoryItem(short id, int amount) : id(id), amount(amount) { }
 	};
 	
-	boost::shared_ptr<IDirect3DTexture9> p_PPDollTexture;
-	boost::shared_ptr<IDirect3DTexture9> p_DropJunkTexture;
+	std::shared_ptr<IDirect3DTexture9> p_PPDollTexture;
+	std::shared_ptr<IDirect3DTexture9> p_DropJunkTexture;
 	Textbox* DropJunkTextbox;
 	Button* UI_Element_PpdollOkay;
 	Button* UI_Element_DropOkay;
@@ -101,6 +101,8 @@ public:
 	int DropMenuY = 0;
 	int DropAmount = 0;
 	int DropID = -1;
+	int DropX = 0;
+	int DropY = 0;
 	UI_Scrollbar* DropJunkScrollBar;
 	Button* UI_Element_InventoryPPdoll;
 	Button* UI_Element_InventoryButton;
@@ -121,9 +123,9 @@ public:
 			if (inventory[i].id == _item.id)
 			{
 				inventory[i].amount -= _item.amount;
-				if (inventory[i].amount <= 0 && inventory[i].id != 0)
+				if (inventory[i].amount <= 0)
 				{
-					inventory.erase(inventory.begin()+i);
+					inventory.erase(inventory.begin() + i);
 					for (int ii = 0; ii < 56; ii++)
 					{
 						if (InventoryGrid[ii].ID == _item.id)
@@ -132,8 +134,8 @@ public:
 							InventoryGrid[ii].MouseOver = false;
 							InventoryGrid[ii].MousePressed = false;
 						}
-						
 					}
+					this->childMPindex = -1;
 				}
 				return;
 			}
@@ -152,7 +154,20 @@ public:
 		}
 	}
 	};
-
+	void DisplayDropDialogye(bool _DropOrJunk, int DropMaxamount, int ID, int X, int Y)
+	{
+		this->DropJunkScrollBar->SetIndex(1);
+		this->DropJunkScrollBar->SetNumberOfLines(1);
+		this->DropJunkTextbox->text = L"1";
+		this->DropJunkTextbox->Rendertext = L"1";
+		this->DropJunkScrollBar->SetMaxIndex(DropMaxamount);
+		this->DropAmount = DropMaxamount;
+		this->DropID = ID;
+		this->DropX = X;
+		this->DropY = Y;
+		this->DropOrJunk = _DropOrJunk;
+		this->IsDropMenuActive = true;
+	}
 	void PaperdollCheckElements();
 	void RenderPaperdoll();
 	void UpdatePaperdoll();

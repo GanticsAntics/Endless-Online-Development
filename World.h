@@ -32,7 +32,15 @@ public:
 	static EIF* EIF_File;
 	static ESF* ESF_File;
 	static ECF* ECF_File;
-
+	struct OnlinePlayerContainer
+	{
+		std::string _Name;
+		std::string _Title;
+		char _Icon;
+		char _ClassID;
+		std::string _GuildTag;
+	};
+	static std::vector<OnlinePlayerContainer> OnlinePlayers;
 	void HandleTextInput(WPARAM Parameter, byte phase, byte subphase);
 	void HandleKeyInput(WPARAM Parameter, byte phase, byte subphase);
     Textbox* RegisterTextBox(Textbox TxtBox);

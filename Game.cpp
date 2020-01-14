@@ -4,8 +4,8 @@
 
 
 ID3DXSprite* sprite;
-boost::shared_ptr<IDirect3DTexture9> texture;
-boost::shared_ptr<IDirect3DTexture9> GLoginButtonTexture;
+std::shared_ptr<IDirect3DTexture9> texture;
+std::shared_ptr<IDirect3DTexture9> GLoginButtonTexture;
 static IDirect3DDevice9* Device;
 bool Game::CancelTrue;
 bool exitinggame;
@@ -344,7 +344,7 @@ void Game::ResetDevice()
 		D3DXCreateSprite(Device,&sprite);
 }
 
-void Game::Draw(ID3DXSprite* Sprite,boost::shared_ptr<IDirect3DTexture9> Texture, int x, int y, int Imgw, int Imgh, float Angle, D3DXCOLOR Color)
+void Game::Draw(ID3DXSprite* Sprite,std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, int Imgw, int Imgh, float Angle, D3DXCOLOR Color)
 {
 		D3DXMATRIX mat;
 		RECT SrcRect;
@@ -405,7 +405,7 @@ void Game::DrawText(ID3DXSprite* Sprite,LPCSTR str, int x, int y,  D3DXCOLOR Col
 	
 	this->DefaultFont->DrawTextA(Sprite, str, -1, &rct, 0, Color );
 }
-void Game::Draw(ID3DXSprite* Sprite, boost::shared_ptr<IDirect3DTexture9> Texture, int x, int y, D3DXCOLOR Color)
+void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, D3DXCOLOR Color)
 {
 		D3DXMATRIX mat;
 		RECT SrcRect;
@@ -424,7 +424,7 @@ void Game::Draw(ID3DXSprite* Sprite, boost::shared_ptr<IDirect3DTexture9> Textur
 }
 std::basic_string<wchar_t> Game_istring;
 
-void Game::Draw(ID3DXSprite* Sprite, boost::shared_ptr<IDirect3DTexture9> Texture, int x, int y, float depth, D3DXCOLOR Color)
+void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, float depth, D3DXCOLOR Color)
 {
 	D3DXVECTOR3* Pos = new D3DXVECTOR3(x, y, depth);
 	D3DXVECTOR3* Center = new D3DXVECTOR3(1, 1, 0);

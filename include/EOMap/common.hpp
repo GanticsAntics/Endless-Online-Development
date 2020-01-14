@@ -28,7 +28,7 @@ template <class T>
 using optref = opt<refwrap<T>>;
 
 template <class... Args>
-using s_ptr = std::shared_ptr<Args...>;
+using s_ptr = std::std::shared_ptr<Args...>;
 
 template <class... Args>
 using w_ptr = std::weak_ptr<Args...>;

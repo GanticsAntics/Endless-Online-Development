@@ -18,8 +18,6 @@ void SAccount::RequestAccountCreate(pt::ipstream* ClientStream, std::string Acco
 	builder.AddString(AccountName);
 	World::Send(gme,ClientStream,builder);
 }
-using boost::lexical_cast;
-
 void SAccount::CreateAccount(pt::ipstream* ClientStream, std::string AccountName, std::string Password, std::string fullname, std::string location, std::string email, std::string computer, LPVOID game)
 {
 	
@@ -41,7 +39,7 @@ void SAccount::CreateAccount(pt::ipstream* ClientStream, std::string AccountName
 	fileSystemName,
 	ARRAYSIZE(fileSystemName));
 
-	std::string str = lexical_cast<std::string>(serialNumber);
+	std::string str = std::to_string(serialNumber);
 	Game* gme = (Game*)game;
 	char nameBuf[MAX_COMPUTERNAME_LENGTH + 2];
 	DWORD nameBufSize;

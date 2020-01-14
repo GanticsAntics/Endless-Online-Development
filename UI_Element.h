@@ -2,8 +2,8 @@
 #include "..\stdafx.h"
 class UI_Element
 {
-	boost::shared_ptr<IDirect3DTexture9> p_Texture;
-	boost::shared_ptr<IDirect3DTexture9> p_Texture_MouseOver;
+	std::shared_ptr<IDirect3DTexture9> p_Texture;
+	std::shared_ptr<IDirect3DTexture9> p_Texture_MouseOver;
 	std::pair<int, int> Position;
 	std::pair<int, int> Size;
 
@@ -35,11 +35,11 @@ public:
 	bool IsNewTextureForMouseOver() { return this->AnimNewTexture; }
 	void AssignNewTextureForMouseOver(bool yesno) { this->AnimNewTexture = yesno; }
 	void SetFrameID(int index) { this->AnimID = index; }
-	void AssignTexture(boost::shared_ptr<IDirect3DTexture9> m_Texture) { this->p_Texture = m_Texture; }
-	boost::shared_ptr<IDirect3DTexture9> GetTexture() { return this->p_Texture; }
-	boost::shared_ptr<IDirect3DTexture9> GetMouseOverTexture() { return this->p_Texture_MouseOver; }
+	void AssignTexture(std::shared_ptr<IDirect3DTexture9> m_Texture) { this->p_Texture = m_Texture; }
+	std::shared_ptr<IDirect3DTexture9> GetTexture() { return this->p_Texture; }
+	std::shared_ptr<IDirect3DTexture9> GetMouseOverTexture() { return this->p_Texture_MouseOver; }
 
-	void AssignMouseOverTexture(boost::shared_ptr<IDirect3DTexture9> m_Texture) { this->p_Texture_MouseOver = m_Texture; }
+	void AssignMouseOverTexture(std::shared_ptr<IDirect3DTexture9> m_Texture) { this->p_Texture_MouseOver = m_Texture; }
 
 	void MouseClickProccessed(){ MouseClicked = false; }
 

@@ -68,9 +68,9 @@ public:
 	void Initialize(IDirect3DDevice9Ptr Device, World* _world);
 	void Update();
 	void Render();
-	void Draw(ID3DXSprite* Sprite,boost::shared_ptr<IDirect3DTexture9> Texture, int x, int y, int Imgw, int Imgh, float Angle, D3DXCOLOR Color);
-	void Draw(ID3DXSprite* Sprite, boost::shared_ptr<IDirect3DTexture9> Texture, int x, int y, D3DXCOLOR Color);
-	void Draw(ID3DXSprite* Sprite, boost::shared_ptr<IDirect3DTexture9> Texture, int x, int y, float depth, D3DXCOLOR Color);
+	void Draw(ID3DXSprite* Sprite,std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, int Imgw, int Imgh, float Angle, D3DXCOLOR Color);
+	void Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, D3DXCOLOR Color);
+	void Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, float depth, D3DXCOLOR Color);
 	void Draw(ID3DXSprite* Sprite,IDirect3DTexture9* Texture, int x, int y, D3DXCOLOR Color);
 	void DrawText(LPCWSTR str, int x, int y, D3DXCOLOR Color);
 	void DrawText(LPCSTR str, int x, int y, D3DXCOLOR Color);

@@ -27,7 +27,7 @@
 #include <d3dx9.h>
 #include <map>
 #include <comdef.h>
-
+#include <ctype.h>
 // global declarations
 _COM_SMARTPTR_TYPEDEF(IDirect3D9, __uuidof(IDirect3D9));
 // Declare Smart Pointers for IFoo, IBar, and IGak interfaces
