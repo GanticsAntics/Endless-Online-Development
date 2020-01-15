@@ -445,6 +445,11 @@
     <ClCompile Include="Map_UI_Element\Map_UI_PassiveSkills.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Map_UI_Element\Map_UI_SelectPlayer.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Map_UI_Element\Map_UI_Skills.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -460,7 +465,6 @@
     <ClCompile Include="Map_UI_Inventory.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Map_UI_SelectPlayer.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Receive\Handler.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -621,12 +625,12 @@
     <ClInclude Include="Map_UI_Element\Map_UI_News.h" />
     <ClInclude Include="Map_UI_Element\Map_UI_Party.h" />
     <ClInclude Include="Map_UI_Element\Map_UI_PassiveSkills.h" />
+    <ClInclude Include="Map_UI_Element\Map_UI_SelectPlayer.h" />
     <ClInclude Include="Map_UI_Element\Map_UI_Skills.h" />
     <ClInclude Include="Map_UI_Element\Map_UI_Talk.h" />
     <ClInclude Include="Map_UI_Element\Map_UI_WhoIsOnline.h" />
     <ClInclude Include="Map_UI_Element\UI_ChatBubbleHandler.h" />
     <ClInclude Include="Map_UI_Inventory.h" />
-    <ClInclude Include="Map_UI_SelectPlayer.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Receive\Handler.h" />
     <ClInclude Include="Receive\RConstants.h" />

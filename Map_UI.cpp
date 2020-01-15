@@ -18,6 +18,7 @@ Map_UI::Map_UI()
 }
 Game* UI_Game;
 CBitmapEx UI_Mask;
+
 std::wstring s2ws(const std::string& s)
 {
 	int len;
@@ -70,6 +71,7 @@ void Map_UI::UI_SendMessage()
 LPDIRECT3DTEXTURE9 TX_UI_Mask = NULL;
 void Map_UI::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_game)
 {
+	PlayerSelect = new Map_UI_SelectPlayer(this, m_game);
 	D3DXIMAGE_INFO info = D3DXIMAGE_INFO();
 	this->m_world = _world;
 	this->m_Device = m_Device;
@@ -172,6 +174,7 @@ void Map_UI::Update()
 	this->map_talk->Update();
 	this->map_whoisonline->Update();
 	this->map_ChatBubbleHandler->Update();
+	PlayerSelect->Update();
 	if (this->isactive)
 	{
 		UI_Game->world->SetFocusedTextbox(this->ChatTextbox);
@@ -203,7 +206,9 @@ void Map_UI::Render()
 	this->map_talk->Render();
 	this->map_whoisonline->Render();
 	this->map_ChatBubbleHandler->Render();
+	PlayerSelect->Render();
 	ChatTextbox->Render(this->Sprite);
+	
 	DrawHUDStats();
 	
 	if (this->HelpMessageTitle != "")

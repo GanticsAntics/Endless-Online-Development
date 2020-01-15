@@ -6,6 +6,7 @@
 #include "Send/SItem.h"
 #include "Map_UI_Element/Map_UI_SelectPlayer.h"
 
+
 Game* p_Game;
 UI_Cursor::UI_Cursor()
 {
@@ -23,6 +24,7 @@ UI_Cursor::UI_Cursor(VOID* m_Game, Map* m_Map, IDirect3DDevice9Ptr m_Device)
 	D3DXCreateSprite(m_Device, &this->p_Sprite);
 	m_CursorType = CursorType::None;
 	cur_istring = L"";
+	
 }
 
 
@@ -31,8 +33,14 @@ UI_Cursor::~UI_Cursor()
 }
 
 bool hideme = false;
+
 void UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 {
+	if (p_Game->Map_UserInterface->PlayerSelect->MouseoverMenu)
+	{
+		this->m_CursorType = CursorType::None;
+		return;
+	}
 	if(hideme)
 	{
 		return;
@@ -180,7 +188,6 @@ void UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 
 std::pair<int, int> ScreenCordToMap(std::pair<int, int> m_loc)
 {
-	
 	/*int screenx = (m_loc.first - m_loc.second) * 32;
 	int screeny = (m_loc.first + m_loc.second) * 16;
 	return std::pair<int, int>(screenx, screeny);*/
@@ -188,32 +195,23 @@ std::pair<int, int> ScreenCordToMap(std::pair<int, int> m_loc)
 	float x = m_loc.first - 32;
 	float y = m_loc.second ;
 	//# Translate one origin to the other
-		float x1 = x ;
+	float x1 = x ;
 	//# Stretch the height so that it's the same as the width in the isometric
 	//# This makes the rotation easier
 	//# Invert the sign because y is upwards in math but downwards in graphics
-		float y1 = y * - 2;
+	float y1 = y * - 2;
 
 	//# Apply a counter - clockwise rotation of 45 degrees
-		float xr = cos(PI / 4) * x1 - sin(PI / 4) * y1;
-		float yr = sin(PI / 4) * x1 + cos(PI / 4) * y1;
+	float xr = cos(PI / 4) * x1 - sin(PI / 4) * y1;
+	float yr = sin(PI / 4) * x1 + cos(PI / 4) * y1;
 
 	//# The side of each isometric tile(which is now a square after the stretch)
-		float diag = 32 * sqrt(2);
+	float diag = 32 * sqrt(2);
 	//# Calculate which tile the coordinate belongs to
-		float x2 = int(xr / diag);
+	float x2 = int(xr / diag);
 	//# Don't forget to invert the sign again
-		float y2 = int(yr * -1 / diag);
-		x2 = int(xr / diag);
-
-
-	/*	std::string test = "";
-		cur_istring.clear();
-		char xstr[12];
-		test += "MouseX = " + std::to_string(xr) + "{" + std::to_string(floor(xr/64)) + "}" + ": Mouse Y = " + std::to_string(yr) + "{" + std::to_string(floor(yr / 32)) + "}";
-		World::DebugPrint(test.c_str());*/
-
-	//# See the final result
+	float y2 = int(yr * -1 / diag);
+	x2 = int(xr / diag);
 	return std::pair<int, int>(x2, y2);
 }
 
@@ -222,6 +220,7 @@ void UI_Cursor::Update()
 {
 	int MouseX = p_Game->MouseX + this->p_Map->xoff;
 	int MouseY = p_Game->MouseY + this->p_Map->yoff;
+
 	if (!p_Game->Map_UserInterface->MouseHeld)
 	{
 		p_Game->Map_UserInterface->map_inventory->childMPindex = -1;

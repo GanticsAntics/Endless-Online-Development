@@ -260,7 +260,7 @@
     <ClCompile Include="Send\SPlayers.cpp">
       <Filter>Send</Filter>
     </ClCompile>
-    <ClCompile Include="Map_UI_SelectPlayer.cpp">
+    <ClCompile Include="Map_UI_Element\Map_UI_SelectPlayer.cpp">
       <Filter>GameStage\Map_UI_Element</Filter>
     </ClCompile>
   </ItemGroup>
@@ -459,7 +459,7 @@
     <ClInclude Include="Send\SPlayers.h">
       <Filter>Send</Filter>
     </ClInclude>
-    <ClInclude Include="Map_UI_SelectPlayer.h">
+    <ClInclude Include="Map_UI_Element\Map_UI_SelectPlayer.h">
       <Filter>GameStage\Map_UI_Element</Filter>
     </ClInclude>
   </ItemGroup>

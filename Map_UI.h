@@ -14,6 +14,8 @@
 #include "Map_UI_Element/Map_UI_GameSettings.h"
 #include "Map_UI_Element/Map_UI_GameHelp.h"
 #include "Map_UI_Element/UI_ChatBubbleHandler.h"
+#include "Map_UI_Element/Map_UI_SelectPlayer.h"
+
 class Map_UI
 {
 public:
@@ -57,6 +59,7 @@ public:
 	Map_UI_Talk* map_talk;
 	Map_UI_WhoIsOnline* map_whoisonline;
 	UI_ChatBubbleHandler* map_ChatBubbleHandler;
+	Map_UI_SelectPlayer* PlayerSelect;
 	bool StatBarDrawn[4] = { false,false,false,false };
 	int MouseX;
 	int MouseY;
