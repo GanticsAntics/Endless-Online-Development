@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "game.h"
-#include "include/PTypes/ptypes.h"
 
+#include "Game_Stage\Menu.h"
+#include "Game_Stage\Map_UI\Map_UI_Cursor.h"
+#include "Game_Stage\Map_UI\Map_UI.h"
+#include "Game_Stage\Map.h"
 
 ID3DXSprite* sprite;
 std::shared_ptr<IDirect3DTexture9> texture;
@@ -21,15 +24,15 @@ void Game::Initialize(IDirect3DDevice9Ptr m_Device, World* _World)
 		D3DXCreateFont(Device, 18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Arial"), &this->DefaultFont);
 		D3DXCreateFont(Device, 14, 6, FW_EXTRALIGHT, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &this->MessageFont);
 
-		this->resource = new Resource();
-		this->resource->Initialize(Device);
-		this->ScrollBarTexture  = this->resource->CreateTexture(2, 29, false);
-		this->TextIconTexture = this->resource->CreateTexture(2, 32, true);
+		this->ResourceManager = new Resource_Manager();
+		this->ResourceManager->Initialize(Device);
+		this->ScrollBarTexture  = this->ResourceManager->CreateTexture(2, 29, false);
+		this->TextIconTexture = this->ResourceManager->CreateTexture(2, 32, true);
 		menu = new Menu();
 		map = new Map();
-		GLoginButtonTexture = this->resource->CreateTexture(1, 15, true).Texture;
-		this->ExitGameTxt = this->resource->CreateTexture(2, 39, true);
-		this->MessageBoxTexture = this->resource->CreateTexture(1, 18, false);
+		GLoginButtonTexture = this->ResourceManager->CreateTexture(1, 15, true).Texture;
+		this->ExitGameTxt = this->ResourceManager->CreateTexture(2, 39, true);
+		this->MessageBoxTexture = this->ResourceManager->CreateTexture(1, 18, false);
 		this->BT_Message_OK = new Button(this, MessageX + 180, MessageY + 112, 0, 116, 91, 28, false, GLoginButtonTexture);
 		this->BT_ExitGame = new Button(this, 640 - 51, 0, 0, 0, 50, 53, true, this->ExitGameTxt.Texture);
 		this->BT_CharDeleteOK = new Button(this, MessageX + 180 - 92, MessageY + 112, 0, 116, 91, 28, false, GLoginButtonTexture);
@@ -50,8 +53,8 @@ void Game::Initialize(IDirect3DDevice9Ptr m_Device, World* _World)
 		this->SubStage = 0;
 		this->CancelTrue = false;
 		this->MsgID = 0;
-		//World::ThrowMessage("Welcome to EODev!","Silvia is awesome and an absolute babe :)");
-		this->MapCursor = UI_Cursor(this, this->map, Device);
+
+		this->MapCursor = Map_UI_Cursor(this, this->map, Device);
 
 		this->ENF_File = new ENF("pub\\dtn001.enf");
 		this->EIF_File = new EIF("pub\\dat001.eif");
@@ -327,8 +330,8 @@ void Game::Unload()
 	if(this->DefaultFont){this->DefaultFont->Release();}
 	this->DefaultFont = NULL;
 	if(this->menu){this->menu->Release();}
-	if(this->resource){this->resource->Release();}
-	//this->resource = NULL;
+	if(this->ResourceManager){this->ResourceManager->Release();}
+	//this->ResourceManager = NULL;
 
 	if(sprite){sprite->Release();}
 	sprite = NULL;

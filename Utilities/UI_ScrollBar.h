@@ -3,7 +3,7 @@
 #define UI_Scrollbar_h
 #include <d3d9types.h>
 #include "Button.h"
-#include "..\TextTools.h"
+#include "TextTools.h"
 
 class UI_Scrollbar 
 {

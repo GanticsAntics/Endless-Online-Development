@@ -1,10 +1,7 @@
-#include <Ptypes\pinet.h>
-#include <Ptypes\ptypes.h>
 #ifndef Connection_h
 #define Connection_h
-USING_PTYPES
 
-class Connection  : public thread
+class Connection  : public pt::thread
 {
 public:
 	LPVOID V_Game;
@@ -28,7 +25,7 @@ public:
 	bool ConnectionAccepted = false;
 	std::list<FileContainer> FileQueue;
 	//void ProcessFile(const char* m_Buffer, Connection::FileContainer m_filecontainer);
-	Connection () : thread(false){}
+	Connection () : pt::thread(false){}
 	pt::ipstream* ClientStream;
 	static bool ConnectionDropped;
 

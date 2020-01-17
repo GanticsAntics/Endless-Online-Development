@@ -2,13 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "..\stdafx.h"
+//#include "..\stdafx.h"
 #include "BitmapEx.h"
-#include <io.h>
-#include <stdio.h>
-#include <tchar.h>
-#include <stdlib.h>
-#include <math.h>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -601,8 +596,8 @@ void CBitmapEx::_ScaleNearestNeighbour(long horizontalPercent, long verticalPerc
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -624,10 +619,10 @@ void CBitmapEx::_ScaleNearestNeighbour(long horizontalPercent, long verticalPerc
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
 				dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
@@ -666,9 +661,9 @@ void CBitmapEx::_ScaleBilinear(long horizontalPercent, long verticalPercent)
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -690,14 +685,14 @@ void CBitmapEx::_ScaleBilinear(long horizontalPercent, long verticalPercent)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 				DWORD dwSrcTopLeft = dwSrcTotalOffset;
 				DWORD dwSrcTopRight = dwSrcTotalOffset + m_iBpp;
@@ -709,26 +704,26 @@ void CBitmapEx::_ScaleBilinear(long horizontalPercent, long verticalPercent)
 				DWORD dwSrcBottomRight = dwSrcTotalOffset + m_iPitch + m_iBpp;
 				if ((n >= m_bih.biWidth-1) || (m >= m_bih.biHeight-1))
 					dwSrcBottomRight = dwSrcTotalOffset;
-				fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-				fixed f_w2 = Mulfx(f_1-f_f, f_g);
-				fixed f_w3 = Mulfx(f_f, f_1-f_g);
-				fixed f_w4 = Mulfx(f_f, f_g);
+				bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+				bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+				bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+				bmfixed f_w4 = Mulfx(f_f, f_g);
 				_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 				_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 				_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 				_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-				fixed f_r1 = itofx(_GetRValue(pixel1));
-				fixed f_r2 = itofx(_GetRValue(pixel2));
-				fixed f_r3 = itofx(_GetRValue(pixel3));
-				fixed f_r4 = itofx(_GetRValue(pixel4));
-				fixed f_g1 = itofx(_GetGValue(pixel1));
-				fixed f_g2 = itofx(_GetGValue(pixel2));
-				fixed f_g3 = itofx(_GetGValue(pixel3));
-				fixed f_g4 = itofx(_GetGValue(pixel4));
-				fixed f_b1 = itofx(_GetBValue(pixel1));
-				fixed f_b2 = itofx(_GetBValue(pixel2));
-				fixed f_b3 = itofx(_GetBValue(pixel3));
-				fixed f_b4 = itofx(_GetBValue(pixel4));
+				bmfixed f_r1 = itofx(_GetRValue(pixel1));
+				bmfixed f_r2 = itofx(_GetRValue(pixel2));
+				bmfixed f_r3 = itofx(_GetRValue(pixel3));
+				bmfixed f_r4 = itofx(_GetRValue(pixel4));
+				bmfixed f_g1 = itofx(_GetGValue(pixel1));
+				bmfixed f_g2 = itofx(_GetGValue(pixel2));
+				bmfixed f_g3 = itofx(_GetGValue(pixel3));
+				bmfixed f_g4 = itofx(_GetGValue(pixel4));
+				bmfixed f_b1 = itofx(_GetBValue(pixel1));
+				bmfixed f_b2 = itofx(_GetBValue(pixel2));
+				bmfixed f_b3 = itofx(_GetBValue(pixel3));
+				bmfixed f_b4 = itofx(_GetBValue(pixel4));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -767,13 +762,13 @@ void CBitmapEx::_ScaleBicubic(long horizontalPercent, long verticalPercent)
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -795,14 +790,14 @@ void CBitmapEx::_ScaleBicubic(long horizontalPercent, long verticalPercent)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 				DWORD dwSrcOffsets[16];
 				dwSrcOffsets[0] = dwSrcTotalOffset - m_iPitch - m_iBpp;
@@ -851,50 +846,50 @@ void CBitmapEx::_ScaleBicubic(long horizontalPercent, long verticalPercent)
 				dwSrcOffsets[15] = dwSrcTotalOffset + m_iPitch + m_iPitch + m_iBpp + m_iBpp;
 				if ((m >= m_bih.biHeight-2) || (n >= m_bih.biWidth-2))
 					dwSrcOffsets[15] = dwSrcTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<3; k++)
 				{
-					fixed f = itofx(k)-f_f;
-					fixed f_fm1 = f - f_1;
-					fixed f_fp1 = f + f_1;
-					fixed f_fp2 = f + f_2;
-					fixed f_a = 0;
+					bmfixed f = itofx(k)-f_f;
+					bmfixed f_fm1 = f - f_1;
+					bmfixed f_fp1 = f + f_1;
+					bmfixed f_fp2 = f + f_2;
+					bmfixed f_a = 0;
 					if (f_fp2 > 0)
 						f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-					fixed f_b = 0;
+					bmfixed f_b = 0;
 					if (f_fp1 > 0)
 						f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-					fixed f_c = 0;
+					bmfixed f_c = 0;
 					if (f > 0)
 						f_c = Mulfx(f,Mulfx(f,f));
-					fixed f_d = 0;
+					bmfixed f_d = 0;
 					if (f_fm1 > 0)
 						f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-					fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+					bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 					for (long l=-1; l<3; l++)
 					{
-						fixed f = itofx(l)-f_g;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(l)-f_g;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-						fixed f_R = Mulfx(f_RY,f_RX);
+						bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_R = Mulfx(f_RY,f_RX);
 						long _k = ((k+1)*4) + (l+1);
-						fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 						f_red += Mulfx(f_rs,f_R);
 						f_green += Mulfx(f_gs,f_R);
 						f_blue += Mulfx(f_bs,f_R);
@@ -964,8 +959,8 @@ void CBitmapEx::_ScaleNearestNeighbour2(long width, long height)
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -987,10 +982,10 @@ void CBitmapEx::_ScaleNearestNeighbour2(long width, long height)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
 				dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
@@ -1027,9 +1022,9 @@ void CBitmapEx::_ScaleBilinear2(long width, long height)
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -1051,14 +1046,14 @@ void CBitmapEx::_ScaleBilinear2(long width, long height)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 				DWORD dwSrcTopLeft = dwSrcTotalOffset;
 				DWORD dwSrcTopRight = dwSrcTotalOffset + m_iBpp;
@@ -1070,26 +1065,26 @@ void CBitmapEx::_ScaleBilinear2(long width, long height)
 				DWORD dwSrcBottomRight = dwSrcTotalOffset + m_iPitch + m_iBpp;
 				if ((n >= m_bih.biWidth-1) || (m >= m_bih.biHeight-1))
 					dwSrcBottomRight = dwSrcTotalOffset;
-				fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-				fixed f_w2 = Mulfx(f_1-f_f, f_g);
-				fixed f_w3 = Mulfx(f_f, f_1-f_g);
-				fixed f_w4 = Mulfx(f_f, f_g);
+				bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+				bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+				bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+				bmfixed f_w4 = Mulfx(f_f, f_g);
 				_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 				_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 				_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 				_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-				fixed f_r1 = itofx(_GetRValue(pixel1));
-				fixed f_r2 = itofx(_GetRValue(pixel2));
-				fixed f_r3 = itofx(_GetRValue(pixel3));
-				fixed f_r4 = itofx(_GetRValue(pixel4));
-				fixed f_g1 = itofx(_GetGValue(pixel1));
-				fixed f_g2 = itofx(_GetGValue(pixel2));
-				fixed f_g3 = itofx(_GetGValue(pixel3));
-				fixed f_g4 = itofx(_GetGValue(pixel4));
-				fixed f_b1 = itofx(_GetBValue(pixel1));
-				fixed f_b2 = itofx(_GetBValue(pixel2));
-				fixed f_b3 = itofx(_GetBValue(pixel3));
-				fixed f_b4 = itofx(_GetBValue(pixel4));
+				bmfixed f_r1 = itofx(_GetRValue(pixel1));
+				bmfixed f_r2 = itofx(_GetRValue(pixel2));
+				bmfixed f_r3 = itofx(_GetRValue(pixel3));
+				bmfixed f_r4 = itofx(_GetRValue(pixel4));
+				bmfixed f_g1 = itofx(_GetGValue(pixel1));
+				bmfixed f_g2 = itofx(_GetGValue(pixel2));
+				bmfixed f_g3 = itofx(_GetGValue(pixel3));
+				bmfixed f_g4 = itofx(_GetGValue(pixel4));
+				bmfixed f_b1 = itofx(_GetBValue(pixel1));
+				bmfixed f_b2 = itofx(_GetBValue(pixel2));
+				bmfixed f_b3 = itofx(_GetBValue(pixel3));
+				bmfixed f_b4 = itofx(_GetBValue(pixel4));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -1126,13 +1121,13 @@ void CBitmapEx::_ScaleBicubic2(long width, long height)
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -1154,14 +1149,14 @@ void CBitmapEx::_ScaleBicubic2(long width, long height)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 				DWORD dwSrcOffsets[16];
 				dwSrcOffsets[0] = dwSrcTotalOffset - m_iPitch - m_iBpp;
@@ -1210,50 +1205,50 @@ void CBitmapEx::_ScaleBicubic2(long width, long height)
 				dwSrcOffsets[15] = dwSrcTotalOffset + m_iPitch + m_iPitch + m_iBpp + m_iBpp;
 				if ((m >= m_bih.biHeight-2) || (n >= m_bih.biWidth-2))
 					dwSrcOffsets[15] = dwSrcTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<3; k++)
 				{
-					fixed f = itofx(k)-f_f;
-					fixed f_fm1 = f - f_1;
-					fixed f_fp1 = f + f_1;
-					fixed f_fp2 = f + f_2;
-					fixed f_a = 0;
+					bmfixed f = itofx(k)-f_f;
+					bmfixed f_fm1 = f - f_1;
+					bmfixed f_fp1 = f + f_1;
+					bmfixed f_fp2 = f + f_2;
+					bmfixed f_a = 0;
 					if (f_fp2 > 0)
 						f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-					fixed f_b = 0;
+					bmfixed f_b = 0;
 					if (f_fp1 > 0)
 						f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-					fixed f_c = 0;
+					bmfixed f_c = 0;
 					if (f > 0)
 						f_c = Mulfx(f,Mulfx(f,f));
-					fixed f_d = 0;
+					bmfixed f_d = 0;
 					if (f_fm1 > 0)
 						f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-					fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+					bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 					for (long l=-1; l<3; l++)
 					{
-						fixed f = itofx(l)-f_g;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(l)-f_g;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-						fixed f_R = Mulfx(f_RY,f_RX);
+						bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_R = Mulfx(f_RY,f_RX);
 						long _k = ((k+1)*4) + (l+1);
-						fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 						f_red += Mulfx(f_rs,f_R);
 						f_green += Mulfx(f_gs,f_R);
 						f_blue += Mulfx(f_bs,f_R);
@@ -1322,11 +1317,11 @@ void CBitmapEx::_RotateNearestNeighbour(long degrees, _PIXEL bgColor)
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_0_5 = ftofx(0.5f);
-		fixed f_H = itofx(m_bih.biHeight/2);
-		fixed f_W = itofx(m_bih.biWidth/2);
-		fixed f_cos = ftofx(cos(-_angle));
-		fixed f_sin = ftofx(sin(-_angle));
+		bmfixed f_0_5 = ftofx(0.5f);
+		bmfixed f_H = itofx(m_bih.biHeight/2);
+		bmfixed f_W = itofx(m_bih.biWidth/2);
+		bmfixed f_cos = ftofx(cos(-_angle));
+		bmfixed f_sin = ftofx(sin(-_angle));
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -1348,10 +1343,10 @@ void CBitmapEx::_RotateNearestNeighbour(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i-_height/2);
-				fixed f_j = itofx(j-_width/2);
-				fixed f_m = Mulfx(f_j,f_sin) + Mulfx(f_i,f_cos) + f_0_5 + f_H;
-				fixed f_n = Mulfx(f_j,f_cos) - Mulfx(f_i,f_sin) + f_0_5 + f_W;
+				bmfixed f_i = itofx(i-_height/2);
+				bmfixed f_j = itofx(j-_width/2);
+				bmfixed f_m = Mulfx(f_j,f_sin) + Mulfx(f_i,f_cos) + f_0_5 + f_H;
+				bmfixed f_n = Mulfx(f_j,f_cos) - Mulfx(f_i,f_sin) + f_0_5 + f_W;
 				long m = fxtoi(f_m);
 				long n = fxtoi(f_n);
 				if ((m > 0) && (m < m_bih.biHeight-1) && (n > 0) && (n < m_bih.biWidth-1))
@@ -1392,12 +1387,12 @@ void CBitmapEx::_RotateBilinear(long degrees, _PIXEL bgColor)
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_0_5 = ftofx(0.5f);
-		fixed f_H = itofx(m_bih.biHeight/2);
-		fixed f_W = itofx(m_bih.biWidth/2);
-		fixed f_cos = ftofx(cos(-_angle));
-		fixed f_sin = ftofx(sin(-_angle));
-		fixed f_1 = itofx(1);
+		bmfixed f_0_5 = ftofx(0.5f);
+		bmfixed f_H = itofx(m_bih.biHeight/2);
+		bmfixed f_W = itofx(m_bih.biWidth/2);
+		bmfixed f_cos = ftofx(cos(-_angle));
+		bmfixed f_sin = ftofx(sin(-_angle));
+		bmfixed f_1 = itofx(1);
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -1419,16 +1414,16 @@ void CBitmapEx::_RotateBilinear(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i-_height/2);
-				fixed f_j = itofx(j-_width/2);
-				fixed f_m = Mulfx(f_j,f_sin) + Mulfx(f_i,f_cos) + f_0_5 + f_H;
-				fixed f_n = Mulfx(f_j,f_cos) - Mulfx(f_i,f_sin) + f_0_5 + f_W;
+				bmfixed f_i = itofx(i-_height/2);
+				bmfixed f_j = itofx(j-_width/2);
+				bmfixed f_m = Mulfx(f_j,f_sin) + Mulfx(f_i,f_cos) + f_0_5 + f_H;
+				bmfixed f_n = Mulfx(f_j,f_cos) - Mulfx(f_i,f_sin) + f_0_5 + f_W;
 				long m = fxtoi(f_m);
 				long n = fxtoi(f_n);
 				if ((m > 0) && (m < m_bih.biHeight-1) && (n > 0) && (n < m_bih.biWidth-1))
 				{
-					fixed f_f = f_m - itofx(m);
-					fixed f_g = f_n - itofx(n);
+					bmfixed f_f = f_m - itofx(m);
+					bmfixed f_g = f_n - itofx(n);
 					dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 					DWORD dwSrcTopLeft = dwSrcTotalOffset;
 					DWORD dwSrcTopRight = dwSrcTotalOffset + m_iBpp;
@@ -1440,29 +1435,29 @@ void CBitmapEx::_RotateBilinear(long degrees, _PIXEL bgColor)
 					DWORD dwSrcBottomRight = dwSrcTotalOffset + m_iPitch + m_iBpp;
 					if ((n >= m_bih.biWidth-1) || (m >= m_bih.biHeight-1))
 						dwSrcBottomRight = dwSrcTotalOffset;
-					fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-					fixed f_w2 = Mulfx(f_1-f_f, f_g);
-					fixed f_w3 = Mulfx(f_f, f_1-f_g);
-					fixed f_w4 = Mulfx(f_f, f_g);
+					bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+					bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+					bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+					bmfixed f_w4 = Mulfx(f_f, f_g);
 					_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 					_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 					_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 					_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-					fixed f_r1 = itofx(_GetRValue(pixel1));
-					fixed f_r2 = itofx(_GetRValue(pixel2));
-					fixed f_r3 = itofx(_GetRValue(pixel3));
-					fixed f_r4 = itofx(_GetRValue(pixel4));
-					fixed f_g1 = itofx(_GetGValue(pixel1));
-					fixed f_g2 = itofx(_GetGValue(pixel2));
-					fixed f_g3 = itofx(_GetGValue(pixel3));
-					fixed f_g4 = itofx(_GetGValue(pixel4));
-					fixed f_b1 = itofx(_GetBValue(pixel1));
-					fixed f_b2 = itofx(_GetBValue(pixel2));
-					fixed f_b3 = itofx(_GetBValue(pixel3));
-					fixed f_b4 = itofx(_GetBValue(pixel4));
-					fixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
-					fixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
-					fixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
+					bmfixed f_r1 = itofx(_GetRValue(pixel1));
+					bmfixed f_r2 = itofx(_GetRValue(pixel2));
+					bmfixed f_r3 = itofx(_GetRValue(pixel3));
+					bmfixed f_r4 = itofx(_GetRValue(pixel4));
+					bmfixed f_g1 = itofx(_GetGValue(pixel1));
+					bmfixed f_g2 = itofx(_GetGValue(pixel2));
+					bmfixed f_g3 = itofx(_GetGValue(pixel3));
+					bmfixed f_g4 = itofx(_GetGValue(pixel4));
+					bmfixed f_b1 = itofx(_GetBValue(pixel1));
+					bmfixed f_b2 = itofx(_GetBValue(pixel2));
+					bmfixed f_b3 = itofx(_GetBValue(pixel3));
+					bmfixed f_b4 = itofx(_GetBValue(pixel4));
+					bmfixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
+					bmfixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
+					bmfixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
 					BYTE red = (BYTE)max(0, min(255, fxtoi(f_red)));
 					BYTE green = (BYTE)max(0, min(255, fxtoi(f_green)));
 					BYTE blue = (BYTE)max(0, min(255, fxtoi(f_blue)));
@@ -1501,16 +1496,16 @@ void CBitmapEx::_RotateBicubic(long degrees, _PIXEL bgColor)
 		long _pitch = m_iBpp * _width;
 		while ((_pitch & 3) != 0)
 			_pitch++;
-		fixed f_0_5 = ftofx(0.5f);
-		fixed f_H = itofx(m_bih.biHeight/2);
-		fixed f_W = itofx(m_bih.biWidth/2);
-		fixed f_cos = ftofx(cos(-_angle));
-		fixed f_sin = ftofx(sin(-_angle));
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_0_5 = ftofx(0.5f);
+		bmfixed f_H = itofx(m_bih.biHeight/2);
+		bmfixed f_W = itofx(m_bih.biWidth/2);
+		bmfixed f_cos = ftofx(cos(-_angle));
+		bmfixed f_sin = ftofx(sin(-_angle));
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
@@ -1532,16 +1527,16 @@ void CBitmapEx::_RotateBicubic(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i-_height/2);
-				fixed f_j = itofx(j-_width/2);
-				fixed f_m = Mulfx(f_j,f_sin) + Mulfx(f_i,f_cos) + f_0_5 + f_H;
-				fixed f_n = Mulfx(f_j,f_cos) - Mulfx(f_i,f_sin) + f_0_5 + f_W;
+				bmfixed f_i = itofx(i-_height/2);
+				bmfixed f_j = itofx(j-_width/2);
+				bmfixed f_m = Mulfx(f_j,f_sin) + Mulfx(f_i,f_cos) + f_0_5 + f_H;
+				bmfixed f_n = Mulfx(f_j,f_cos) - Mulfx(f_i,f_sin) + f_0_5 + f_W;
 				long m = fxtoi(f_m);
 				long n = fxtoi(f_n);
 				if ((m > 0) && (m < m_bih.biHeight-1) && (n > 0) && (n < m_bih.biWidth-1))
 				{
-					fixed f_f = f_m - itofx(m);
-					fixed f_g = f_n - itofx(n);
+					bmfixed f_f = f_m - itofx(m);
+					bmfixed f_g = f_n - itofx(n);
 					dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 					DWORD dwSrcOffsets[16];
 					dwSrcOffsets[0] = dwSrcTotalOffset - m_iPitch - m_iBpp;
@@ -1590,50 +1585,50 @@ void CBitmapEx::_RotateBicubic(long degrees, _PIXEL bgColor)
 					dwSrcOffsets[15] = dwSrcTotalOffset + m_iPitch + m_iPitch + m_iBpp + m_iBpp;
 					if ((m >= m_bih.biHeight-2) || (n >= m_bih.biWidth-2))
 						dwSrcOffsets[15] = dwSrcTotalOffset;
-					fixed f_red=0, f_green=0, f_blue=0;
+					bmfixed f_red=0, f_green=0, f_blue=0;
 					for (long k=-1; k<3; k++)
 					{
-						fixed f = itofx(k)-f_f;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(k)-f_f;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 						for (long l=-1; l<3; l++)
 						{
-							fixed f = itofx(l)-f_g;
-							fixed f_fm1 = f - f_1;
-							fixed f_fp1 = f + f_1;
-							fixed f_fp2 = f + f_2;
-							fixed f_a = 0;
+							bmfixed f = itofx(l)-f_g;
+							bmfixed f_fm1 = f - f_1;
+							bmfixed f_fp1 = f + f_1;
+							bmfixed f_fp2 = f + f_2;
+							bmfixed f_a = 0;
 							if (f_fp2 > 0)
 								f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-							fixed f_b = 0;
+							bmfixed f_b = 0;
 							if (f_fp1 > 0)
 								f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-							fixed f_c = 0;
+							bmfixed f_c = 0;
 							if (f > 0)
 								f_c = Mulfx(f,Mulfx(f,f));
-							fixed f_d = 0;
+							bmfixed f_d = 0;
 							if (f_fm1 > 0)
 								f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-							fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-							fixed f_R = Mulfx(f_RY,f_RX);
+							bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+							bmfixed f_R = Mulfx(f_RY,f_RX);
 							long _k = ((k+1)*4) + (l+1);
-							fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 							f_red += Mulfx(f_rs,f_R);
 							f_green += Mulfx(f_gs,f_R);
 							f_blue += Mulfx(f_bs,f_R);
@@ -1793,8 +1788,8 @@ void CBitmapEx::_ShearVerticalNearestNeighbour(long degrees, _PIXEL bgColor)
 		long _offset = (long)((float)m_bih.biWidth * _alpha + 0.5f);
 		long _height = m_bih.biHeight + abs(_offset);
 		long _width = m_bih.biWidth;
-		fixed f_alpha = ftofx(_alpha);
-		fixed f_offset = ftofx(_offset);
+		bmfixed f_alpha = ftofx(_alpha);
+		bmfixed f_offset = ftofx(_offset);
 
 		// Create temporary bitmap
 		long _pitch = _width * m_iBpp;
@@ -1819,14 +1814,14 @@ void CBitmapEx::_ShearVerticalNearestNeighbour(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_y;
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_y;
 				if (f_offset >= 0)
 					f_y = f_i - Mulfx(f_j,f_alpha);
 				else
 					f_y = (f_i+f_offset) - Mulfx(f_j,f_alpha);
-				fixed f_x = f_j;
+				bmfixed f_x = f_j;
 				long m = fxtoi(f_y);
 				long n = fxtoi(f_x);
 				if ((m >= 0) && (m <= m_bih.biHeight-1) && (n >= 0) && (n <= m_bih.biWidth-1))
@@ -1865,9 +1860,9 @@ void CBitmapEx::_ShearVerticalBilinear(long degrees, _PIXEL bgColor)
 		long _offset = (long)((float)m_bih.biWidth * _alpha + 0.5f);
 		long _height = m_bih.biHeight + abs(_offset);
 		long _width = m_bih.biWidth;
-		fixed f_alpha = ftofx(_alpha);
-		fixed f_offset = ftofx(_offset);
-		fixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alpha);
+		bmfixed f_offset = ftofx(_offset);
+		bmfixed f_1 = itofx(1);
 
 		// Create temporary bitmap
 		long _pitch = _width * m_iBpp;
@@ -1892,20 +1887,20 @@ void CBitmapEx::_ShearVerticalBilinear(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_y;
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_y;
 				if (f_offset >= 0)
 					f_y = f_i - Mulfx(f_j,f_alpha);
 				else
 					f_y = (f_i+f_offset) - Mulfx(f_j,f_alpha);
-				fixed f_x = f_j;
+				bmfixed f_x = f_j;
 				long m = fxtoi(f_y);
 				long n = fxtoi(f_x);
 				if ((m >= 0) && (m <= m_bih.biHeight-1) && (n >= 0) && (n <= m_bih.biWidth-1))
 				{
-					fixed f_f = f_y - itofx(m);
-					fixed f_g = f_x - itofx(n);
+					bmfixed f_f = f_y - itofx(m);
+					bmfixed f_g = f_x - itofx(n);
 					dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 					DWORD dwSrcTopLeft = dwSrcTotalOffset;
 					DWORD dwSrcTopRight = dwSrcTotalOffset + m_iBpp;
@@ -1917,29 +1912,29 @@ void CBitmapEx::_ShearVerticalBilinear(long degrees, _PIXEL bgColor)
 					DWORD dwSrcBottomRight = dwSrcTotalOffset + m_iPitch + m_iBpp;
 					if ((n >= m_bih.biWidth-1) || (m >= m_bih.biHeight-1))
 						dwSrcBottomRight = dwSrcTotalOffset;
-					fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-					fixed f_w2 = Mulfx(f_1-f_f, f_g);
-					fixed f_w3 = Mulfx(f_f, f_1-f_g);
-					fixed f_w4 = Mulfx(f_f, f_g);
+					bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+					bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+					bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+					bmfixed f_w4 = Mulfx(f_f, f_g);
 					_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 					_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 					_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 					_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-					fixed f_r1 = itofx(_GetRValue(pixel1));
-					fixed f_r2 = itofx(_GetRValue(pixel2));
-					fixed f_r3 = itofx(_GetRValue(pixel3));
-					fixed f_r4 = itofx(_GetRValue(pixel4));
-					fixed f_g1 = itofx(_GetGValue(pixel1));
-					fixed f_g2 = itofx(_GetGValue(pixel2));
-					fixed f_g3 = itofx(_GetGValue(pixel3));
-					fixed f_g4 = itofx(_GetGValue(pixel4));
-					fixed f_b1 = itofx(_GetBValue(pixel1));
-					fixed f_b2 = itofx(_GetBValue(pixel2));
-					fixed f_b3 = itofx(_GetBValue(pixel3));
-					fixed f_b4 = itofx(_GetBValue(pixel4));
-					fixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
-					fixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
-					fixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
+					bmfixed f_r1 = itofx(_GetRValue(pixel1));
+					bmfixed f_r2 = itofx(_GetRValue(pixel2));
+					bmfixed f_r3 = itofx(_GetRValue(pixel3));
+					bmfixed f_r4 = itofx(_GetRValue(pixel4));
+					bmfixed f_g1 = itofx(_GetGValue(pixel1));
+					bmfixed f_g2 = itofx(_GetGValue(pixel2));
+					bmfixed f_g3 = itofx(_GetGValue(pixel3));
+					bmfixed f_g4 = itofx(_GetGValue(pixel4));
+					bmfixed f_b1 = itofx(_GetBValue(pixel1));
+					bmfixed f_b2 = itofx(_GetBValue(pixel2));
+					bmfixed f_b3 = itofx(_GetBValue(pixel3));
+					bmfixed f_b4 = itofx(_GetBValue(pixel4));
+					bmfixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
+					bmfixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
+					bmfixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
 					BYTE red = (BYTE)max(0, min(255, fxtoi(f_red)));
 					BYTE green = (BYTE)max(0, min(255, fxtoi(f_green)));
 					BYTE blue = (BYTE)max(0, min(255, fxtoi(f_blue)));
@@ -1976,13 +1971,13 @@ void CBitmapEx::_ShearVerticalBicubic(long degrees, _PIXEL bgColor)
 		long _offset = (long)((float)m_bih.biWidth * _alpha + 0.5f);
 		long _height = m_bih.biHeight + abs(_offset);
 		long _width = m_bih.biWidth;
-		fixed f_alpha = ftofx(_alpha);
-		fixed f_offset = ftofx(_offset);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_alpha = ftofx(_alpha);
+		bmfixed f_offset = ftofx(_offset);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Create temporary bitmap
 		long _pitch = _width * m_iBpp;
@@ -2007,20 +2002,20 @@ void CBitmapEx::_ShearVerticalBicubic(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_y;
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_y;
 				if (f_offset >= 0)
 					f_y = f_i - Mulfx(f_j,f_alpha);
 				else
 					f_y = (f_i+f_offset) - Mulfx(f_j,f_alpha);
-				fixed f_x = f_j;
+				bmfixed f_x = f_j;
 				long m = fxtoi(f_y);
 				long n = fxtoi(f_x);
 				if ((m >= 0) && (m <= m_bih.biHeight-1) && (n >= 0) && (n <= m_bih.biWidth-1))
 				{
-					fixed f_f = f_y - itofx(m);
-					fixed f_g = f_x - itofx(n);
+					bmfixed f_f = f_y - itofx(m);
+					bmfixed f_g = f_x - itofx(n);
 					dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 					DWORD dwSrcOffsets[16];
 					dwSrcOffsets[0] = dwSrcTotalOffset - m_iPitch - m_iBpp;
@@ -2069,50 +2064,50 @@ void CBitmapEx::_ShearVerticalBicubic(long degrees, _PIXEL bgColor)
 					dwSrcOffsets[15] = dwSrcTotalOffset + m_iPitch + m_iPitch + m_iBpp + m_iBpp;
 					if ((m >= m_bih.biHeight-2) || (n >= m_bih.biWidth-2))
 						dwSrcOffsets[15] = dwSrcTotalOffset;
-					fixed f_red=0, f_green=0, f_blue=0;
+					bmfixed f_red=0, f_green=0, f_blue=0;
 					for (long k=-1; k<3; k++)
 					{
-						fixed f = itofx(k)-f_f;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(k)-f_f;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 						for (long l=-1; l<3; l++)
 						{
-							fixed f = itofx(l)-f_g;
-							fixed f_fm1 = f - f_1;
-							fixed f_fp1 = f + f_1;
-							fixed f_fp2 = f + f_2;
-							fixed f_a = 0;
+							bmfixed f = itofx(l)-f_g;
+							bmfixed f_fm1 = f - f_1;
+							bmfixed f_fp1 = f + f_1;
+							bmfixed f_fp2 = f + f_2;
+							bmfixed f_a = 0;
 							if (f_fp2 > 0)
 								f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-							fixed f_b = 0;
+							bmfixed f_b = 0;
 							if (f_fp1 > 0)
 								f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-							fixed f_c = 0;
+							bmfixed f_c = 0;
 							if (f > 0)
 								f_c = Mulfx(f,Mulfx(f,f));
-							fixed f_d = 0;
+							bmfixed f_d = 0;
 							if (f_fm1 > 0)
 								f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-							fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-							fixed f_R = Mulfx(f_RY,f_RX);
+							bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+							bmfixed f_R = Mulfx(f_RY,f_RX);
 							long _k = ((k+1)*4) + (l+1);
-							fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 							f_red += Mulfx(f_rs,f_R);
 							f_green += Mulfx(f_gs,f_R);
 							f_blue += Mulfx(f_bs,f_R);
@@ -2182,8 +2177,8 @@ void CBitmapEx::_ShearHorizontalNearestNeighbour(long degrees, _PIXEL bgColor)
 		long _offset = (long)((float)m_bih.biHeight * _alpha + 0.5f);
 		long _height = m_bih.biHeight;
 		long _width = m_bih.biWidth + abs(_offset);
-		fixed f_alpha = ftofx(_alpha);
-		fixed f_offset = ftofx(_offset);
+		bmfixed f_alpha = ftofx(_alpha);
+		bmfixed f_offset = ftofx(_offset);
 
 		// Create temporary bitmap
 		long _pitch = _width * m_iBpp;
@@ -2208,10 +2203,10 @@ void CBitmapEx::_ShearHorizontalNearestNeighbour(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_y = f_i;
-				fixed f_x;
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_y = f_i;
+				bmfixed f_x;
 				if (f_offset >= 0)
 					f_x = f_j - Mulfx(f_i,f_alpha);
 				else
@@ -2254,9 +2249,9 @@ void CBitmapEx::_ShearHorizontalBilinear(long degrees, _PIXEL bgColor)
 		long _offset = (long)((float)m_bih.biHeight * _alpha + 0.5f);
 		long _height = m_bih.biHeight;
 		long _width = m_bih.biWidth + abs(_offset);
-		fixed f_alpha = ftofx(_alpha);
-		fixed f_offset = ftofx(_offset);
-		fixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alpha);
+		bmfixed f_offset = ftofx(_offset);
+		bmfixed f_1 = itofx(1);
 
 		// Create temporary bitmap
 		long _pitch = _width * m_iBpp;
@@ -2281,10 +2276,10 @@ void CBitmapEx::_ShearHorizontalBilinear(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_y = f_i;
-				fixed f_x;
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_y = f_i;
+				bmfixed f_x;
 				if (f_offset >= 0)
 					f_x = f_j - Mulfx(f_i,f_alpha);
 				else
@@ -2293,8 +2288,8 @@ void CBitmapEx::_ShearHorizontalBilinear(long degrees, _PIXEL bgColor)
 				long n = fxtoi(f_x);
 				if ((m >= 0) && (m <= m_bih.biHeight-1) && (n >= 0) && (n <= m_bih.biWidth-1))
 				{
-					fixed f_f = f_y - itofx(m);
-					fixed f_g = f_x - itofx(n);
+					bmfixed f_f = f_y - itofx(m);
+					bmfixed f_g = f_x - itofx(n);
 					dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 					DWORD dwSrcTopLeft = dwSrcTotalOffset;
 					DWORD dwSrcTopRight = dwSrcTotalOffset + m_iBpp;
@@ -2306,29 +2301,29 @@ void CBitmapEx::_ShearHorizontalBilinear(long degrees, _PIXEL bgColor)
 					DWORD dwSrcBottomRight = dwSrcTotalOffset + m_iPitch + m_iBpp;
 					if ((n >= m_bih.biWidth-1) || (m >= m_bih.biHeight-1))
 						dwSrcBottomRight = dwSrcTotalOffset;
-					fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-					fixed f_w2 = Mulfx(f_1-f_f, f_g);
-					fixed f_w3 = Mulfx(f_f, f_1-f_g);
-					fixed f_w4 = Mulfx(f_f, f_g);
+					bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+					bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+					bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+					bmfixed f_w4 = Mulfx(f_f, f_g);
 					_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 					_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 					_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 					_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-					fixed f_r1 = itofx(_GetRValue(pixel1));
-					fixed f_r2 = itofx(_GetRValue(pixel2));
-					fixed f_r3 = itofx(_GetRValue(pixel3));
-					fixed f_r4 = itofx(_GetRValue(pixel4));
-					fixed f_g1 = itofx(_GetGValue(pixel1));
-					fixed f_g2 = itofx(_GetGValue(pixel2));
-					fixed f_g3 = itofx(_GetGValue(pixel3));
-					fixed f_g4 = itofx(_GetGValue(pixel4));
-					fixed f_b1 = itofx(_GetBValue(pixel1));
-					fixed f_b2 = itofx(_GetBValue(pixel2));
-					fixed f_b3 = itofx(_GetBValue(pixel3));
-					fixed f_b4 = itofx(_GetBValue(pixel4));
-					fixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
-					fixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
-					fixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
+					bmfixed f_r1 = itofx(_GetRValue(pixel1));
+					bmfixed f_r2 = itofx(_GetRValue(pixel2));
+					bmfixed f_r3 = itofx(_GetRValue(pixel3));
+					bmfixed f_r4 = itofx(_GetRValue(pixel4));
+					bmfixed f_g1 = itofx(_GetGValue(pixel1));
+					bmfixed f_g2 = itofx(_GetGValue(pixel2));
+					bmfixed f_g3 = itofx(_GetGValue(pixel3));
+					bmfixed f_g4 = itofx(_GetGValue(pixel4));
+					bmfixed f_b1 = itofx(_GetBValue(pixel1));
+					bmfixed f_b2 = itofx(_GetBValue(pixel2));
+					bmfixed f_b3 = itofx(_GetBValue(pixel3));
+					bmfixed f_b4 = itofx(_GetBValue(pixel4));
+					bmfixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
+					bmfixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
+					bmfixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
 					BYTE red = (BYTE)max(0, min(255, fxtoi(f_red)));
 					BYTE green = (BYTE)max(0, min(255, fxtoi(f_green)));
 					BYTE blue = (BYTE)max(0, min(255, fxtoi(f_blue)));
@@ -2365,13 +2360,13 @@ void CBitmapEx::_ShearHorizontalBicubic(long degrees, _PIXEL bgColor)
 		long _offset = (long)((float)m_bih.biHeight * _alpha + 0.5f);
 		long _height = m_bih.biHeight;
 		long _width = m_bih.biWidth + abs(_offset);
-		fixed f_alpha = ftofx(_alpha);
-		fixed f_offset = ftofx(_offset);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_alpha = ftofx(_alpha);
+		bmfixed f_offset = ftofx(_offset);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Create temporary bitmap
 		long _pitch = _width * m_iBpp;
@@ -2396,10 +2391,10 @@ void CBitmapEx::_ShearHorizontalBicubic(long degrees, _PIXEL bgColor)
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_y = f_i;
-				fixed f_x;
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_y = f_i;
+				bmfixed f_x;
 				if (f_offset >= 0)
 					f_x = f_j - Mulfx(f_i,f_alpha);
 				else
@@ -2408,8 +2403,8 @@ void CBitmapEx::_ShearHorizontalBicubic(long degrees, _PIXEL bgColor)
 				long n = fxtoi(f_x);
 				if ((m >= 0) && (m <= m_bih.biHeight-1) && (n >= 0) && (n <= m_bih.biWidth-1))
 				{
-					fixed f_f = f_y - itofx(m);
-					fixed f_g = f_x - itofx(n);
+					bmfixed f_f = f_y - itofx(m);
+					bmfixed f_g = f_x - itofx(n);
 					dwSrcTotalOffset = m*m_iPitch + n*m_iBpp;
 					DWORD dwSrcOffsets[16];
 					dwSrcOffsets[0] = dwSrcTotalOffset - m_iPitch - m_iBpp;
@@ -2458,50 +2453,50 @@ void CBitmapEx::_ShearHorizontalBicubic(long degrees, _PIXEL bgColor)
 					dwSrcOffsets[15] = dwSrcTotalOffset + m_iPitch + m_iPitch + m_iBpp + m_iBpp;
 					if ((m >= m_bih.biHeight-2) || (n >= m_bih.biWidth-2))
 						dwSrcOffsets[15] = dwSrcTotalOffset;
-					fixed f_red=0, f_green=0, f_blue=0;
+					bmfixed f_red=0, f_green=0, f_blue=0;
 					for (long k=-1; k<3; k++)
 					{
-						fixed f = itofx(k)-f_f;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(k)-f_f;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 						for (long l=-1; l<3; l++)
 						{
-							fixed f = itofx(l)-f_g;
-							fixed f_fm1 = f - f_1;
-							fixed f_fp1 = f + f_1;
-							fixed f_fp2 = f + f_2;
-							fixed f_a = 0;
+							bmfixed f = itofx(l)-f_g;
+							bmfixed f_fm1 = f - f_1;
+							bmfixed f_fp1 = f + f_1;
+							bmfixed f_fp2 = f + f_2;
+							bmfixed f_a = 0;
 							if (f_fp2 > 0)
 								f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-							fixed f_b = 0;
+							bmfixed f_b = 0;
 							if (f_fp1 > 0)
 								f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-							fixed f_c = 0;
+							bmfixed f_c = 0;
 							if (f > 0)
 								f_c = Mulfx(f,Mulfx(f,f));
-							fixed f_d = 0;
+							bmfixed f_d = 0;
 							if (f_fm1 > 0)
 								f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-							fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-							fixed f_R = Mulfx(f_RY,f_RX);
+							bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+							bmfixed f_R = Mulfx(f_RY,f_RX);
 							long _k = ((k+1)*4) + (l+1);
-							fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 							f_red += Mulfx(f_rs,f_R);
 							f_green += Mulfx(f_gs,f_R);
 							f_blue += Mulfx(f_bs,f_R);
@@ -2894,9 +2889,9 @@ void CBitmapEx::Grayscale()
 	if (IsValid())
 	{
 		// Calculate grayscale params
-		fixed f_w1 = ftofx(0.299f);
-		fixed f_w2 = ftofx(0.587f);
-		fixed f_w3 = ftofx(0.114f);
+		bmfixed f_w1 = ftofx(0.299f);
+		bmfixed f_w2 = ftofx(0.587f);
+		bmfixed f_w3 = ftofx(0.114f);
 
 /*		// Grayscale bitmap
 		DWORD dwHorizontalOffset;
@@ -2912,10 +2907,10 @@ void CBitmapEx::Grayscale()
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				fixed f_red = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
+				bmfixed f_red = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
 				_PIXEL newPixel = _RGB(fxtoi(f_value),fxtoi(f_value),fxtoi(f_value));
 				lpDstData[dwTotalOffset>>2] = newPixel;
 
@@ -2981,12 +2976,12 @@ void CBitmapEx::Sepia(long depth)
 	if (IsValid())
 	{
 		// Calculate sepia params
-		fixed f_w1 = ftofx(0.299f);
-		fixed f_w2 = ftofx(0.587f);
-		fixed f_w3 = ftofx(0.114f);
+		bmfixed f_w1 = ftofx(0.299f);
+		bmfixed f_w2 = ftofx(0.587f);
+		bmfixed f_w3 = ftofx(0.114f);
 		long _depth = max(0, min(100, depth));
-		fixed f_depth = itofx(_depth);
-		fixed f_depth2 = Mulfx(itofx(2),f_depth);
+		bmfixed f_depth = itofx(_depth);
+		bmfixed f_depth2 = Mulfx(itofx(2),f_depth);
 
 /*		// Sepia bitmap
 		DWORD dwHorizontalOffset;
@@ -3002,10 +2997,10 @@ void CBitmapEx::Sepia(long depth)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				fixed f_red = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
+				bmfixed f_red = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
 				BYTE red = (BYTE)fxtoi(f_value+f_depth2);
 				if (red < ((_depth<<1)-1))
 					red = 255;
@@ -3093,15 +3088,15 @@ void CBitmapEx::Emboss()
 	if (IsValid())
 	{
 		// Calculate emboss params
-		fixed f_w[9] = {itofx(-1), itofx(-1), itofx(0),
+		bmfixed f_w[9] = {itofx(-1), itofx(-1), itofx(0),
 						itofx(-1), itofx(0), itofx(1),
 						itofx(0), itofx(1), itofx(1)
 		};
-		fixed f_w1 = ftofx(0.299f);
-		fixed f_w2 = ftofx(0.587f);
-		fixed f_w3 = ftofx(0.114f);
-		fixed f_128 = itofx(128);
-		fixed f_255 = itofx(255);
+		bmfixed f_w1 = ftofx(0.299f);
+		bmfixed f_w2 = ftofx(0.587f);
+		bmfixed f_w3 = ftofx(0.114f);
+		bmfixed f_128 = itofx(128);
+		bmfixed f_255 = itofx(255);
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -3148,12 +3143,12 @@ void CBitmapEx::Emboss()
 				dwSrcOffsets[8] = dwTotalOffset + m_iPitch + m_iBpp;
 				if ((i >= m_bih.biHeight-1) || (j >= m_bih.biWidth-1))
 					dwSrcOffsets[8] = dwTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=0; k<9; k++)
 				{
-					fixed f_r = itofx(_GetRValue(lpSrcData[dwSrcOffsets[k]>>2]));
-					fixed f_g = itofx(_GetGValue(lpSrcData[dwSrcOffsets[k]>>2]));
-					fixed f_b = itofx(_GetBValue(lpSrcData[dwSrcOffsets[k]>>2]));
+					bmfixed f_r = itofx(_GetRValue(lpSrcData[dwSrcOffsets[k]>>2]));
+					bmfixed f_g = itofx(_GetGValue(lpSrcData[dwSrcOffsets[k]>>2]));
+					bmfixed f_b = itofx(_GetBValue(lpSrcData[dwSrcOffsets[k]>>2]));
 					f_red += Mulfx(f_r,f_w[k]);
 					f_green += Mulfx(f_g,f_w[k]);
 					f_blue += Mulfx(f_b,f_w[k]);
@@ -3161,7 +3156,7 @@ void CBitmapEx::Emboss()
 				f_red = max(0, min(f_255, f_red+f_128));
 				f_green = max(0, min(f_255, f_green+f_128));
 				f_blue = max(0, min(f_255, f_blue+f_128));
-				fixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
+				bmfixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
 				_PIXEL newPixel = _RGB(fxtoi(f_value),fxtoi(f_value),fxtoi(f_value));
 				lpDstData[dwTotalOffset>>2] = newPixel;
 
@@ -3185,15 +3180,15 @@ void CBitmapEx::Engrave()
 	if (IsValid())
 	{
 		// Calculate engrave params
-		fixed f_w[9] = {itofx(1), itofx(1), itofx(0),
+		bmfixed f_w[9] = {itofx(1), itofx(1), itofx(0),
 						itofx(1), itofx(0), itofx(-1),
 						itofx(0), itofx(-1), itofx(-1)
 		};
-		fixed f_w1 = ftofx(0.299f);
-		fixed f_w2 = ftofx(0.587f);
-		fixed f_w3 = ftofx(0.114f);
-		fixed f_128 = itofx(128);
-		fixed f_255 = itofx(255);
+		bmfixed f_w1 = ftofx(0.299f);
+		bmfixed f_w2 = ftofx(0.587f);
+		bmfixed f_w3 = ftofx(0.114f);
+		bmfixed f_128 = itofx(128);
+		bmfixed f_255 = itofx(255);
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -3240,12 +3235,12 @@ void CBitmapEx::Engrave()
 				dwSrcOffsets[8] = dwTotalOffset + m_iPitch + m_iBpp;
 				if ((i >= m_bih.biHeight-1) || (j >= m_bih.biWidth-1))
 					dwSrcOffsets[8] = dwTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=0; k<9; k++)
 				{
-					fixed f_r = itofx(_GetRValue(lpSrcData[dwSrcOffsets[k]>>2]));
-					fixed f_g = itofx(_GetGValue(lpSrcData[dwSrcOffsets[k]>>2]));
-					fixed f_b = itofx(_GetBValue(lpSrcData[dwSrcOffsets[k]>>2]));
+					bmfixed f_r = itofx(_GetRValue(lpSrcData[dwSrcOffsets[k]>>2]));
+					bmfixed f_g = itofx(_GetGValue(lpSrcData[dwSrcOffsets[k]>>2]));
+					bmfixed f_b = itofx(_GetBValue(lpSrcData[dwSrcOffsets[k]>>2]));
 					f_red += Mulfx(f_r,f_w[k]);
 					f_green += Mulfx(f_g,f_w[k]);
 					f_blue += Mulfx(f_b,f_w[k]);
@@ -3253,7 +3248,7 @@ void CBitmapEx::Engrave()
 				f_red = max(0, min(f_255, f_red+f_128));
 				f_green = max(0, min(f_255, f_green+f_128));
 				f_blue = max(0, min(f_255, f_blue+f_128));
-				fixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
+				bmfixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
 				_PIXEL newPixel = _RGB(fxtoi(f_value),fxtoi(f_value),fxtoi(f_value));
 				lpDstData[dwTotalOffset>>2] = newPixel;
 
@@ -3278,7 +3273,7 @@ void CBitmapEx::Pixelize(long size)
 	{
 		// Calculate pixelize params
 		long _size = max(1, min((m_bih.biWidth>>4), size));
-		fixed f_size = Divfx(itofx(1),itofx(_size*_size));
+		bmfixed f_size = Divfx(itofx(1),itofx(_size*_size));
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -3300,7 +3295,7 @@ void CBitmapEx::Pixelize(long size)
 
 				// Update bitmap
 				DWORD dwSrcOffset = dwTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=0; k<_size; k++)
 				{
 					long m = i + k;
@@ -3397,8 +3392,8 @@ void CBitmapEx::Contrast(long contrast)
 	{
 		// Calculate contrast params
 		long _contrast = max(1, min(100, contrast));
-		fixed f_contrast = ftofx(1.0f/_contrast);
-		fixed f_128 = itofx(128);
+		bmfixed f_contrast = ftofx(1.0f/_contrast);
+		bmfixed f_128 = itofx(128);
 
 		// Change bitmap contrast
 		DWORD dwHorizontalOffset;
@@ -3414,9 +3409,9 @@ void CBitmapEx::Contrast(long contrast)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				fixed f_red = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_red = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
 				f_red = Mulfx(f_red-f_128, f_contrast) + f_128;
 				f_green = Mulfx(f_green-f_128, f_contrast) + f_128;
 				f_blue = Mulfx(f_blue-f_128, f_contrast) + f_128;
@@ -3441,7 +3436,7 @@ void CBitmapEx::Blur()
 	if (IsValid())
 	{
 		// Calculate blur params
-		fixed f_9 = itofx(9);
+		bmfixed f_9 = itofx(9);
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -3463,7 +3458,7 @@ void CBitmapEx::Blur()
 
 				// Update bitmap
 				DWORD dwSrcOffset = dwTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<=1; k++)
 				{
 					long m = i + k;
@@ -3509,9 +3504,9 @@ void CBitmapEx::GaussianBlur()
 	if (IsValid())
 	{
 		// Calculate blur params
-		fixed f_16 = itofx(16);
-		fixed f_4 = itofx(4);
-		fixed f_2 = itofx(2);
+		bmfixed f_16 = itofx(16);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_2 = itofx(2);
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -3533,7 +3528,7 @@ void CBitmapEx::GaussianBlur()
 
 				// Update bitmap
 				DWORD dwSrcOffset = dwTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<=1; k++)
 				{
 					long m = i + k;
@@ -3594,8 +3589,8 @@ void CBitmapEx::Sharp()
 	if (IsValid())
 	{
 		// Calculate sharp params
-		fixed f_6 = ftofx(6.0f);
-		fixed f_1_2 = ftofx(1.0f/2.0f);
+		bmfixed f_6 = ftofx(6.0f);
+		bmfixed f_1_2 = ftofx(1.0f/2.0f);
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -3617,7 +3612,7 @@ void CBitmapEx::Sharp()
 
 				// Update bitmap
 				DWORD dwSrcOffset = dwTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<=1; k++)
 				{
 					long m = i + k;
@@ -3672,11 +3667,11 @@ void CBitmapEx::Colorize(_PIXEL color)
 	if (IsValid())
 	{
 		// Calculate colorization params
-		fixed f_sred = itofx(_GetRValue(color));
-		fixed f_sgreen = itofx(_GetGValue(color));
-		fixed f_sblue = itofx(_GetBValue(color));
+		bmfixed f_sred = itofx(_GetRValue(color));
+		bmfixed f_sgreen = itofx(_GetGValue(color));
+		bmfixed f_sblue = itofx(_GetBValue(color));
 		_PIXEL _sColor = _RGB2HSV(color);
-		fixed f_value = Divfx(itofx(_GetBValue(_sColor)), itofx(255));
+		bmfixed f_value = Divfx(itofx(_GetBValue(_sColor)), itofx(255));
 
 		// Colorize bitmap
 		DWORD dwHorizontalOffset;
@@ -3692,9 +3687,9 @@ void CBitmapEx::Colorize(_PIXEL color)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				fixed f_dred = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_dgreen = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_dblue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
 				f_dred = f_dred + Mulfx(f_value, f_sred-f_dred);
 				f_dgreen = f_dgreen + Mulfx(f_value, f_sgreen-f_dgreen);
 				f_dblue = f_dblue + Mulfx(f_value, f_sblue-f_dblue);
@@ -3716,7 +3711,7 @@ void CBitmapEx::Rank(BOOL bMinimum)
 	if (IsValid())
 	{
 		// Calculate rank params
-		fixed f_255 = itofx(255);
+		bmfixed f_255 = itofx(255);
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -3738,9 +3733,9 @@ void CBitmapEx::Rank(BOOL bMinimum)
 
 				// Update bitmap
 				DWORD dwSrcOffset = dwTotalOffset;
-				fixed f_redMin=f_255, f_redMax=0;
-				fixed f_greenMin=f_255, f_greenMax=0;
-				fixed f_blueMin=f_255, f_blueMax=0;
+				bmfixed f_redMin=f_255, f_redMax=0;
+				bmfixed f_greenMin=f_255, f_greenMax=0;
+				bmfixed f_blueMin=f_255, f_blueMax=0;
 				for (long k=0; k<3; k++)
 				{
 					long m = i + k;
@@ -3752,9 +3747,9 @@ void CBitmapEx::Rank(BOOL bMinimum)
 						if (n >= m_bih.biWidth-1)
 							n = m_bih.biWidth - 1;
 						dwSrcOffset = m*m_iPitch + n*m_iBpp;
-						fixed f_red = itofx(_GetRValue(lpSrcData[dwSrcOffset>>2]));
-						fixed f_green = itofx(_GetGValue(lpSrcData[dwSrcOffset>>2]));
-						fixed f_blue = itofx(_GetBValue(lpSrcData[dwSrcOffset>>2]));
+						bmfixed f_red = itofx(_GetRValue(lpSrcData[dwSrcOffset>>2]));
+						bmfixed f_green = itofx(_GetGValue(lpSrcData[dwSrcOffset>>2]));
+						bmfixed f_blue = itofx(_GetBValue(lpSrcData[dwSrcOffset>>2]));
 						if (bMinimum)
 						{
 							if (f_red < f_redMin)
@@ -3904,11 +3899,11 @@ void CBitmapEx::BlackAndWhite(long offset)
 	if (IsValid())
 	{
 		// Calculate black-and-white params
-		fixed f_w1 = ftofx(0.299f);
-		fixed f_w2 = ftofx(0.587f);
-		fixed f_w3 = ftofx(0.114f);
+		bmfixed f_w1 = ftofx(0.299f);
+		bmfixed f_w2 = ftofx(0.587f);
+		bmfixed f_w3 = ftofx(0.114f);
 		long _offset = max(0, min(255, offset));
-		fixed f_offset = itofx(_offset);
+		bmfixed f_offset = itofx(_offset);
 
 		// Black-And-White bitmap
 		DWORD dwHorizontalOffset;
@@ -3924,10 +3919,10 @@ void CBitmapEx::BlackAndWhite(long offset)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				fixed f_red = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
-				fixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
+				bmfixed f_red = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
+				bmfixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
 				if (f_value > f_offset)
 					lpDstData[dwTotalOffset>>2] = _RGB(0,0,0);
 				else
@@ -3949,7 +3944,7 @@ void CBitmapEx::EdgeDetect()
 	if (IsValid())
 	{
 		// Calculate blur params
-		fixed f_8 = itofx(8);
+		bmfixed f_8 = itofx(8);
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -3971,7 +3966,7 @@ void CBitmapEx::EdgeDetect()
 
 				// Update bitmap
 				DWORD dwSrcOffset = dwTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<=1; k++)
 				{
 					long m = i + k;
@@ -4028,9 +4023,9 @@ void CBitmapEx::GlowingEdges(long blur, long threshold, long scale)
 		// Calculate glowing edge params
 		float _threshold = max(0, min(100, threshold)) / 100.0f;
 		long _scale = max(0, min(100, scale));
-		fixed f_treshold = ftofx(_threshold);
-		fixed f_scale = ftofx(_scale);
-		fixed f_255 = itofx(255);
+		bmfixed f_treshold = ftofx(_threshold);
+		bmfixed f_scale = ftofx(_scale);
+		bmfixed f_255 = itofx(255);
 
 		// Create temporary bitmap
 		CBitmapEx tempBitmap;
@@ -4054,9 +4049,9 @@ void CBitmapEx::GlowingEdges(long blur, long threshold, long scale)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				fixed f_red = Divfx(itofx(_GetRValue(lpSrcData[dwTotalOffset>>2])),f_255);
-				fixed f_green = Divfx(itofx(_GetGValue(lpSrcData[dwTotalOffset>>2])),f_255);
-				fixed f_blue = Divfx(itofx(_GetBValue(lpSrcData[dwTotalOffset>>2])),f_255);
+				bmfixed f_red = Divfx(itofx(_GetRValue(lpSrcData[dwTotalOffset>>2])),f_255);
+				bmfixed f_green = Divfx(itofx(_GetGValue(lpSrcData[dwTotalOffset>>2])),f_255);
+				bmfixed f_blue = Divfx(itofx(_GetBValue(lpSrcData[dwTotalOffset>>2])),f_255);
 				if ((f_red > f_treshold) || (f_green > f_treshold) || (f_blue > f_treshold))
 				{
 					f_red = Mulfx(f_red,f_scale);
@@ -4179,7 +4174,7 @@ void CBitmapEx::Median()
 	if (IsValid())
 	{
 		// Calculate median params
-		fixed f_8 = itofx(8);
+		bmfixed f_8 = itofx(8);
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
@@ -4203,7 +4198,7 @@ void CBitmapEx::Median()
 				// Update bitmap
 				long s = 0;
 				DWORD dwSrcOffset = dwTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<=1; k++)
 				{
 					long m = i + k;
@@ -4322,8 +4317,8 @@ void CBitmapEx::Solarize(long threshold)
 	{
 		// Calculate solarization params
 		long _threshold = max(0, min(255, threshold));
-		fixed f_treshold = itofx(_threshold);
-		fixed f_255 = itofx(255);
+		bmfixed f_treshold = itofx(_threshold);
+		bmfixed f_255 = itofx(255);
 
 		// Solarize bitmap
 		DWORD dwHorizontalOffset;
@@ -4342,9 +4337,9 @@ void CBitmapEx::Solarize(long threshold)
 				BYTE red = _GetRValue(lpDstData[dwTotalOffset>>2]);
 				BYTE green = _GetGValue(lpDstData[dwTotalOffset>>2]);
 				BYTE blue = _GetBValue(lpDstData[dwTotalOffset>>2]);
-				fixed f_red = itofx(red);
-				fixed f_green = itofx(green);
-				fixed f_blue = itofx(blue);
+				bmfixed f_red = itofx(red);
+				bmfixed f_green = itofx(green);
+				bmfixed f_blue = itofx(blue);
 				if (f_red > 0)
 					f_red = Mulfx(Divfx(f_treshold-f_red,f_red),f_255);
 				if (f_green > 0)
@@ -4531,9 +4526,9 @@ void CBitmapEx::Draw(long dstX, long dstY, long width, long height, CBitmapEx& b
 		long _bpp = bitmapEx.GetBpp() >> 3;
 		long _alpha = max(0, min(alpha, 100));
 		float _alphaPercent = (float)_alpha / 100.0f;
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1 = itofx(1);
-		fixed f_1malpha = f_1 - f_alpha;
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_1malpha = f_1 - f_alpha;
 		long _width = min(_dstEndX-_dstStartX, _srcEndX-_srcStartX);
 		long _height = min(_dstEndY-_dstStartY, _srcEndY-_srcStartY);
 		if ((_width == 0) || (_height == 0))
@@ -4565,12 +4560,12 @@ void CBitmapEx::Draw(long dstX, long dstY, long width, long height, CBitmapEx& b
 				// Update bitmap
 				_PIXEL pixel1 = lpSrcData[dwSrcTotalOffset>>2];
 				_PIXEL pixel2 = lpDstData[dwDstTotalOffset>>2];
-				fixed f_sred = itofx(_GetRValue(pixel1));
-				fixed f_sgreen = itofx(_GetGValue(pixel1));
-				fixed f_sblue = itofx(_GetBValue(pixel1));
-				fixed f_dred = itofx(_GetRValue(pixel2));
-				fixed f_dgreen = itofx(_GetGValue(pixel2));
-				fixed f_dblue = itofx(_GetBValue(pixel2));
+				bmfixed f_sred = itofx(_GetRValue(pixel1));
+				bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+				bmfixed f_sblue = itofx(_GetBValue(pixel1));
+				bmfixed f_dred = itofx(_GetRValue(pixel2));
+				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+				bmfixed f_dblue = itofx(_GetBValue(pixel2));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -4734,10 +4729,10 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx)
 		if ((_dstWidth == 0) || (_dstHeight == 0))
 			return;
 		float f_inv2a = 1.0f / (2*a);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Draw bitmap
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
@@ -4792,9 +4787,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx)
 								{
 									long m = (long)(delta*_height);
 									long n = (long)(mu*_width);
-									fixed f_f = ftofx(delta*_height) - itofx(m);
-									fixed f_g = ftofx(mu*_width) - itofx(n);
-									fixed f_1 = itofx(1);
+									bmfixed f_f = ftofx(delta*_height) - itofx(m);
+									bmfixed f_g = ftofx(mu*_width) - itofx(n);
+									bmfixed f_1 = itofx(1);
 									DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 									DWORD dwSrcTopLeft = dwSrcTotalOffset;
 									DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -4806,26 +4801,26 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx)
 									DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 									if ((n >= _width-1) || (m >= _height-1))
 										dwSrcBottomRight = dwSrcTotalOffset;
-									fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-									fixed f_w2 = Mulfx(f_1-f_f, f_g);
-									fixed f_w3 = Mulfx(f_f, f_1-f_g);
-									fixed f_w4 = Mulfx(f_f, f_g);
+									bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+									bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+									bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+									bmfixed f_w4 = Mulfx(f_f, f_g);
 									_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 									_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 									_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 									_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-									fixed f_r1 = itofx(_GetRValue(pixel1));
-									fixed f_r2 = itofx(_GetRValue(pixel2));
-									fixed f_r3 = itofx(_GetRValue(pixel3));
-									fixed f_r4 = itofx(_GetRValue(pixel4));
-									fixed f_g1 = itofx(_GetGValue(pixel1));
-									fixed f_g2 = itofx(_GetGValue(pixel2));
-									fixed f_g3 = itofx(_GetGValue(pixel3));
-									fixed f_g4 = itofx(_GetGValue(pixel4));
-									fixed f_b1 = itofx(_GetBValue(pixel1));
-									fixed f_b2 = itofx(_GetBValue(pixel2));
-									fixed f_b3 = itofx(_GetBValue(pixel3));
-									fixed f_b4 = itofx(_GetBValue(pixel4));
+									bmfixed f_r1 = itofx(_GetRValue(pixel1));
+									bmfixed f_r2 = itofx(_GetRValue(pixel2));
+									bmfixed f_r3 = itofx(_GetRValue(pixel3));
+									bmfixed f_r4 = itofx(_GetRValue(pixel4));
+									bmfixed f_g1 = itofx(_GetGValue(pixel1));
+									bmfixed f_g2 = itofx(_GetGValue(pixel2));
+									bmfixed f_g3 = itofx(_GetGValue(pixel3));
+									bmfixed f_g4 = itofx(_GetGValue(pixel4));
+									bmfixed f_b1 = itofx(_GetBValue(pixel1));
+									bmfixed f_b2 = itofx(_GetBValue(pixel2));
+									bmfixed f_b3 = itofx(_GetBValue(pixel3));
+									bmfixed f_b4 = itofx(_GetBValue(pixel4));
 									BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 									BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 									BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -4857,9 +4852,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx)
 								{
 									long m = (long)(delta*_height);
 									long n = (long)(mu*_width);
-									fixed f_f = ftofx(delta*_height) - itofx(m);
-									fixed f_g = ftofx(mu*_width) - itofx(n);
-									fixed f_1 = itofx(1);
+									bmfixed f_f = ftofx(delta*_height) - itofx(m);
+									bmfixed f_g = ftofx(mu*_width) - itofx(n);
+									bmfixed f_1 = itofx(1);
 									DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 									DWORD dwSrcOffsets[16];
 									dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -4908,50 +4903,50 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx)
 									dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 									if ((m >= _height-2) || (n >= _width-2))
 										dwSrcOffsets[15] = dwSrcTotalOffset;
-									fixed f_red=0, f_green=0, f_blue=0;
+									bmfixed f_red=0, f_green=0, f_blue=0;
 									for (long k=-1; k<3; k++)
 									{
-										fixed f = itofx(k)-f_f;
-										fixed f_fm1 = f - f_1;
-										fixed f_fp1 = f + f_1;
-										fixed f_fp2 = f + f_2;
-										fixed f_a = 0;
+										bmfixed f = itofx(k)-f_f;
+										bmfixed f_fm1 = f - f_1;
+										bmfixed f_fp1 = f + f_1;
+										bmfixed f_fp2 = f + f_2;
+										bmfixed f_a = 0;
 										if (f_fp2 > 0)
 											f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-										fixed f_b = 0;
+										bmfixed f_b = 0;
 										if (f_fp1 > 0)
 											f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-										fixed f_c = 0;
+										bmfixed f_c = 0;
 										if (f > 0)
 											f_c = Mulfx(f,Mulfx(f,f));
-										fixed f_d = 0;
+										bmfixed f_d = 0;
 										if (f_fm1 > 0)
 											f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-										fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+										bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 										for (long l=-1; l<3; l++)
 										{
-											fixed f = itofx(l)-f_g;
-											fixed f_fm1 = f - f_1;
-											fixed f_fp1 = f + f_1;
-											fixed f_fp2 = f + f_2;
-											fixed f_a = 0;
+											bmfixed f = itofx(l)-f_g;
+											bmfixed f_fm1 = f - f_1;
+											bmfixed f_fp1 = f + f_1;
+											bmfixed f_fp2 = f + f_2;
+											bmfixed f_a = 0;
 											if (f_fp2 > 0)
 												f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-											fixed f_b = 0;
+											bmfixed f_b = 0;
 											if (f_fp1 > 0)
 												f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-											fixed f_c = 0;
+											bmfixed f_c = 0;
 											if (f > 0)
 												f_c = Mulfx(f,Mulfx(f,f));
-											fixed f_d = 0;
+											bmfixed f_d = 0;
 											if (f_fm1 > 0)
 												f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-											fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-											fixed f_R = Mulfx(f_RY,f_RX);
+											bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+											bmfixed f_R = Mulfx(f_RY,f_RX);
 											long _k = ((k+1)*4) + (l+1);
-											fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-											fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-											fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 											f_red += Mulfx(f_rs,f_R);
 											f_green += Mulfx(f_gs,f_R);
 											f_blue += Mulfx(f_bs,f_R);
@@ -5019,14 +5014,14 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 		if ((_dstWidth == 0) || (_dstHeight == 0))
 			return;
 		float f_inv2a = 1.0f / (2*a);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 		long _alpha = max(0, min(alpha, 100));
 		float _alphaPercent = (float)_alpha / 100.0f;
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1 = itofx(1);
 
 		// Draw bitmap
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
@@ -5055,12 +5050,12 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 									long n = (long)(mu*_width+0.5f);
 									_PIXEL pixel1 =  bitmapEx.GetPixel(n, m);
 									_PIXEL pixel2 =  GetPixel(j, i);
-									fixed f_sred = itofx(_GetRValue(pixel1));
-									fixed f_sgreen = itofx(_GetGValue(pixel1));
-									fixed f_sblue = itofx(_GetBValue(pixel1));
-									fixed f_dred = itofx(_GetRValue(pixel2));
-									fixed f_dgreen = itofx(_GetGValue(pixel2));
-									fixed f_dblue = itofx(_GetBValue(pixel2));
+									bmfixed f_sred = itofx(_GetRValue(pixel1));
+									bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+									bmfixed f_sblue = itofx(_GetBValue(pixel1));
+									bmfixed f_dred = itofx(_GetRValue(pixel2));
+									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+									bmfixed f_dblue = itofx(_GetBValue(pixel2));
 									BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 									BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 									BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -5092,9 +5087,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 								{
 									long m = (long)(delta*_height);
 									long n = (long)(mu*_width);
-									fixed f_f = ftofx(delta*_height) - itofx(m);
-									fixed f_g = ftofx(mu*_width) - itofx(n);
-									fixed f_1 = itofx(1);
+									bmfixed f_f = ftofx(delta*_height) - itofx(m);
+									bmfixed f_g = ftofx(mu*_width) - itofx(n);
+									bmfixed f_1 = itofx(1);
 									DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 									DWORD dwSrcTopLeft = dwSrcTotalOffset;
 									DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -5106,37 +5101,37 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 									DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 									if ((n >= _width-1) || (m >= _height-1))
 										dwSrcBottomRight = dwSrcTotalOffset;
-									fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-									fixed f_w2 = Mulfx(f_1-f_f, f_g);
-									fixed f_w3 = Mulfx(f_f, f_1-f_g);
-									fixed f_w4 = Mulfx(f_f, f_g);
+									bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+									bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+									bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+									bmfixed f_w4 = Mulfx(f_f, f_g);
 									_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 									_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 									_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 									_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-									fixed f_r1 = itofx(_GetRValue(pixel1));
-									fixed f_r2 = itofx(_GetRValue(pixel2));
-									fixed f_r3 = itofx(_GetRValue(pixel3));
-									fixed f_r4 = itofx(_GetRValue(pixel4));
-									fixed f_g1 = itofx(_GetGValue(pixel1));
-									fixed f_g2 = itofx(_GetGValue(pixel2));
-									fixed f_g3 = itofx(_GetGValue(pixel3));
-									fixed f_g4 = itofx(_GetGValue(pixel4));
-									fixed f_b1 = itofx(_GetBValue(pixel1));
-									fixed f_b2 = itofx(_GetBValue(pixel2));
-									fixed f_b3 = itofx(_GetBValue(pixel3));
-									fixed f_b4 = itofx(_GetBValue(pixel4));
+									bmfixed f_r1 = itofx(_GetRValue(pixel1));
+									bmfixed f_r2 = itofx(_GetRValue(pixel2));
+									bmfixed f_r3 = itofx(_GetRValue(pixel3));
+									bmfixed f_r4 = itofx(_GetRValue(pixel4));
+									bmfixed f_g1 = itofx(_GetGValue(pixel1));
+									bmfixed f_g2 = itofx(_GetGValue(pixel2));
+									bmfixed f_g3 = itofx(_GetGValue(pixel3));
+									bmfixed f_g4 = itofx(_GetGValue(pixel4));
+									bmfixed f_b1 = itofx(_GetBValue(pixel1));
+									bmfixed f_b2 = itofx(_GetBValue(pixel2));
+									bmfixed f_b3 = itofx(_GetBValue(pixel3));
+									bmfixed f_b4 = itofx(_GetBValue(pixel4));
 									BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 									BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 									BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 									pixel1 =  _RGB(red, green, blue);
 									pixel2 =  GetPixel(j, i);
-									fixed f_sred = itofx(_GetRValue(pixel1));
-									fixed f_sgreen = itofx(_GetGValue(pixel1));
-									fixed f_sblue = itofx(_GetBValue(pixel1));
-									fixed f_dred = itofx(_GetRValue(pixel2));
-									fixed f_dgreen = itofx(_GetGValue(pixel2));
-									fixed f_dblue = itofx(_GetBValue(pixel2));
+									bmfixed f_sred = itofx(_GetRValue(pixel1));
+									bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+									bmfixed f_sblue = itofx(_GetBValue(pixel1));
+									bmfixed f_dred = itofx(_GetRValue(pixel2));
+									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+									bmfixed f_dblue = itofx(_GetBValue(pixel2));
 									red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 									green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 									blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -5168,9 +5163,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 								{
 									long m = (long)(delta*_height);
 									long n = (long)(mu*_width);
-									fixed f_f = ftofx(delta*_height) - itofx(m);
-									fixed f_g = ftofx(mu*_width) - itofx(n);
-									fixed f_1 = itofx(1);
+									bmfixed f_f = ftofx(delta*_height) - itofx(m);
+									bmfixed f_g = ftofx(mu*_width) - itofx(n);
+									bmfixed f_1 = itofx(1);
 									DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 									DWORD dwSrcOffsets[16];
 									dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -5219,50 +5214,50 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 									dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 									if ((m >= _height-2) || (n >= _width-2))
 										dwSrcOffsets[15] = dwSrcTotalOffset;
-									fixed f_red=0, f_green=0, f_blue=0;
+									bmfixed f_red=0, f_green=0, f_blue=0;
 									for (long k=-1; k<3; k++)
 									{
-										fixed f = itofx(k)-f_f;
-										fixed f_fm1 = f - f_1;
-										fixed f_fp1 = f + f_1;
-										fixed f_fp2 = f + f_2;
-										fixed f_a = 0;
+										bmfixed f = itofx(k)-f_f;
+										bmfixed f_fm1 = f - f_1;
+										bmfixed f_fp1 = f + f_1;
+										bmfixed f_fp2 = f + f_2;
+										bmfixed f_a = 0;
 										if (f_fp2 > 0)
 											f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-										fixed f_b = 0;
+										bmfixed f_b = 0;
 										if (f_fp1 > 0)
 											f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-										fixed f_c = 0;
+										bmfixed f_c = 0;
 										if (f > 0)
 											f_c = Mulfx(f,Mulfx(f,f));
-										fixed f_d = 0;
+										bmfixed f_d = 0;
 										if (f_fm1 > 0)
 											f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-										fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+										bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 										for (long l=-1; l<3; l++)
 										{
-											fixed f = itofx(l)-f_g;
-											fixed f_fm1 = f - f_1;
-											fixed f_fp1 = f + f_1;
-											fixed f_fp2 = f + f_2;
-											fixed f_a = 0;
+											bmfixed f = itofx(l)-f_g;
+											bmfixed f_fm1 = f - f_1;
+											bmfixed f_fp1 = f + f_1;
+											bmfixed f_fp2 = f + f_2;
+											bmfixed f_a = 0;
 											if (f_fp2 > 0)
 												f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-											fixed f_b = 0;
+											bmfixed f_b = 0;
 											if (f_fp1 > 0)
 												f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-											fixed f_c = 0;
+											bmfixed f_c = 0;
 											if (f > 0)
 												f_c = Mulfx(f,Mulfx(f,f));
-											fixed f_d = 0;
+											bmfixed f_d = 0;
 											if (f_fm1 > 0)
 												f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-											fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-											fixed f_R = Mulfx(f_RY,f_RX);
+											bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+											bmfixed f_R = Mulfx(f_RY,f_RX);
 											long _k = ((k+1)*4) + (l+1);
-											fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-											fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-											fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 											f_red += Mulfx(f_rs,f_R);
 											f_green += Mulfx(f_gs,f_R);
 											f_blue += Mulfx(f_bs,f_R);
@@ -5273,12 +5268,12 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 									BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 									_PIXEL pixel1 =  _RGB(red, green, blue);
 									_PIXEL pixel2 =  GetPixel(j, i);
-									fixed f_sred = itofx(_GetRValue(pixel1));
-									fixed f_sgreen = itofx(_GetGValue(pixel1));
-									fixed f_sblue = itofx(_GetBValue(pixel1));
-									fixed f_dred = itofx(_GetRValue(pixel2));
-									fixed f_dgreen = itofx(_GetGValue(pixel2));
-									fixed f_dblue = itofx(_GetBValue(pixel2));
+									bmfixed f_sred = itofx(_GetRValue(pixel1));
+									bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+									bmfixed f_sblue = itofx(_GetBValue(pixel1));
+									bmfixed f_dred = itofx(_GetRValue(pixel2));
+									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+									bmfixed f_dblue = itofx(_GetBValue(pixel2));
 									red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 									green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 									blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -5349,10 +5344,10 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 		if ((_dstWidth == 0) || (_dstHeight == 0) || (_srcWidth == 0) || (_srcHeight == 0))
 			return;
 		float f_inv2a = 1.0f / (2*a);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Draw bitmap
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
@@ -5407,9 +5402,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 								{
 									long m = (long)(delta*_srcHeight+_srcStartY);
 									long n = (long)(mu*_srcWidth+_srcStartX);
-									fixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
-									fixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
-									fixed f_1 = itofx(1);
+									bmfixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
+									bmfixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
+									bmfixed f_1 = itofx(1);
 									DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 									DWORD dwSrcTopLeft = dwSrcTotalOffset;
 									DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -5421,26 +5416,26 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 									if ((n >= _width-1) || (m >= _height-1))
 										dwSrcBottomRight = dwSrcTotalOffset;
-									fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-									fixed f_w2 = Mulfx(f_1-f_f, f_g);
-									fixed f_w3 = Mulfx(f_f, f_1-f_g);
-									fixed f_w4 = Mulfx(f_f, f_g);
+									bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+									bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+									bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+									bmfixed f_w4 = Mulfx(f_f, f_g);
 									_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 									_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 									_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 									_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-									fixed f_r1 = itofx(_GetRValue(pixel1));
-									fixed f_r2 = itofx(_GetRValue(pixel2));
-									fixed f_r3 = itofx(_GetRValue(pixel3));
-									fixed f_r4 = itofx(_GetRValue(pixel4));
-									fixed f_g1 = itofx(_GetGValue(pixel1));
-									fixed f_g2 = itofx(_GetGValue(pixel2));
-									fixed f_g3 = itofx(_GetGValue(pixel3));
-									fixed f_g4 = itofx(_GetGValue(pixel4));
-									fixed f_b1 = itofx(_GetBValue(pixel1));
-									fixed f_b2 = itofx(_GetBValue(pixel2));
-									fixed f_b3 = itofx(_GetBValue(pixel3));
-									fixed f_b4 = itofx(_GetBValue(pixel4));
+									bmfixed f_r1 = itofx(_GetRValue(pixel1));
+									bmfixed f_r2 = itofx(_GetRValue(pixel2));
+									bmfixed f_r3 = itofx(_GetRValue(pixel3));
+									bmfixed f_r4 = itofx(_GetRValue(pixel4));
+									bmfixed f_g1 = itofx(_GetGValue(pixel1));
+									bmfixed f_g2 = itofx(_GetGValue(pixel2));
+									bmfixed f_g3 = itofx(_GetGValue(pixel3));
+									bmfixed f_g4 = itofx(_GetGValue(pixel4));
+									bmfixed f_b1 = itofx(_GetBValue(pixel1));
+									bmfixed f_b2 = itofx(_GetBValue(pixel2));
+									bmfixed f_b3 = itofx(_GetBValue(pixel3));
+									bmfixed f_b4 = itofx(_GetBValue(pixel4));
 									BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 									BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 									BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -5472,9 +5467,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 								{
 									long m = (long)(delta*_srcHeight+_srcStartY);
 									long n = (long)(mu*_srcWidth+_srcStartX);
-									fixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
-									fixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
-									fixed f_1 = itofx(1);
+									bmfixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
+									bmfixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
+									bmfixed f_1 = itofx(1);
 									DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 									DWORD dwSrcOffsets[16];
 									dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -5523,50 +5518,50 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 									if ((m >= _height-2) || (n >= _width-2))
 										dwSrcOffsets[15] = dwSrcTotalOffset;
-									fixed f_red=0, f_green=0, f_blue=0;
+									bmfixed f_red=0, f_green=0, f_blue=0;
 									for (long k=-1; k<3; k++)
 									{
-										fixed f = itofx(k)-f_f;
-										fixed f_fm1 = f - f_1;
-										fixed f_fp1 = f + f_1;
-										fixed f_fp2 = f + f_2;
-										fixed f_a = 0;
+										bmfixed f = itofx(k)-f_f;
+										bmfixed f_fm1 = f - f_1;
+										bmfixed f_fp1 = f + f_1;
+										bmfixed f_fp2 = f + f_2;
+										bmfixed f_a = 0;
 										if (f_fp2 > 0)
 											f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-										fixed f_b = 0;
+										bmfixed f_b = 0;
 										if (f_fp1 > 0)
 											f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-										fixed f_c = 0;
+										bmfixed f_c = 0;
 										if (f > 0)
 											f_c = Mulfx(f,Mulfx(f,f));
-										fixed f_d = 0;
+										bmfixed f_d = 0;
 										if (f_fm1 > 0)
 											f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-										fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+										bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 										for (long l=-1; l<3; l++)
 										{
-											fixed f = itofx(l)-f_g;
-											fixed f_fm1 = f - f_1;
-											fixed f_fp1 = f + f_1;
-											fixed f_fp2 = f + f_2;
-											fixed f_a = 0;
+											bmfixed f = itofx(l)-f_g;
+											bmfixed f_fm1 = f - f_1;
+											bmfixed f_fp1 = f + f_1;
+											bmfixed f_fp2 = f + f_2;
+											bmfixed f_a = 0;
 											if (f_fp2 > 0)
 												f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-											fixed f_b = 0;
+											bmfixed f_b = 0;
 											if (f_fp1 > 0)
 												f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-											fixed f_c = 0;
+											bmfixed f_c = 0;
 											if (f > 0)
 												f_c = Mulfx(f,Mulfx(f,f));
-											fixed f_d = 0;
+											bmfixed f_d = 0;
 											if (f_fm1 > 0)
 												f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-											fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-											fixed f_R = Mulfx(f_RY,f_RX);
+											bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+											bmfixed f_R = Mulfx(f_RY,f_RX);
 											long _k = ((k+1)*4) + (l+1);
-											fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-											fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-											fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 											f_red += Mulfx(f_rs,f_R);
 											f_green += Mulfx(f_gs,f_R);
 											f_blue += Mulfx(f_bs,f_R);
@@ -5642,14 +5637,14 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 		if ((_dstWidth == 0) || (_dstHeight == 0) || (_srcWidth == 0) || (_srcHeight == 0))
 			return;
 		float f_inv2a = 1.0f / (2*a);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 		long _alpha = max(0, min(alpha, 100));
 		float _alphaPercent = (float)_alpha / 100.0f;
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1 = itofx(1);
 
 		// Draw bitmap
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
@@ -5678,12 +5673,12 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									long n = (long)(mu*_srcWidth+0.5f) + _srcStartX;
 									_PIXEL pixel1 =  bitmapEx.GetPixel(n, m);
 									_PIXEL pixel2 =  GetPixel(j, i);
-									fixed f_sred = itofx(_GetRValue(pixel1));
-									fixed f_sgreen = itofx(_GetGValue(pixel1));
-									fixed f_sblue = itofx(_GetBValue(pixel1));
-									fixed f_dred = itofx(_GetRValue(pixel2));
-									fixed f_dgreen = itofx(_GetGValue(pixel2));
-									fixed f_dblue = itofx(_GetBValue(pixel2));
+									bmfixed f_sred = itofx(_GetRValue(pixel1));
+									bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+									bmfixed f_sblue = itofx(_GetBValue(pixel1));
+									bmfixed f_dred = itofx(_GetRValue(pixel2));
+									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+									bmfixed f_dblue = itofx(_GetBValue(pixel2));
 									BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 									BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 									BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -5715,9 +5710,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 								{
 									long m = (long)(delta*_srcHeight+_srcStartY);
 									long n = (long)(mu*_srcWidth+_srcStartX);
-									fixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
-									fixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
-									fixed f_1 = itofx(1);
+									bmfixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
+									bmfixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
+									bmfixed f_1 = itofx(1);
 									DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 									DWORD dwSrcTopLeft = dwSrcTotalOffset;
 									DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -5729,37 +5724,37 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 									if ((n >= _width-1) || (m >= _height-1))
 										dwSrcBottomRight = dwSrcTotalOffset;
-									fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-									fixed f_w2 = Mulfx(f_1-f_f, f_g);
-									fixed f_w3 = Mulfx(f_f, f_1-f_g);
-									fixed f_w4 = Mulfx(f_f, f_g);
+									bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+									bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+									bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+									bmfixed f_w4 = Mulfx(f_f, f_g);
 									_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 									_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 									_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 									_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-									fixed f_r1 = itofx(_GetRValue(pixel1));
-									fixed f_r2 = itofx(_GetRValue(pixel2));
-									fixed f_r3 = itofx(_GetRValue(pixel3));
-									fixed f_r4 = itofx(_GetRValue(pixel4));
-									fixed f_g1 = itofx(_GetGValue(pixel1));
-									fixed f_g2 = itofx(_GetGValue(pixel2));
-									fixed f_g3 = itofx(_GetGValue(pixel3));
-									fixed f_g4 = itofx(_GetGValue(pixel4));
-									fixed f_b1 = itofx(_GetBValue(pixel1));
-									fixed f_b2 = itofx(_GetBValue(pixel2));
-									fixed f_b3 = itofx(_GetBValue(pixel3));
-									fixed f_b4 = itofx(_GetBValue(pixel4));
+									bmfixed f_r1 = itofx(_GetRValue(pixel1));
+									bmfixed f_r2 = itofx(_GetRValue(pixel2));
+									bmfixed f_r3 = itofx(_GetRValue(pixel3));
+									bmfixed f_r4 = itofx(_GetRValue(pixel4));
+									bmfixed f_g1 = itofx(_GetGValue(pixel1));
+									bmfixed f_g2 = itofx(_GetGValue(pixel2));
+									bmfixed f_g3 = itofx(_GetGValue(pixel3));
+									bmfixed f_g4 = itofx(_GetGValue(pixel4));
+									bmfixed f_b1 = itofx(_GetBValue(pixel1));
+									bmfixed f_b2 = itofx(_GetBValue(pixel2));
+									bmfixed f_b3 = itofx(_GetBValue(pixel3));
+									bmfixed f_b4 = itofx(_GetBValue(pixel4));
 									BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 									BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 									BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 									pixel1 =  _RGB(red, green, blue);
 									pixel2 =  GetPixel(j, i);
-									fixed f_sred = itofx(_GetRValue(pixel1));
-									fixed f_sgreen = itofx(_GetGValue(pixel1));
-									fixed f_sblue = itofx(_GetBValue(pixel1));
-									fixed f_dred = itofx(_GetRValue(pixel2));
-									fixed f_dgreen = itofx(_GetGValue(pixel2));
-									fixed f_dblue = itofx(_GetBValue(pixel2));
+									bmfixed f_sred = itofx(_GetRValue(pixel1));
+									bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+									bmfixed f_sblue = itofx(_GetBValue(pixel1));
+									bmfixed f_dred = itofx(_GetRValue(pixel2));
+									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+									bmfixed f_dblue = itofx(_GetBValue(pixel2));
 									red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 									green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 									blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -5791,9 +5786,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 								{
 									long m = (long)(delta*_srcHeight+_srcStartY);
 									long n = (long)(mu*_srcWidth+_srcStartX);
-									fixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
-									fixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
-									fixed f_1 = itofx(1);
+									bmfixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
+									bmfixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
+									bmfixed f_1 = itofx(1);
 									DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 									DWORD dwSrcOffsets[16];
 									dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -5842,50 +5837,50 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 									if ((m >= _height-2) || (n >= _width-2))
 										dwSrcOffsets[15] = dwSrcTotalOffset;
-									fixed f_red=0, f_green=0, f_blue=0;
+									bmfixed f_red=0, f_green=0, f_blue=0;
 									for (long k=-1; k<3; k++)
 									{
-										fixed f = itofx(k)-f_f;
-										fixed f_fm1 = f - f_1;
-										fixed f_fp1 = f + f_1;
-										fixed f_fp2 = f + f_2;
-										fixed f_a = 0;
+										bmfixed f = itofx(k)-f_f;
+										bmfixed f_fm1 = f - f_1;
+										bmfixed f_fp1 = f + f_1;
+										bmfixed f_fp2 = f + f_2;
+										bmfixed f_a = 0;
 										if (f_fp2 > 0)
 											f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-										fixed f_b = 0;
+										bmfixed f_b = 0;
 										if (f_fp1 > 0)
 											f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-										fixed f_c = 0;
+										bmfixed f_c = 0;
 										if (f > 0)
 											f_c = Mulfx(f,Mulfx(f,f));
-										fixed f_d = 0;
+										bmfixed f_d = 0;
 										if (f_fm1 > 0)
 											f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-										fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+										bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 										for (long l=-1; l<3; l++)
 										{
-											fixed f = itofx(l)-f_g;
-											fixed f_fm1 = f - f_1;
-											fixed f_fp1 = f + f_1;
-											fixed f_fp2 = f + f_2;
-											fixed f_a = 0;
+											bmfixed f = itofx(l)-f_g;
+											bmfixed f_fm1 = f - f_1;
+											bmfixed f_fp1 = f + f_1;
+											bmfixed f_fp2 = f + f_2;
+											bmfixed f_a = 0;
 											if (f_fp2 > 0)
 												f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-											fixed f_b = 0;
+											bmfixed f_b = 0;
 											if (f_fp1 > 0)
 												f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-											fixed f_c = 0;
+											bmfixed f_c = 0;
 											if (f > 0)
 												f_c = Mulfx(f,Mulfx(f,f));
-											fixed f_d = 0;
+											bmfixed f_d = 0;
 											if (f_fm1 > 0)
 												f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-											fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-											fixed f_R = Mulfx(f_RY,f_RX);
+											bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+											bmfixed f_R = Mulfx(f_RY,f_RX);
 											long _k = ((k+1)*4) + (l+1);
-											fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-											fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-											fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+											bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 											f_red += Mulfx(f_rs,f_R);
 											f_green += Mulfx(f_gs,f_R);
 											f_blue += Mulfx(f_bs,f_R);
@@ -5896,12 +5891,12 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 									_PIXEL pixel1 =  _RGB(red, green, blue);
 									_PIXEL pixel2 =  GetPixel(j, i);
-									fixed f_sred = itofx(_GetRValue(pixel1));
-									fixed f_sgreen = itofx(_GetGValue(pixel1));
-									fixed f_sblue = itofx(_GetBValue(pixel1));
-									fixed f_dred = itofx(_GetRValue(pixel2));
-									fixed f_dgreen = itofx(_GetGValue(pixel2));
-									fixed f_dblue = itofx(_GetBValue(pixel2));
+									bmfixed f_sred = itofx(_GetRValue(pixel1));
+									bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+									bmfixed f_sblue = itofx(_GetBValue(pixel1));
+									bmfixed f_dred = itofx(_GetRValue(pixel2));
+									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+									bmfixed f_dblue = itofx(_GetBValue(pixel2));
 									red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 									green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 									blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -5957,9 +5952,9 @@ void CBitmapEx::_DrawNearestNeighbour(long dstX, long dstY, long dstWidth, long 
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 /*		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -5978,10 +5973,10 @@ void CBitmapEx::_DrawNearestNeighbour(long dstX, long dstY, long dstWidth, long 
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
@@ -6097,9 +6092,9 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 /*		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -6118,14 +6113,14 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				DWORD dwSrcTopLeft = dwSrcTotalOffset;
 				DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -6137,26 +6132,26 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 				DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 				if ((n >= _width-1) || (m >= _height-1))
 					dwSrcBottomRight = dwSrcTotalOffset;
-				fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-				fixed f_w2 = Mulfx(f_1-f_f, f_g);
-				fixed f_w3 = Mulfx(f_f, f_1-f_g);
-				fixed f_w4 = Mulfx(f_f, f_g);
+				bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+				bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+				bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+				bmfixed f_w4 = Mulfx(f_f, f_g);
 				_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 				_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 				_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 				_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-				fixed f_r1 = itofx(_GetRValue(pixel1));
-				fixed f_r2 = itofx(_GetRValue(pixel2));
-				fixed f_r3 = itofx(_GetRValue(pixel3));
-				fixed f_r4 = itofx(_GetRValue(pixel4));
-				fixed f_g1 = itofx(_GetGValue(pixel1));
-				fixed f_g2 = itofx(_GetGValue(pixel2));
-				fixed f_g3 = itofx(_GetGValue(pixel3));
-				fixed f_g4 = itofx(_GetGValue(pixel4));
-				fixed f_b1 = itofx(_GetBValue(pixel1));
-				fixed f_b2 = itofx(_GetBValue(pixel2));
-				fixed f_b3 = itofx(_GetBValue(pixel3));
-				fixed f_b4 = itofx(_GetBValue(pixel4));
+				bmfixed f_r1 = itofx(_GetRValue(pixel1));
+				bmfixed f_r2 = itofx(_GetRValue(pixel2));
+				bmfixed f_r3 = itofx(_GetRValue(pixel3));
+				bmfixed f_r4 = itofx(_GetRValue(pixel4));
+				bmfixed f_g1 = itofx(_GetGValue(pixel1));
+				bmfixed f_g2 = itofx(_GetGValue(pixel2));
+				bmfixed f_g3 = itofx(_GetGValue(pixel3));
+				bmfixed f_g4 = itofx(_GetGValue(pixel4));
+				bmfixed f_b1 = itofx(_GetBValue(pixel1));
+				bmfixed f_b2 = itofx(_GetBValue(pixel2));
+				bmfixed f_b3 = itofx(_GetBValue(pixel3));
+				bmfixed f_b4 = itofx(_GetBValue(pixel4));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -6181,7 +6176,7 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 		DWORD dwDstPitch = m_iPitch;
 		DWORD m, n, dwSrcVerticalOffset, dwSrcHorizontalOffset;
 		DWORD dwSrcTopLeft, dwSrcTopRight, dwSrcBottomLeft, dwSrcBottomRight;
-		fixed f_f, f_g, f_w1, f_w2, f_w3, f_w4;
+		bmfixed f_f, f_g, f_w1, f_w2, f_w3, f_w4;
 		__asm {
 			mov edi, lpDstData
 			add edi, dwDstVerticalOffset
@@ -6447,13 +6442,13 @@ void CBitmapEx::_DrawBicubic(long dstX, long dstY, long dstWidth, long dstHeight
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -6472,14 +6467,14 @@ void CBitmapEx::_DrawBicubic(long dstX, long dstY, long dstWidth, long dstHeight
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				DWORD dwSrcOffsets[16];
 				dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -6528,50 +6523,50 @@ void CBitmapEx::_DrawBicubic(long dstX, long dstY, long dstWidth, long dstHeight
 				dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 				if ((m >= _height-2) || (n >= _width-2))
 					dwSrcOffsets[15] = dwSrcTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<3; k++)
 				{
-					fixed f = itofx(k)-f_f;
-					fixed f_fm1 = f - f_1;
-					fixed f_fp1 = f + f_1;
-					fixed f_fp2 = f + f_2;
-					fixed f_a = 0;
+					bmfixed f = itofx(k)-f_f;
+					bmfixed f_fm1 = f - f_1;
+					bmfixed f_fp1 = f + f_1;
+					bmfixed f_fp2 = f + f_2;
+					bmfixed f_a = 0;
 					if (f_fp2 > 0)
 						f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-					fixed f_b = 0;
+					bmfixed f_b = 0;
 					if (f_fp1 > 0)
 						f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-					fixed f_c = 0;
+					bmfixed f_c = 0;
 					if (f > 0)
 						f_c = Mulfx(f,Mulfx(f,f));
-					fixed f_d = 0;
+					bmfixed f_d = 0;
 					if (f_fm1 > 0)
 						f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-					fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+					bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 					for (long l=-1; l<3; l++)
 					{
-						fixed f = itofx(l)-f_g;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(l)-f_g;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-						fixed f_R = Mulfx(f_RY,f_RX);
+						bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_R = Mulfx(f_RY,f_RX);
 						long _k = ((k+1)*4) + (l+1);
-						fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 						f_red += Mulfx(f_rs,f_R);
 						f_green += Mulfx(f_gs,f_R);
 						f_blue += Mulfx(f_bs,f_R);
@@ -6663,11 +6658,11 @@ void CBitmapEx::_DrawNearestNeighbour(long dstX, long dstY, long dstWidth, long 
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1malpha = f_1 - f_alpha;
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1malpha = f_1 - f_alpha;
 
 /*		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -6686,21 +6681,21 @@ void CBitmapEx::_DrawNearestNeighbour(long dstX, long dstY, long dstWidth, long 
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				_PIXEL pixel1 = lpSrcData[dwSrcTotalOffset>>2];
 				_PIXEL pixel2 = lpDstData[dwDstTotalOffset>>2];
-				fixed f_sred = itofx(_GetRValue(pixel1));
-				fixed f_sgreen = itofx(_GetGValue(pixel1));
-				fixed f_sblue = itofx(_GetBValue(pixel1));
-				fixed f_dred = itofx(_GetRValue(pixel2));
-				fixed f_dgreen = itofx(_GetGValue(pixel2));
-				fixed f_dblue = itofx(_GetBValue(pixel2));
+				bmfixed f_sred = itofx(_GetRValue(pixel1));
+				bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+				bmfixed f_sblue = itofx(_GetBValue(pixel1));
+				bmfixed f_dred = itofx(_GetRValue(pixel2));
+				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+				bmfixed f_dblue = itofx(_GetBValue(pixel2));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -6868,11 +6863,11 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1malpha = f_1 - f_alpha;
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1malpha = f_1 - f_alpha;
 
 /*		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -6891,14 +6886,14 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				DWORD dwSrcTopLeft = dwSrcTotalOffset;
 				DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -6910,32 +6905,32 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 				DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 				if ((n >= _width-1) || (m >= _height-1))
 					dwSrcBottomRight = dwSrcTotalOffset;
-				fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-				fixed f_w2 = Mulfx(f_1-f_f, f_g);
-				fixed f_w3 = Mulfx(f_f, f_1-f_g);
-				fixed f_w4 = Mulfx(f_f, f_g);
+				bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+				bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+				bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+				bmfixed f_w4 = Mulfx(f_f, f_g);
 				_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 				_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 				_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 				_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-				fixed f_r1 = itofx(_GetRValue(pixel1));
-				fixed f_r2 = itofx(_GetRValue(pixel2));
-				fixed f_r3 = itofx(_GetRValue(pixel3));
-				fixed f_r4 = itofx(_GetRValue(pixel4));
-				fixed f_g1 = itofx(_GetGValue(pixel1));
-				fixed f_g2 = itofx(_GetGValue(pixel2));
-				fixed f_g3 = itofx(_GetGValue(pixel3));
-				fixed f_g4 = itofx(_GetGValue(pixel4));
-				fixed f_b1 = itofx(_GetBValue(pixel1));
-				fixed f_b2 = itofx(_GetBValue(pixel2));
-				fixed f_b3 = itofx(_GetBValue(pixel3));
-				fixed f_b4 = itofx(_GetBValue(pixel4));
-				fixed f_sred = (Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-				fixed f_sgreen = (Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-				fixed f_sblue = (Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
-				fixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
-				fixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
-				fixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_r1 = itofx(_GetRValue(pixel1));
+				bmfixed f_r2 = itofx(_GetRValue(pixel2));
+				bmfixed f_r3 = itofx(_GetRValue(pixel3));
+				bmfixed f_r4 = itofx(_GetRValue(pixel4));
+				bmfixed f_g1 = itofx(_GetGValue(pixel1));
+				bmfixed f_g2 = itofx(_GetGValue(pixel2));
+				bmfixed f_g3 = itofx(_GetGValue(pixel3));
+				bmfixed f_g4 = itofx(_GetGValue(pixel4));
+				bmfixed f_b1 = itofx(_GetBValue(pixel1));
+				bmfixed f_b2 = itofx(_GetBValue(pixel2));
+				bmfixed f_b3 = itofx(_GetBValue(pixel3));
+				bmfixed f_b4 = itofx(_GetBValue(pixel4));
+				bmfixed f_sred = (Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+				bmfixed f_sgreen = (Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+				bmfixed f_sblue = (Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -6960,7 +6955,7 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 		DWORD dwDstPitch = m_iPitch;
 		DWORD m, n, dwSrcVerticalOffset, dwSrcHorizontalOffset;
 		DWORD dwSrcTopLeft, dwSrcTopRight, dwSrcBottomLeft, dwSrcBottomRight;
-		fixed f_f, f_g, f_w1, f_w2, f_w3, f_w4, f_srcPixel;
+		bmfixed f_f, f_g, f_w1, f_w2, f_w3, f_w4, f_srcPixel;
 		__asm {
 			mov edi, lpDstData
 			add edi, dwDstVerticalOffset
@@ -7280,14 +7275,14 @@ void CBitmapEx::_DrawBicubic(long dstX, long dstY, long dstWidth, long dstHeight
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
-		fixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
+		bmfixed f_alpha = ftofx(_alphaPercent);
 
 		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -7306,14 +7301,14 @@ void CBitmapEx::_DrawBicubic(long dstX, long dstY, long dstWidth, long dstHeight
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				DWORD dwSrcOffsets[16];
 				dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -7362,61 +7357,61 @@ void CBitmapEx::_DrawBicubic(long dstX, long dstY, long dstWidth, long dstHeight
 				dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 				if ((m >= _height-2) || (n >= _width-2))
 					dwSrcOffsets[15] = dwSrcTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<3; k++)
 				{
-					fixed f = itofx(k)-f_f;
-					fixed f_fm1 = f - f_1;
-					fixed f_fp1 = f + f_1;
-					fixed f_fp2 = f + f_2;
-					fixed f_a = 0;
+					bmfixed f = itofx(k)-f_f;
+					bmfixed f_fm1 = f - f_1;
+					bmfixed f_fp1 = f + f_1;
+					bmfixed f_fp2 = f + f_2;
+					bmfixed f_a = 0;
 					if (f_fp2 > 0)
 						f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-					fixed f_b = 0;
+					bmfixed f_b = 0;
 					if (f_fp1 > 0)
 						f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-					fixed f_c = 0;
+					bmfixed f_c = 0;
 					if (f > 0)
 						f_c = Mulfx(f,Mulfx(f,f));
-					fixed f_d = 0;
+					bmfixed f_d = 0;
 					if (f_fm1 > 0)
 						f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-					fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+					bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 					for (long l=-1; l<3; l++)
 					{
-						fixed f = itofx(l)-f_g;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(l)-f_g;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-						fixed f_R = Mulfx(f_RY,f_RX);
+						bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_R = Mulfx(f_RY,f_RX);
 						long _k = ((k+1)*4) + (l+1);
-						fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 						f_red += Mulfx(f_rs,f_R);
 						f_green += Mulfx(f_gs,f_R);
 						f_blue += Mulfx(f_bs,f_R);
 					}
 				}
-				fixed f_sred = itofx(max(0, min(255, fxtoi(Mulfx(f_red,f_gama)))));
-				fixed f_sgreen = itofx(max(0, min(255, fxtoi(Mulfx(f_green,f_gama)))));
-				fixed f_sblue = itofx(max(0, min(255, fxtoi(Mulfx(f_blue,f_gama)))));
-				fixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
-				fixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
-				fixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_sred = itofx(max(0, min(255, fxtoi(Mulfx(f_red,f_gama)))));
+				bmfixed f_sgreen = itofx(max(0, min(255, fxtoi(Mulfx(f_green,f_gama)))));
+				bmfixed f_sblue = itofx(max(0, min(255, fxtoi(Mulfx(f_blue,f_gama)))));
+				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -7628,10 +7623,10 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, _PIXEL trans
 		if ((_dstWidth == 0) || (_dstHeight == 0))
 			return;
 		float f_inv2a = 1.0f / (2*a);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Draw bitmap
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
@@ -7691,9 +7686,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, _PIXEL trans
 									_PIXEL pixel = bitmapEx.GetPixel(n, m);
 									if (pixel != transparentColor)
 									{
-										fixed f_f = ftofx(delta*_height) - itofx(m);
-										fixed f_g = ftofx(mu*_width) - itofx(n);
-										fixed f_1 = itofx(1);
+										bmfixed f_f = ftofx(delta*_height) - itofx(m);
+										bmfixed f_g = ftofx(mu*_width) - itofx(n);
+										bmfixed f_1 = itofx(1);
 										DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 										DWORD dwSrcTopLeft = dwSrcTotalOffset;
 										DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -7705,26 +7700,26 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, _PIXEL trans
 										DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 										if ((n >= _width-1) || (m >= _height-1))
 											dwSrcBottomRight = dwSrcTotalOffset;
-										fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-										fixed f_w2 = Mulfx(f_1-f_f, f_g);
-										fixed f_w3 = Mulfx(f_f, f_1-f_g);
-										fixed f_w4 = Mulfx(f_f, f_g);
+										bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+										bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+										bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+										bmfixed f_w4 = Mulfx(f_f, f_g);
 										_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 										_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 										_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 										_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-										fixed f_r1 = itofx(_GetRValue(pixel1));
-										fixed f_r2 = itofx(_GetRValue(pixel2));
-										fixed f_r3 = itofx(_GetRValue(pixel3));
-										fixed f_r4 = itofx(_GetRValue(pixel4));
-										fixed f_g1 = itofx(_GetGValue(pixel1));
-										fixed f_g2 = itofx(_GetGValue(pixel2));
-										fixed f_g3 = itofx(_GetGValue(pixel3));
-										fixed f_g4 = itofx(_GetGValue(pixel4));
-										fixed f_b1 = itofx(_GetBValue(pixel1));
-										fixed f_b2 = itofx(_GetBValue(pixel2));
-										fixed f_b3 = itofx(_GetBValue(pixel3));
-										fixed f_b4 = itofx(_GetBValue(pixel4));
+										bmfixed f_r1 = itofx(_GetRValue(pixel1));
+										bmfixed f_r2 = itofx(_GetRValue(pixel2));
+										bmfixed f_r3 = itofx(_GetRValue(pixel3));
+										bmfixed f_r4 = itofx(_GetRValue(pixel4));
+										bmfixed f_g1 = itofx(_GetGValue(pixel1));
+										bmfixed f_g2 = itofx(_GetGValue(pixel2));
+										bmfixed f_g3 = itofx(_GetGValue(pixel3));
+										bmfixed f_g4 = itofx(_GetGValue(pixel4));
+										bmfixed f_b1 = itofx(_GetBValue(pixel1));
+										bmfixed f_b2 = itofx(_GetBValue(pixel2));
+										bmfixed f_b3 = itofx(_GetBValue(pixel3));
+										bmfixed f_b4 = itofx(_GetBValue(pixel4));
 										BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 										BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 										BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -7760,9 +7755,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, _PIXEL trans
 									_PIXEL pixel = bitmapEx.GetPixel(n, m);
 									if (pixel != transparentColor)
 									{
-										fixed f_f = ftofx(delta*_height) - itofx(m);
-										fixed f_g = ftofx(mu*_width) - itofx(n);
-										fixed f_1 = itofx(1);
+										bmfixed f_f = ftofx(delta*_height) - itofx(m);
+										bmfixed f_g = ftofx(mu*_width) - itofx(n);
+										bmfixed f_1 = itofx(1);
 										DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 										DWORD dwSrcOffsets[16];
 										dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -7811,50 +7806,50 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, _PIXEL trans
 										dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 										if ((m >= _height-2) || (n >= _width-2))
 											dwSrcOffsets[15] = dwSrcTotalOffset;
-										fixed f_red=0, f_green=0, f_blue=0;
+										bmfixed f_red=0, f_green=0, f_blue=0;
 										for (long k=-1; k<3; k++)
 										{
-											fixed f = itofx(k)-f_f;
-											fixed f_fm1 = f - f_1;
-											fixed f_fp1 = f + f_1;
-											fixed f_fp2 = f + f_2;
-											fixed f_a = 0;
+											bmfixed f = itofx(k)-f_f;
+											bmfixed f_fm1 = f - f_1;
+											bmfixed f_fp1 = f + f_1;
+											bmfixed f_fp2 = f + f_2;
+											bmfixed f_a = 0;
 											if (f_fp2 > 0)
 												f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-											fixed f_b = 0;
+											bmfixed f_b = 0;
 											if (f_fp1 > 0)
 												f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-											fixed f_c = 0;
+											bmfixed f_c = 0;
 											if (f > 0)
 												f_c = Mulfx(f,Mulfx(f,f));
-											fixed f_d = 0;
+											bmfixed f_d = 0;
 											if (f_fm1 > 0)
 												f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-											fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+											bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 											for (long l=-1; l<3; l++)
 											{
-												fixed f = itofx(l)-f_g;
-												fixed f_fm1 = f - f_1;
-												fixed f_fp1 = f + f_1;
-												fixed f_fp2 = f + f_2;
-												fixed f_a = 0;
+												bmfixed f = itofx(l)-f_g;
+												bmfixed f_fm1 = f - f_1;
+												bmfixed f_fp1 = f + f_1;
+												bmfixed f_fp2 = f + f_2;
+												bmfixed f_a = 0;
 												if (f_fp2 > 0)
 													f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-												fixed f_b = 0;
+												bmfixed f_b = 0;
 												if (f_fp1 > 0)
 													f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-												fixed f_c = 0;
+												bmfixed f_c = 0;
 												if (f > 0)
 													f_c = Mulfx(f,Mulfx(f,f));
-												fixed f_d = 0;
+												bmfixed f_d = 0;
 												if (f_fm1 > 0)
 													f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-												fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-												fixed f_R = Mulfx(f_RY,f_RX);
+												bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+												bmfixed f_R = Mulfx(f_RY,f_RX);
 												long _k = ((k+1)*4) + (l+1);
-												fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-												fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-												fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 												f_red += Mulfx(f_rs,f_R);
 												f_green += Mulfx(f_gs,f_R);
 												f_blue += Mulfx(f_bs,f_R);
@@ -7905,9 +7900,9 @@ void CBitmapEx::DrawTransparent(long dstX, long dstY, long width, long height, C
 		long _bpp = bitmapEx.GetBpp() >> 3;
 		long _alpha = max(0, min(alpha, 100));
 		float _alphaPercent = (float)_alpha / 100.0f;
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1 = itofx(1);
-		fixed f_1malpha = f_1 - f_alpha;
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_1malpha = f_1 - f_alpha;
 		long _width = min(_dstEndX-_dstStartX, _srcEndX-_srcStartX);
 		long _height = min(_dstEndY-_dstStartY, _srcEndY-_srcStartY);
 		if ((_width == 0) || (_height == 0))
@@ -7941,12 +7936,12 @@ void CBitmapEx::DrawTransparent(long dstX, long dstY, long width, long height, C
 				if (pixel1 != transparentColor)
 				{
 					_PIXEL pixel2 = lpDstData[dwDstTotalOffset>>2];
-					fixed f_sred = itofx(_GetRValue(pixel1));
-					fixed f_sgreen = itofx(_GetGValue(pixel1));
-					fixed f_sblue = itofx(_GetBValue(pixel1));
-					fixed f_dred = itofx(_GetRValue(pixel2));
-					fixed f_dgreen = itofx(_GetGValue(pixel2));
-					fixed f_dblue = itofx(_GetBValue(pixel2));
+					bmfixed f_sred = itofx(_GetRValue(pixel1));
+					bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+					bmfixed f_sblue = itofx(_GetBValue(pixel1));
+					bmfixed f_dred = itofx(_GetRValue(pixel2));
+					bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+					bmfixed f_dblue = itofx(_GetBValue(pixel2));
 					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -8114,14 +8109,14 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 		if ((_dstWidth == 0) || (_dstHeight == 0))
 			return;
 		float f_inv2a = 1.0f / (2*a);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 		long _alpha = max(0, min(alpha, 100));
 		float _alphaPercent = (float)_alpha / 100.0f;
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1 = itofx(1);
 
 		// Draw bitmap
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
@@ -8152,12 +8147,12 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 									if (pixel1 != transparentColor)
 									{
 										_PIXEL pixel2 =  GetPixel(j, i);
-										fixed f_sred = itofx(_GetRValue(pixel1));
-										fixed f_sgreen = itofx(_GetGValue(pixel1));
-										fixed f_sblue = itofx(_GetBValue(pixel1));
-										fixed f_dred = itofx(_GetRValue(pixel2));
-										fixed f_dgreen = itofx(_GetGValue(pixel2));
-										fixed f_dblue = itofx(_GetBValue(pixel2));
+										bmfixed f_sred = itofx(_GetRValue(pixel1));
+										bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+										bmfixed f_sblue = itofx(_GetBValue(pixel1));
+										bmfixed f_dred = itofx(_GetRValue(pixel2));
+										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+										bmfixed f_dblue = itofx(_GetBValue(pixel2));
 										BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 										BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 										BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -8193,9 +8188,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 									_PIXEL pixel1 =  bitmapEx.GetPixel(n, m);
 									if (pixel1 != transparentColor)
 									{
-										fixed f_f = ftofx(delta*_height) - itofx(m);
-										fixed f_g = ftofx(mu*_width) - itofx(n);
-										fixed f_1 = itofx(1);
+										bmfixed f_f = ftofx(delta*_height) - itofx(m);
+										bmfixed f_g = ftofx(mu*_width) - itofx(n);
+										bmfixed f_1 = itofx(1);
 										DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 										DWORD dwSrcTopLeft = dwSrcTotalOffset;
 										DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -8207,37 +8202,37 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 										DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 										if ((n >= _width-1) || (m >= _height-1))
 											dwSrcBottomRight = dwSrcTotalOffset;
-										fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-										fixed f_w2 = Mulfx(f_1-f_f, f_g);
-										fixed f_w3 = Mulfx(f_f, f_1-f_g);
-										fixed f_w4 = Mulfx(f_f, f_g);
+										bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+										bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+										bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+										bmfixed f_w4 = Mulfx(f_f, f_g);
 										_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 										_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 										_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 										_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-										fixed f_r1 = itofx(_GetRValue(pixel1));
-										fixed f_r2 = itofx(_GetRValue(pixel2));
-										fixed f_r3 = itofx(_GetRValue(pixel3));
-										fixed f_r4 = itofx(_GetRValue(pixel4));
-										fixed f_g1 = itofx(_GetGValue(pixel1));
-										fixed f_g2 = itofx(_GetGValue(pixel2));
-										fixed f_g3 = itofx(_GetGValue(pixel3));
-										fixed f_g4 = itofx(_GetGValue(pixel4));
-										fixed f_b1 = itofx(_GetBValue(pixel1));
-										fixed f_b2 = itofx(_GetBValue(pixel2));
-										fixed f_b3 = itofx(_GetBValue(pixel3));
-										fixed f_b4 = itofx(_GetBValue(pixel4));
+										bmfixed f_r1 = itofx(_GetRValue(pixel1));
+										bmfixed f_r2 = itofx(_GetRValue(pixel2));
+										bmfixed f_r3 = itofx(_GetRValue(pixel3));
+										bmfixed f_r4 = itofx(_GetRValue(pixel4));
+										bmfixed f_g1 = itofx(_GetGValue(pixel1));
+										bmfixed f_g2 = itofx(_GetGValue(pixel2));
+										bmfixed f_g3 = itofx(_GetGValue(pixel3));
+										bmfixed f_g4 = itofx(_GetGValue(pixel4));
+										bmfixed f_b1 = itofx(_GetBValue(pixel1));
+										bmfixed f_b2 = itofx(_GetBValue(pixel2));
+										bmfixed f_b3 = itofx(_GetBValue(pixel3));
+										bmfixed f_b4 = itofx(_GetBValue(pixel4));
 										BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 										BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 										BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 										pixel1 =  _RGB(red, green, blue);
 										pixel2 =  GetPixel(j, i);
-										fixed f_sred = itofx(_GetRValue(pixel1));
-										fixed f_sgreen = itofx(_GetGValue(pixel1));
-										fixed f_sblue = itofx(_GetBValue(pixel1));
-										fixed f_dred = itofx(_GetRValue(pixel2));
-										fixed f_dgreen = itofx(_GetGValue(pixel2));
-										fixed f_dblue = itofx(_GetBValue(pixel2));
+										bmfixed f_sred = itofx(_GetRValue(pixel1));
+										bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+										bmfixed f_sblue = itofx(_GetBValue(pixel1));
+										bmfixed f_dred = itofx(_GetRValue(pixel2));
+										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+										bmfixed f_dblue = itofx(_GetBValue(pixel2));
 										red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 										green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 										blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -8273,9 +8268,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 									_PIXEL pixel1 =  bitmapEx.GetPixel(n, m);
 									if (pixel1 != transparentColor)
 									{
-										fixed f_f = ftofx(delta*_height) - itofx(m);
-										fixed f_g = ftofx(mu*_width) - itofx(n);
-										fixed f_1 = itofx(1);
+										bmfixed f_f = ftofx(delta*_height) - itofx(m);
+										bmfixed f_g = ftofx(mu*_width) - itofx(n);
+										bmfixed f_1 = itofx(1);
 										DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 										DWORD dwSrcOffsets[16];
 										dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -8324,50 +8319,50 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 										dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 										if ((m >= _height-2) || (n >= _width-2))
 											dwSrcOffsets[15] = dwSrcTotalOffset;
-										fixed f_red=0, f_green=0, f_blue=0;
+										bmfixed f_red=0, f_green=0, f_blue=0;
 										for (long k=-1; k<3; k++)
 										{
-											fixed f = itofx(k)-f_f;
-											fixed f_fm1 = f - f_1;
-											fixed f_fp1 = f + f_1;
-											fixed f_fp2 = f + f_2;
-											fixed f_a = 0;
+											bmfixed f = itofx(k)-f_f;
+											bmfixed f_fm1 = f - f_1;
+											bmfixed f_fp1 = f + f_1;
+											bmfixed f_fp2 = f + f_2;
+											bmfixed f_a = 0;
 											if (f_fp2 > 0)
 												f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-											fixed f_b = 0;
+											bmfixed f_b = 0;
 											if (f_fp1 > 0)
 												f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-											fixed f_c = 0;
+											bmfixed f_c = 0;
 											if (f > 0)
 												f_c = Mulfx(f,Mulfx(f,f));
-											fixed f_d = 0;
+											bmfixed f_d = 0;
 											if (f_fm1 > 0)
 												f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-											fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+											bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 											for (long l=-1; l<3; l++)
 											{
-												fixed f = itofx(l)-f_g;
-												fixed f_fm1 = f - f_1;
-												fixed f_fp1 = f + f_1;
-												fixed f_fp2 = f + f_2;
-												fixed f_a = 0;
+												bmfixed f = itofx(l)-f_g;
+												bmfixed f_fm1 = f - f_1;
+												bmfixed f_fp1 = f + f_1;
+												bmfixed f_fp2 = f + f_2;
+												bmfixed f_a = 0;
 												if (f_fp2 > 0)
 													f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-												fixed f_b = 0;
+												bmfixed f_b = 0;
 												if (f_fp1 > 0)
 													f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-												fixed f_c = 0;
+												bmfixed f_c = 0;
 												if (f > 0)
 													f_c = Mulfx(f,Mulfx(f,f));
-												fixed f_d = 0;
+												bmfixed f_d = 0;
 												if (f_fm1 > 0)
 													f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-												fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-												fixed f_R = Mulfx(f_RY,f_RX);
+												bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+												bmfixed f_R = Mulfx(f_RY,f_RX);
 												long _k = ((k+1)*4) + (l+1);
-												fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-												fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-												fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 												f_red += Mulfx(f_rs,f_R);
 												f_green += Mulfx(f_gs,f_R);
 												f_blue += Mulfx(f_bs,f_R);
@@ -8378,12 +8373,12 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 										BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 										_PIXEL pixel1 =  _RGB(red, green, blue);
 										_PIXEL pixel2 =  GetPixel(j, i);
-										fixed f_sred = itofx(_GetRValue(pixel1));
-										fixed f_sgreen = itofx(_GetGValue(pixel1));
-										fixed f_sblue = itofx(_GetBValue(pixel1));
-										fixed f_dred = itofx(_GetRValue(pixel2));
-										fixed f_dgreen = itofx(_GetGValue(pixel2));
-										fixed f_dblue = itofx(_GetBValue(pixel2));
+										bmfixed f_sred = itofx(_GetRValue(pixel1));
+										bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+										bmfixed f_sblue = itofx(_GetBValue(pixel1));
+										bmfixed f_dred = itofx(_GetRValue(pixel2));
+										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+										bmfixed f_dblue = itofx(_GetBValue(pixel2));
 										red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 										green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 										blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -8440,9 +8435,9 @@ void CBitmapEx::_DrawTransparentNearestNeighbour(long dstX, long dstY, long dstW
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 /*		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -8461,10 +8456,10 @@ void CBitmapEx::_DrawTransparentNearestNeighbour(long dstX, long dstY, long dstW
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
@@ -8585,9 +8580,9 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 /*		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -8606,14 +8601,14 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				_PIXEL pixel = lpSrcData[dwSrcTotalOffset>>2];
 				if (pixel != transparentColor)
@@ -8628,26 +8623,26 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 					DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 					if ((n >= _width-1) || (m >= _height-1))
 						dwSrcBottomRight = dwSrcTotalOffset;
-					fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-					fixed f_w2 = Mulfx(f_1-f_f, f_g);
-					fixed f_w3 = Mulfx(f_f, f_1-f_g);
-					fixed f_w4 = Mulfx(f_f, f_g);
+					bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+					bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+					bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+					bmfixed f_w4 = Mulfx(f_f, f_g);
 					_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 					_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 					_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 					_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-					fixed f_r1 = itofx(_GetRValue(pixel1));
-					fixed f_r2 = itofx(_GetRValue(pixel2));
-					fixed f_r3 = itofx(_GetRValue(pixel3));
-					fixed f_r4 = itofx(_GetRValue(pixel4));
-					fixed f_g1 = itofx(_GetGValue(pixel1));
-					fixed f_g2 = itofx(_GetGValue(pixel2));
-					fixed f_g3 = itofx(_GetGValue(pixel3));
-					fixed f_g4 = itofx(_GetGValue(pixel4));
-					fixed f_b1 = itofx(_GetBValue(pixel1));
-					fixed f_b2 = itofx(_GetBValue(pixel2));
-					fixed f_b3 = itofx(_GetBValue(pixel3));
-					fixed f_b4 = itofx(_GetBValue(pixel4));
+					bmfixed f_r1 = itofx(_GetRValue(pixel1));
+					bmfixed f_r2 = itofx(_GetRValue(pixel2));
+					bmfixed f_r3 = itofx(_GetRValue(pixel3));
+					bmfixed f_r4 = itofx(_GetRValue(pixel4));
+					bmfixed f_g1 = itofx(_GetGValue(pixel1));
+					bmfixed f_g2 = itofx(_GetGValue(pixel2));
+					bmfixed f_g3 = itofx(_GetGValue(pixel3));
+					bmfixed f_g4 = itofx(_GetGValue(pixel4));
+					bmfixed f_b1 = itofx(_GetBValue(pixel1));
+					bmfixed f_b2 = itofx(_GetBValue(pixel2));
+					bmfixed f_b3 = itofx(_GetBValue(pixel3));
+					bmfixed f_b4 = itofx(_GetBValue(pixel4));
 					BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 					BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 					BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -8673,7 +8668,7 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 		DWORD dwDstPitch = m_iPitch;
 		DWORD m, n, dwSrcVerticalOffset, dwSrcHorizontalOffset;
 		DWORD dwSrcTopLeft, dwSrcTopRight, dwSrcBottomLeft, dwSrcBottomRight;
-		fixed f_f, f_g, f_w1, f_w2, f_w3, f_w4;
+		bmfixed f_f, f_g, f_w1, f_w2, f_w3, f_w4;
 		DWORD dwTransparentColor = transparentColor;
 		__asm {
 			mov edi, lpDstData
@@ -8945,13 +8940,13 @@ void CBitmapEx::_DrawTransparentBicubic(long dstX, long dstY, long dstWidth, lon
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -8970,14 +8965,14 @@ void CBitmapEx::_DrawTransparentBicubic(long dstX, long dstY, long dstWidth, lon
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				_PIXEL pixel = lpSrcData[dwSrcTotalOffset>>2];
 				if (pixel != transparentColor)
@@ -9029,50 +9024,50 @@ void CBitmapEx::_DrawTransparentBicubic(long dstX, long dstY, long dstWidth, lon
 					dwSrcOffsets[15] = dwSrcTotalOffset - _pitch + _pitch + _bpp + _bpp;
 					if ((m >= _height-2) || (n >= _width-2))
 						dwSrcOffsets[15] = dwSrcTotalOffset;
-					fixed f_red=0, f_green=0, f_blue=0;
+					bmfixed f_red=0, f_green=0, f_blue=0;
 					for (long k=-1; k<3; k++)
 					{
-						fixed f = itofx(k)-f_f;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(k)-f_f;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 						for (long l=-1; l<3; l++)
 						{
-							fixed f = itofx(l)-f_g;
-							fixed f_fm1 = f - f_1;
-							fixed f_fp1 = f + f_1;
-							fixed f_fp2 = f + f_2;
-							fixed f_a = 0;
+							bmfixed f = itofx(l)-f_g;
+							bmfixed f_fm1 = f - f_1;
+							bmfixed f_fp1 = f + f_1;
+							bmfixed f_fp2 = f + f_2;
+							bmfixed f_a = 0;
 							if (f_fp2 > 0)
 								f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-							fixed f_b = 0;
+							bmfixed f_b = 0;
 							if (f_fp1 > 0)
 								f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-							fixed f_c = 0;
+							bmfixed f_c = 0;
 							if (f > 0)
 								f_c = Mulfx(f,Mulfx(f,f));
-							fixed f_d = 0;
+							bmfixed f_d = 0;
 							if (f_fm1 > 0)
 								f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-							fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-							fixed f_R = Mulfx(f_RY,f_RX);
+							bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+							bmfixed f_R = Mulfx(f_RY,f_RX);
 							long _k = ((k+1)*4) + (l+1);
-							fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 							f_red += Mulfx(f_rs,f_R);
 							f_green += Mulfx(f_gs,f_R);
 							f_blue += Mulfx(f_bs,f_R);
@@ -9178,10 +9173,10 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 		if ((_dstWidth == 0) || (_dstHeight == 0) || (_srcWidth == 0) || (_srcHeight == 0))
 			return;
 		float f_inv2a = 1.0f / (2*a);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Draw bitmap
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
@@ -9241,9 +9236,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 									_PIXEL pixel1 =  bitmapEx.GetPixel(n, m);
 									if (pixel1 != transparentColor)
 									{
-										fixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
-										fixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
-										fixed f_1 = itofx(1);
+										bmfixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
+										bmfixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
+										bmfixed f_1 = itofx(1);
 										DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 										DWORD dwSrcTopLeft = dwSrcTotalOffset;
 										DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -9255,26 +9250,26 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 										if ((n >= _width-1) || (m >= _height-1))
 											dwSrcBottomRight = dwSrcTotalOffset;
-										fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-										fixed f_w2 = Mulfx(f_1-f_f, f_g);
-										fixed f_w3 = Mulfx(f_f, f_1-f_g);
-										fixed f_w4 = Mulfx(f_f, f_g);
+										bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+										bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+										bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+										bmfixed f_w4 = Mulfx(f_f, f_g);
 										_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 										_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 										_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 										_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-										fixed f_r1 = itofx(_GetRValue(pixel1));
-										fixed f_r2 = itofx(_GetRValue(pixel2));
-										fixed f_r3 = itofx(_GetRValue(pixel3));
-										fixed f_r4 = itofx(_GetRValue(pixel4));
-										fixed f_g1 = itofx(_GetGValue(pixel1));
-										fixed f_g2 = itofx(_GetGValue(pixel2));
-										fixed f_g3 = itofx(_GetGValue(pixel3));
-										fixed f_g4 = itofx(_GetGValue(pixel4));
-										fixed f_b1 = itofx(_GetBValue(pixel1));
-										fixed f_b2 = itofx(_GetBValue(pixel2));
-										fixed f_b3 = itofx(_GetBValue(pixel3));
-										fixed f_b4 = itofx(_GetBValue(pixel4));
+										bmfixed f_r1 = itofx(_GetRValue(pixel1));
+										bmfixed f_r2 = itofx(_GetRValue(pixel2));
+										bmfixed f_r3 = itofx(_GetRValue(pixel3));
+										bmfixed f_r4 = itofx(_GetRValue(pixel4));
+										bmfixed f_g1 = itofx(_GetGValue(pixel1));
+										bmfixed f_g2 = itofx(_GetGValue(pixel2));
+										bmfixed f_g3 = itofx(_GetGValue(pixel3));
+										bmfixed f_g4 = itofx(_GetGValue(pixel4));
+										bmfixed f_b1 = itofx(_GetBValue(pixel1));
+										bmfixed f_b2 = itofx(_GetBValue(pixel2));
+										bmfixed f_b3 = itofx(_GetBValue(pixel3));
+										bmfixed f_b4 = itofx(_GetBValue(pixel4));
 										BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 										BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 										BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -9310,9 +9305,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 									_PIXEL pixel1 =  bitmapEx.GetPixel(n, m);
 									if (pixel1 != transparentColor)
 									{
-										fixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
-										fixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
-										fixed f_1 = itofx(1);
+										bmfixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
+										bmfixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
+										bmfixed f_1 = itofx(1);
 										DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 										DWORD dwSrcOffsets[16];
 										dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -9361,50 +9356,50 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 										if ((m >= _height-2) || (n >= _width-2))
 											dwSrcOffsets[15] = dwSrcTotalOffset;
-										fixed f_red=0, f_green=0, f_blue=0;
+										bmfixed f_red=0, f_green=0, f_blue=0;
 										for (long k=-1; k<3; k++)
 										{
-											fixed f = itofx(k)-f_f;
-											fixed f_fm1 = f - f_1;
-											fixed f_fp1 = f + f_1;
-											fixed f_fp2 = f + f_2;
-											fixed f_a = 0;
+											bmfixed f = itofx(k)-f_f;
+											bmfixed f_fm1 = f - f_1;
+											bmfixed f_fp1 = f + f_1;
+											bmfixed f_fp2 = f + f_2;
+											bmfixed f_a = 0;
 											if (f_fp2 > 0)
 												f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-											fixed f_b = 0;
+											bmfixed f_b = 0;
 											if (f_fp1 > 0)
 												f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-											fixed f_c = 0;
+											bmfixed f_c = 0;
 											if (f > 0)
 												f_c = Mulfx(f,Mulfx(f,f));
-											fixed f_d = 0;
+											bmfixed f_d = 0;
 											if (f_fm1 > 0)
 												f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-											fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+											bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 											for (long l=-1; l<3; l++)
 											{
-												fixed f = itofx(l)-f_g;
-												fixed f_fm1 = f - f_1;
-												fixed f_fp1 = f + f_1;
-												fixed f_fp2 = f + f_2;
-												fixed f_a = 0;
+												bmfixed f = itofx(l)-f_g;
+												bmfixed f_fm1 = f - f_1;
+												bmfixed f_fp1 = f + f_1;
+												bmfixed f_fp2 = f + f_2;
+												bmfixed f_a = 0;
 												if (f_fp2 > 0)
 													f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-												fixed f_b = 0;
+												bmfixed f_b = 0;
 												if (f_fp1 > 0)
 													f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-												fixed f_c = 0;
+												bmfixed f_c = 0;
 												if (f > 0)
 													f_c = Mulfx(f,Mulfx(f,f));
-												fixed f_d = 0;
+												bmfixed f_d = 0;
 												if (f_fm1 > 0)
 													f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-												fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-												fixed f_R = Mulfx(f_RY,f_RX);
+												bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+												bmfixed f_R = Mulfx(f_RY,f_RX);
 												long _k = ((k+1)*4) + (l+1);
-												fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-												fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-												fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 												f_red += Mulfx(f_rs,f_R);
 												f_green += Mulfx(f_gs,f_R);
 												f_blue += Mulfx(f_bs,f_R);
@@ -9468,11 +9463,11 @@ void CBitmapEx::_DrawTransparentNearestNeighbour(long dstX, long dstY, long dstW
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1malpha = f_1 - f_alpha;
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1malpha = f_1 - f_alpha;
 
 /*		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -9491,10 +9486,10 @@ void CBitmapEx::_DrawTransparentNearestNeighbour(long dstX, long dstY, long dstW
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
@@ -9502,12 +9497,12 @@ void CBitmapEx::_DrawTransparentNearestNeighbour(long dstX, long dstY, long dstW
 				if (pixel1 != transparentColor)
 				{
 					_PIXEL pixel2 = lpDstData[dwDstTotalOffset>>2];
-					fixed f_sred = itofx(_GetRValue(pixel1));
-					fixed f_sgreen = itofx(_GetGValue(pixel1));
-					fixed f_sblue = itofx(_GetBValue(pixel1));
-					fixed f_dred = itofx(_GetRValue(pixel2));
-					fixed f_dgreen = itofx(_GetGValue(pixel2));
-					fixed f_dblue = itofx(_GetBValue(pixel2));
+					bmfixed f_sred = itofx(_GetRValue(pixel1));
+					bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+					bmfixed f_sblue = itofx(_GetBValue(pixel1));
+					bmfixed f_dred = itofx(_GetRValue(pixel2));
+					bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+					bmfixed f_dblue = itofx(_GetBValue(pixel2));
 					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -9679,11 +9674,11 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1malpha = f_1 - f_alpha;
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1malpha = f_1 - f_alpha;
 
 /*		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -9702,14 +9697,14 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				_PIXEL pixel = lpSrcData[dwSrcTotalOffset>>2];
 				if (pixel != transparentColor)
@@ -9724,32 +9719,32 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 					DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 					if ((n >= _width-1) || (m >= _height-1))
 						dwSrcBottomRight = dwSrcTotalOffset;
-					fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-					fixed f_w2 = Mulfx(f_1-f_f, f_g);
-					fixed f_w3 = Mulfx(f_f, f_1-f_g);
-					fixed f_w4 = Mulfx(f_f, f_g);
+					bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+					bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+					bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+					bmfixed f_w4 = Mulfx(f_f, f_g);
 					_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 					_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 					_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 					_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-					fixed f_r1 = itofx(_GetRValue(pixel1));
-					fixed f_r2 = itofx(_GetRValue(pixel2));
-					fixed f_r3 = itofx(_GetRValue(pixel3));
-					fixed f_r4 = itofx(_GetRValue(pixel4));
-					fixed f_g1 = itofx(_GetGValue(pixel1));
-					fixed f_g2 = itofx(_GetGValue(pixel2));
-					fixed f_g3 = itofx(_GetGValue(pixel3));
-					fixed f_g4 = itofx(_GetGValue(pixel4));
-					fixed f_b1 = itofx(_GetBValue(pixel1));
-					fixed f_b2 = itofx(_GetBValue(pixel2));
-					fixed f_b3 = itofx(_GetBValue(pixel3));
-					fixed f_b4 = itofx(_GetBValue(pixel4));
-					fixed f_sred = (Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-					fixed f_sgreen = (Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-					fixed f_sblue = (Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
-					fixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
-					fixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
-					fixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
+					bmfixed f_r1 = itofx(_GetRValue(pixel1));
+					bmfixed f_r2 = itofx(_GetRValue(pixel2));
+					bmfixed f_r3 = itofx(_GetRValue(pixel3));
+					bmfixed f_r4 = itofx(_GetRValue(pixel4));
+					bmfixed f_g1 = itofx(_GetGValue(pixel1));
+					bmfixed f_g2 = itofx(_GetGValue(pixel2));
+					bmfixed f_g3 = itofx(_GetGValue(pixel3));
+					bmfixed f_g4 = itofx(_GetGValue(pixel4));
+					bmfixed f_b1 = itofx(_GetBValue(pixel1));
+					bmfixed f_b2 = itofx(_GetBValue(pixel2));
+					bmfixed f_b3 = itofx(_GetBValue(pixel3));
+					bmfixed f_b4 = itofx(_GetBValue(pixel4));
+					bmfixed f_sred = (Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+					bmfixed f_sgreen = (Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+					bmfixed f_sblue = (Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+					bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
+					bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
+					bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
 					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -9775,7 +9770,7 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 		DWORD dwDstPitch = m_iPitch;
 		DWORD m, n, dwSrcVerticalOffset, dwSrcHorizontalOffset;
 		DWORD dwSrcTopLeft, dwSrcTopRight, dwSrcBottomLeft, dwSrcBottomRight;
-		fixed f_f, f_g, f_w1, f_w2, f_w3, f_w4, f_srcPixel;
+		bmfixed f_f, f_g, f_w1, f_w2, f_w3, f_w4, f_srcPixel;
 		DWORD dwTransparentColor = transparentColor;
 		__asm {
 			mov edi, lpDstData
@@ -10101,14 +10096,14 @@ void CBitmapEx::_DrawTransparentBicubic(long dstX, long dstY, long dstWidth, lon
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
-		fixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
+		bmfixed f_alpha = ftofx(_alphaPercent);
 
 		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -10127,14 +10122,14 @@ void CBitmapEx::_DrawTransparentBicubic(long dstX, long dstY, long dstWidth, lon
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				_PIXEL pixel = lpSrcData[dwSrcTotalOffset>>2];
 				if (pixel != transparentColor)
@@ -10186,61 +10181,61 @@ void CBitmapEx::_DrawTransparentBicubic(long dstX, long dstY, long dstWidth, lon
 					dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 					if ((m >= _height-2) || (n >= _width-2))
 						dwSrcOffsets[15] = dwSrcTotalOffset;
-					fixed f_red=0, f_green=0, f_blue=0;
+					bmfixed f_red=0, f_green=0, f_blue=0;
 					for (long k=-1; k<3; k++)
 					{
-						fixed f = itofx(k)-f_f;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(k)-f_f;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 						for (long l=-1; l<3; l++)
 						{
-							fixed f = itofx(l)-f_g;
-							fixed f_fm1 = f - f_1;
-							fixed f_fp1 = f + f_1;
-							fixed f_fp2 = f + f_2;
-							fixed f_a = 0;
+							bmfixed f = itofx(l)-f_g;
+							bmfixed f_fm1 = f - f_1;
+							bmfixed f_fp1 = f + f_1;
+							bmfixed f_fp2 = f + f_2;
+							bmfixed f_a = 0;
 							if (f_fp2 > 0)
 								f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-							fixed f_b = 0;
+							bmfixed f_b = 0;
 							if (f_fp1 > 0)
 								f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-							fixed f_c = 0;
+							bmfixed f_c = 0;
 							if (f > 0)
 								f_c = Mulfx(f,Mulfx(f,f));
-							fixed f_d = 0;
+							bmfixed f_d = 0;
 							if (f_fm1 > 0)
 								f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-							fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-							fixed f_R = Mulfx(f_RY,f_RX);
+							bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+							bmfixed f_R = Mulfx(f_RY,f_RX);
 							long _k = ((k+1)*4) + (l+1);
-							fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-							fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+							bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 							f_red += Mulfx(f_rs,f_R);
 							f_green += Mulfx(f_gs,f_R);
 							f_blue += Mulfx(f_bs,f_R);
 						}
 					}
-					fixed f_sred = itofx(max(0, min(255, fxtoi(Mulfx(f_red,f_gama)))));
-					fixed f_sgreen = itofx(max(0, min(255, fxtoi(Mulfx(f_green,f_gama)))));
-					fixed f_sblue = itofx(max(0, min(255, fxtoi(Mulfx(f_blue,f_gama)))));
-					fixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
-					fixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
-					fixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
+					bmfixed f_sred = itofx(max(0, min(255, fxtoi(Mulfx(f_red,f_gama)))));
+					bmfixed f_sgreen = itofx(max(0, min(255, fxtoi(Mulfx(f_green,f_gama)))));
+					bmfixed f_sblue = itofx(max(0, min(255, fxtoi(Mulfx(f_blue,f_gama)))));
+					bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
+					bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
+					bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
 					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -10341,14 +10336,14 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 		if ((_dstWidth == 0) || (_dstHeight == 0) || (_srcWidth == 0) || (_srcHeight == 0))
 			return;
 		float f_inv2a = 1.0f / (2*a);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 		long _alpha = max(0, min(alpha, 100));
 		float _alphaPercent = (float)_alpha / 100.0f;
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1 = itofx(1);
 
 		// Draw bitmap
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
@@ -10379,12 +10374,12 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 									if (pixel1 != transparentColor)
 									{
 										_PIXEL pixel2 =  GetPixel(j, i);
-										fixed f_sred = itofx(_GetRValue(pixel1));
-										fixed f_sgreen = itofx(_GetGValue(pixel1));
-										fixed f_sblue = itofx(_GetBValue(pixel1));
-										fixed f_dred = itofx(_GetRValue(pixel2));
-										fixed f_dgreen = itofx(_GetGValue(pixel2));
-										fixed f_dblue = itofx(_GetBValue(pixel2));
+										bmfixed f_sred = itofx(_GetRValue(pixel1));
+										bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+										bmfixed f_sblue = itofx(_GetBValue(pixel1));
+										bmfixed f_dred = itofx(_GetRValue(pixel2));
+										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+										bmfixed f_dblue = itofx(_GetBValue(pixel2));
 										BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 										BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 										BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -10420,9 +10415,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 									_PIXEL pixel1 =  bitmapEx.GetPixel(n, m);
 									if (pixel1 != transparentColor)
 									{
-										fixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
-										fixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
-										fixed f_1 = itofx(1);
+										bmfixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
+										bmfixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
+										bmfixed f_1 = itofx(1);
 										DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 										DWORD dwSrcTopLeft = dwSrcTotalOffset;
 										DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -10434,37 +10429,37 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 										if ((n >= _width-1) || (m >= _height-1))
 											dwSrcBottomRight = dwSrcTotalOffset;
-										fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-										fixed f_w2 = Mulfx(f_1-f_f, f_g);
-										fixed f_w3 = Mulfx(f_f, f_1-f_g);
-										fixed f_w4 = Mulfx(f_f, f_g);
+										bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+										bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+										bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+										bmfixed f_w4 = Mulfx(f_f, f_g);
 										_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 										_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 										_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 										_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-										fixed f_r1 = itofx(_GetRValue(pixel1));
-										fixed f_r2 = itofx(_GetRValue(pixel2));
-										fixed f_r3 = itofx(_GetRValue(pixel3));
-										fixed f_r4 = itofx(_GetRValue(pixel4));
-										fixed f_g1 = itofx(_GetGValue(pixel1));
-										fixed f_g2 = itofx(_GetGValue(pixel2));
-										fixed f_g3 = itofx(_GetGValue(pixel3));
-										fixed f_g4 = itofx(_GetGValue(pixel4));
-										fixed f_b1 = itofx(_GetBValue(pixel1));
-										fixed f_b2 = itofx(_GetBValue(pixel2));
-										fixed f_b3 = itofx(_GetBValue(pixel3));
-										fixed f_b4 = itofx(_GetBValue(pixel4));
+										bmfixed f_r1 = itofx(_GetRValue(pixel1));
+										bmfixed f_r2 = itofx(_GetRValue(pixel2));
+										bmfixed f_r3 = itofx(_GetRValue(pixel3));
+										bmfixed f_r4 = itofx(_GetRValue(pixel4));
+										bmfixed f_g1 = itofx(_GetGValue(pixel1));
+										bmfixed f_g2 = itofx(_GetGValue(pixel2));
+										bmfixed f_g3 = itofx(_GetGValue(pixel3));
+										bmfixed f_g4 = itofx(_GetGValue(pixel4));
+										bmfixed f_b1 = itofx(_GetBValue(pixel1));
+										bmfixed f_b2 = itofx(_GetBValue(pixel2));
+										bmfixed f_b3 = itofx(_GetBValue(pixel3));
+										bmfixed f_b4 = itofx(_GetBValue(pixel4));
 										BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 										BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 										BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 										pixel1 =  _RGB(red, green, blue);
 										pixel2 =  GetPixel(j, i);
-										fixed f_sred = itofx(_GetRValue(pixel1));
-										fixed f_sgreen = itofx(_GetGValue(pixel1));
-										fixed f_sblue = itofx(_GetBValue(pixel1));
-										fixed f_dred = itofx(_GetRValue(pixel2));
-										fixed f_dgreen = itofx(_GetGValue(pixel2));
-										fixed f_dblue = itofx(_GetBValue(pixel2));
+										bmfixed f_sred = itofx(_GetRValue(pixel1));
+										bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+										bmfixed f_sblue = itofx(_GetBValue(pixel1));
+										bmfixed f_dred = itofx(_GetRValue(pixel2));
+										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+										bmfixed f_dblue = itofx(_GetBValue(pixel2));
 										red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 										green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 										blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -10500,9 +10495,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 									_PIXEL pixel1 =  bitmapEx.GetPixel(n, m);
 									if (pixel1 != transparentColor)
 									{
-										fixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
-										fixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
-										fixed f_1 = itofx(1);
+										bmfixed f_f = ftofx(delta*_srcHeight+_srcStartY) - itofx(m);
+										bmfixed f_g = ftofx(mu*_srcWidth+_srcStartX) - itofx(n);
+										bmfixed f_1 = itofx(1);
 										DWORD dwSrcTotalOffset = (_height-m-1)*_pitch + n*_bpp;
 										DWORD dwSrcOffsets[16];
 										dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -10551,50 +10546,50 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 										if ((m >= _height-2) || (n >= _width-2))
 											dwSrcOffsets[15] = dwSrcTotalOffset;
-										fixed f_red=0, f_green=0, f_blue=0;
+										bmfixed f_red=0, f_green=0, f_blue=0;
 										for (long k=-1; k<3; k++)
 										{
-											fixed f = itofx(k)-f_f;
-											fixed f_fm1 = f - f_1;
-											fixed f_fp1 = f + f_1;
-											fixed f_fp2 = f + f_2;
-											fixed f_a = 0;
+											bmfixed f = itofx(k)-f_f;
+											bmfixed f_fm1 = f - f_1;
+											bmfixed f_fp1 = f + f_1;
+											bmfixed f_fp2 = f + f_2;
+											bmfixed f_a = 0;
 											if (f_fp2 > 0)
 												f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-											fixed f_b = 0;
+											bmfixed f_b = 0;
 											if (f_fp1 > 0)
 												f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-											fixed f_c = 0;
+											bmfixed f_c = 0;
 											if (f > 0)
 												f_c = Mulfx(f,Mulfx(f,f));
-											fixed f_d = 0;
+											bmfixed f_d = 0;
 											if (f_fm1 > 0)
 												f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-											fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+											bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 											for (long l=-1; l<3; l++)
 											{
-												fixed f = itofx(l)-f_g;
-												fixed f_fm1 = f - f_1;
-												fixed f_fp1 = f + f_1;
-												fixed f_fp2 = f + f_2;
-												fixed f_a = 0;
+												bmfixed f = itofx(l)-f_g;
+												bmfixed f_fm1 = f - f_1;
+												bmfixed f_fp1 = f + f_1;
+												bmfixed f_fp2 = f + f_2;
+												bmfixed f_a = 0;
 												if (f_fp2 > 0)
 													f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-												fixed f_b = 0;
+												bmfixed f_b = 0;
 												if (f_fp1 > 0)
 													f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-												fixed f_c = 0;
+												bmfixed f_c = 0;
 												if (f > 0)
 													f_c = Mulfx(f,Mulfx(f,f));
-												fixed f_d = 0;
+												bmfixed f_d = 0;
 												if (f_fm1 > 0)
 													f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-												fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-												fixed f_R = Mulfx(f_RY,f_RX);
+												bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+												bmfixed f_R = Mulfx(f_RY,f_RX);
 												long _k = ((k+1)*4) + (l+1);
-												fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-												fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-												fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+												bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 												f_red += Mulfx(f_rs,f_R);
 												f_green += Mulfx(f_gs,f_R);
 												f_blue += Mulfx(f_bs,f_R);
@@ -10605,12 +10600,12 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 										_PIXEL pixel1 =  _RGB(red, green, blue);
 										_PIXEL pixel2 =  GetPixel(j, i);
-										fixed f_sred = itofx(_GetRValue(pixel1));
-										fixed f_sgreen = itofx(_GetGValue(pixel1));
-										fixed f_sblue = itofx(_GetBValue(pixel1));
-										fixed f_dred = itofx(_GetRValue(pixel2));
-										fixed f_dgreen = itofx(_GetGValue(pixel2));
-										fixed f_dblue = itofx(_GetBValue(pixel2));
+										bmfixed f_sred = itofx(_GetRValue(pixel1));
+										bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+										bmfixed f_sblue = itofx(_GetBValue(pixel1));
+										bmfixed f_dred = itofx(_GetRValue(pixel2));
+										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+										bmfixed f_dblue = itofx(_GetBValue(pixel2));
 										red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 										green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 										blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -10658,7 +10653,7 @@ void CBitmapEx::DrawBlended(long dstX, long dstY, long width, long height, CBitm
 		float _startAlphaPercent = (float)_startAlpha / 100.0f;
 		long _endAlpha = max(0, min(endAlpha, 100));
 		float _endAlphaPercent = (float)_endAlpha / 100.0f;
-		fixed f_1 = itofx(1);
+		bmfixed f_1 = itofx(1);
 		long _width = min(_dstEndX-_dstStartX, _srcEndX-_srcStartX);
 		long _height = min(_dstEndY-_dstStartY, _srcEndY-_srcStartY);
 		if ((_width == 0) || (_height == 0))
@@ -10732,17 +10727,17 @@ void CBitmapEx::DrawBlended(long dstX, long dstY, long width, long height, CBitm
 					else
 						_alpha = min(_startAlphaPercent, _alpha);
 				}
-				fixed f_alpha = ftofx(_alpha);
+				bmfixed f_alpha = ftofx(_alpha);
 
 				// Update bitmap
 				_PIXEL pixel1 = lpSrcData[dwSrcTotalOffset>>2];
 				_PIXEL pixel2 = lpDstData[dwDstTotalOffset>>2];
-				fixed f_sred = itofx(_GetRValue(pixel1));
-				fixed f_sgreen = itofx(_GetGValue(pixel1));
-				fixed f_sblue = itofx(_GetBValue(pixel1));
-				fixed f_dred = itofx(_GetRValue(pixel2));
-				fixed f_dgreen = itofx(_GetGValue(pixel2));
-				fixed f_dblue = itofx(_GetBValue(pixel2));
+				bmfixed f_sred = itofx(_GetRValue(pixel1));
+				bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+				bmfixed f_sblue = itofx(_GetBValue(pixel1));
+				bmfixed f_dred = itofx(_GetRValue(pixel2));
+				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+				bmfixed f_dblue = itofx(_GetBValue(pixel2));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -10807,9 +10802,9 @@ void CBitmapEx::_DrawBlendedNearestNeighbour(long dstX, long dstY, long dstWidth
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 		// Check drawing region
 		long _startAlpha = max(0, min(startAlpha, 100));
@@ -10880,24 +10875,24 @@ void CBitmapEx::_DrawBlendedNearestNeighbour(long dstX, long dstY, long dstWidth
 					else
 						_alpha = min(_startAlphaPercent, _alpha);
 				}
-				fixed f_alpha = ftofx(_alpha);
+				bmfixed f_alpha = ftofx(_alpha);
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				_PIXEL pixel1 = lpSrcData[dwSrcTotalOffset>>2];
 				_PIXEL pixel2 = lpDstData[dwDstTotalOffset>>2];
-				fixed f_sred = itofx(_GetRValue(pixel1));
-				fixed f_sgreen = itofx(_GetGValue(pixel1));
-				fixed f_sblue = itofx(_GetBValue(pixel1));
-				fixed f_dred = itofx(_GetRValue(pixel2));
-				fixed f_dgreen = itofx(_GetGValue(pixel2));
-				fixed f_dblue = itofx(_GetBValue(pixel2));
+				bmfixed f_sred = itofx(_GetRValue(pixel1));
+				bmfixed f_sgreen = itofx(_GetGValue(pixel1));
+				bmfixed f_sblue = itofx(_GetBValue(pixel1));
+				bmfixed f_dred = itofx(_GetRValue(pixel2));
+				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+				bmfixed f_dblue = itofx(_GetBValue(pixel2));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -10957,9 +10952,9 @@ void CBitmapEx::_DrawBlendedBilinear(long dstX, long dstY, long dstWidth, long d
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 		// Check drawing region
 		long _startAlpha = max(0, min(startAlpha, 100));
@@ -11030,17 +11025,17 @@ void CBitmapEx::_DrawBlendedBilinear(long dstX, long dstY, long dstWidth, long d
 					else
 						_alpha = min(_startAlphaPercent, _alpha);
 				}
-				fixed f_alpha = ftofx(_alpha);
+				bmfixed f_alpha = ftofx(_alpha);
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				DWORD dwSrcTopLeft = dwSrcTotalOffset;
 				DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -11052,32 +11047,32 @@ void CBitmapEx::_DrawBlendedBilinear(long dstX, long dstY, long dstWidth, long d
 				DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 				if ((n >= _width-1) || (m >= _height-1))
 					dwSrcBottomRight = dwSrcTotalOffset;
-				fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-				fixed f_w2 = Mulfx(f_1-f_f, f_g);
-				fixed f_w3 = Mulfx(f_f, f_1-f_g);
-				fixed f_w4 = Mulfx(f_f, f_g);
+				bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+				bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+				bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+				bmfixed f_w4 = Mulfx(f_f, f_g);
 				_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 				_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 				_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 				_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-				fixed f_r1 = itofx(_GetRValue(pixel1));
-				fixed f_r2 = itofx(_GetRValue(pixel2));
-				fixed f_r3 = itofx(_GetRValue(pixel3));
-				fixed f_r4 = itofx(_GetRValue(pixel4));
-				fixed f_g1 = itofx(_GetGValue(pixel1));
-				fixed f_g2 = itofx(_GetGValue(pixel2));
-				fixed f_g3 = itofx(_GetGValue(pixel3));
-				fixed f_g4 = itofx(_GetGValue(pixel4));
-				fixed f_b1 = itofx(_GetBValue(pixel1));
-				fixed f_b2 = itofx(_GetBValue(pixel2));
-				fixed f_b3 = itofx(_GetBValue(pixel3));
-				fixed f_b4 = itofx(_GetBValue(pixel4));
-				fixed f_sred = (Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-				fixed f_sgreen = (Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-				fixed f_sblue = (Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
-				fixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
-				fixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
-				fixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_r1 = itofx(_GetRValue(pixel1));
+				bmfixed f_r2 = itofx(_GetRValue(pixel2));
+				bmfixed f_r3 = itofx(_GetRValue(pixel3));
+				bmfixed f_r4 = itofx(_GetRValue(pixel4));
+				bmfixed f_g1 = itofx(_GetGValue(pixel1));
+				bmfixed f_g2 = itofx(_GetGValue(pixel2));
+				bmfixed f_g3 = itofx(_GetGValue(pixel3));
+				bmfixed f_g4 = itofx(_GetGValue(pixel4));
+				bmfixed f_b1 = itofx(_GetBValue(pixel1));
+				bmfixed f_b2 = itofx(_GetBValue(pixel2));
+				bmfixed f_b3 = itofx(_GetBValue(pixel3));
+				bmfixed f_b4 = itofx(_GetBValue(pixel4));
+				bmfixed f_sred = (Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+				bmfixed f_sgreen = (Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+				bmfixed f_sblue = (Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -11137,13 +11132,13 @@ void CBitmapEx::_DrawBlendedBicubic(long dstX, long dstY, long dstWidth, long ds
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Check drawing region
 		long _startAlpha = max(0, min(startAlpha, 100));
@@ -11214,17 +11209,17 @@ void CBitmapEx::_DrawBlendedBicubic(long dstX, long dstY, long dstWidth, long ds
 					else
 						_alpha = min(_startAlphaPercent, _alpha);
 				}
-				fixed f_alpha = ftofx(_alpha);
+				bmfixed f_alpha = ftofx(_alpha);
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				DWORD dwSrcOffsets[16];
 				dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -11273,61 +11268,61 @@ void CBitmapEx::_DrawBlendedBicubic(long dstX, long dstY, long dstWidth, long ds
 				dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 				if ((m >= _height-2) || (n >= _width-2))
 					dwSrcOffsets[15] = dwSrcTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<3; k++)
 				{
-					fixed f = itofx(k)-f_f;
-					fixed f_fm1 = f - f_1;
-					fixed f_fp1 = f + f_1;
-					fixed f_fp2 = f + f_2;
-					fixed f_a = 0;
+					bmfixed f = itofx(k)-f_f;
+					bmfixed f_fm1 = f - f_1;
+					bmfixed f_fp1 = f + f_1;
+					bmfixed f_fp2 = f + f_2;
+					bmfixed f_a = 0;
 					if (f_fp2 > 0)
 						f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-					fixed f_b = 0;
+					bmfixed f_b = 0;
 					if (f_fp1 > 0)
 						f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-					fixed f_c = 0;
+					bmfixed f_c = 0;
 					if (f > 0)
 						f_c = Mulfx(f,Mulfx(f,f));
-					fixed f_d = 0;
+					bmfixed f_d = 0;
 					if (f_fm1 > 0)
 						f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-					fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+					bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 					for (long l=-1; l<3; l++)
 					{
-						fixed f = itofx(l)-f_g;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(l)-f_g;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-						fixed f_R = Mulfx(f_RY,f_RX);
+						bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_R = Mulfx(f_RY,f_RX);
 						long _k = ((k+1)*4) + (l+1);
-						fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 						f_red += Mulfx(f_rs,f_R);
 						f_green += Mulfx(f_gs,f_R);
 						f_blue += Mulfx(f_bs,f_R);
 					}
 				}
-				fixed f_sred = itofx(max(0, min(255, fxtoi(Mulfx(f_red,f_gama)))));
-				fixed f_sgreen = itofx(max(0, min(255, fxtoi(Mulfx(f_green,f_gama)))));
-				fixed f_sblue = itofx(max(0, min(255, fxtoi(Mulfx(f_blue,f_gama)))));
-				fixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
-				fixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
-				fixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_sred = itofx(max(0, min(255, fxtoi(Mulfx(f_red,f_gama)))));
+				bmfixed f_sgreen = itofx(max(0, min(255, fxtoi(Mulfx(f_green,f_gama)))));
+				bmfixed f_sblue = itofx(max(0, min(255, fxtoi(Mulfx(f_blue,f_gama)))));
+				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
+				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
@@ -11486,9 +11481,9 @@ void CBitmapEx::DrawAlpha(long dstX, long dstY, long width, long height, CBitmap
 		long _bpp = bitmapEx.GetBpp() >> 3;
 		long _alpha = max(0, min(alpha, 100));
 		float _alphaPercent = (float)_alpha / 100.0f;
-		fixed f_alpha = ftofx(_alphaPercent);
-		fixed f_1 = itofx(1);
-		fixed f_1malpha = f_1 - f_alpha;
+		bmfixed f_alpha = ftofx(_alphaPercent);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_1malpha = f_1 - f_alpha;
 		long _width = min(_dstEndX-_dstStartX, _srcEndX-_srcStartX);
 		long _height = min(_dstEndY-_dstStartY, _srcEndY-_srcStartY);
 		if ((_width == 0) || (_height == 0))
@@ -11520,14 +11515,14 @@ void CBitmapEx::DrawAlpha(long dstX, long dstY, long width, long height, CBitmap
 				// Update bitmap
 				_PIXEL pixel1 = lpSrcData[dwSrcTotalOffset>>2];
 				_PIXEL pixel2 = lpDstData[dwDstTotalOffset>>2];
-				fixed f_alphaSrc = f_1 - ftofx((float)_GetRValue(pixel1)/255.0f);
-				fixed f_alphaDst = f_1 - Mulfx(f_alphaSrc, f_alpha);
-				fixed f_sred = itofx(_GetRValue(alphaColor));
-				fixed f_sgreen = itofx(_GetGValue(alphaColor));
-				fixed f_sblue = itofx(_GetBValue(alphaColor));
-				fixed f_dred = itofx(_GetRValue(pixel2));
-				fixed f_dgreen = itofx(_GetGValue(pixel2));
-				fixed f_dblue = itofx(_GetBValue(pixel2));
+				bmfixed f_alphaSrc = f_1 - ftofx((float)_GetRValue(pixel1)/255.0f);
+				bmfixed f_alphaDst = f_1 - Mulfx(f_alphaSrc, f_alpha);
+				bmfixed f_sred = itofx(_GetRValue(alphaColor));
+				bmfixed f_sgreen = itofx(_GetGValue(alphaColor));
+				bmfixed f_sblue = itofx(_GetBValue(alphaColor));
+				bmfixed f_dred = itofx(_GetRValue(pixel2));
+				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
+				bmfixed f_dblue = itofx(_GetBValue(pixel2));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_dred, f_alphaDst) + Mulfx(f_sred, f_1-f_alphaDst));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_dgreen, f_alphaDst) + Mulfx(f_sgreen, f_1-f_alphaDst));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_dblue, f_alphaDst) + Mulfx(f_sblue, f_1-f_alphaDst));
@@ -11692,9 +11687,9 @@ void CBitmapEx::_DrawCombinedNearestNeighbour(long dstX, long dstY, long dstWidt
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -11713,10 +11708,10 @@ void CBitmapEx::_DrawCombinedNearestNeighbour(long dstX, long dstY, long dstWidt
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
@@ -11801,9 +11796,9 @@ void CBitmapEx::_DrawCombinedBilinear(long dstX, long dstY, long dstWidth, long 
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
 
 		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -11822,14 +11817,14 @@ void CBitmapEx::_DrawCombinedBilinear(long dstX, long dstY, long dstWidth, long 
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				DWORD dwSrcTopLeft = dwSrcTotalOffset;
 				DWORD dwSrcTopRight = dwSrcTotalOffset + _bpp;
@@ -11841,26 +11836,26 @@ void CBitmapEx::_DrawCombinedBilinear(long dstX, long dstY, long dstWidth, long 
 				DWORD dwSrcBottomRight = dwSrcTotalOffset - _pitch + _bpp;
 				if ((n >= _width-1) || (m >= _height-1))
 					dwSrcBottomRight = dwSrcTotalOffset;
-				fixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
-				fixed f_w2 = Mulfx(f_1-f_f, f_g);
-				fixed f_w3 = Mulfx(f_f, f_1-f_g);
-				fixed f_w4 = Mulfx(f_f, f_g);
+				bmfixed f_w1 = Mulfx(f_1-f_f, f_1-f_g);
+				bmfixed f_w2 = Mulfx(f_1-f_f, f_g);
+				bmfixed f_w3 = Mulfx(f_f, f_1-f_g);
+				bmfixed f_w4 = Mulfx(f_f, f_g);
 				_PIXEL pixel1 = lpSrcData[dwSrcTopLeft>>2];
 				_PIXEL pixel2 = lpSrcData[dwSrcTopRight>>2];
 				_PIXEL pixel3 = lpSrcData[dwSrcBottomLeft>>2];
 				_PIXEL pixel4 = lpSrcData[dwSrcBottomRight>>2];
-				fixed f_r1 = itofx(_GetRValue(pixel1));
-				fixed f_r2 = itofx(_GetRValue(pixel2));
-				fixed f_r3 = itofx(_GetRValue(pixel3));
-				fixed f_r4 = itofx(_GetRValue(pixel4));
-				fixed f_g1 = itofx(_GetGValue(pixel1));
-				fixed f_g2 = itofx(_GetGValue(pixel2));
-				fixed f_g3 = itofx(_GetGValue(pixel3));
-				fixed f_g4 = itofx(_GetGValue(pixel4));
-				fixed f_b1 = itofx(_GetBValue(pixel1));
-				fixed f_b2 = itofx(_GetBValue(pixel2));
-				fixed f_b3 = itofx(_GetBValue(pixel3));
-				fixed f_b4 = itofx(_GetBValue(pixel4));
+				bmfixed f_r1 = itofx(_GetRValue(pixel1));
+				bmfixed f_r2 = itofx(_GetRValue(pixel2));
+				bmfixed f_r3 = itofx(_GetRValue(pixel3));
+				bmfixed f_r4 = itofx(_GetRValue(pixel4));
+				bmfixed f_g1 = itofx(_GetGValue(pixel1));
+				bmfixed f_g2 = itofx(_GetGValue(pixel2));
+				bmfixed f_g3 = itofx(_GetGValue(pixel3));
+				bmfixed f_g4 = itofx(_GetGValue(pixel4));
+				bmfixed f_b1 = itofx(_GetBValue(pixel1));
+				bmfixed f_b2 = itofx(_GetBValue(pixel2));
+				bmfixed f_b3 = itofx(_GetBValue(pixel3));
+				bmfixed f_b4 = itofx(_GetBValue(pixel4));
 				BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
 				BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
 				BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
@@ -11945,13 +11940,13 @@ void CBitmapEx::_DrawCombinedBicubic(long dstX, long dstY, long dstWidth, long d
 		long _verticalPercent = (long)(((float)_dstHeight / (float)_srcHeight) * 100.0f);
 		float dx = (float)_srcWidth / (float)_dstWidth;
 		float dy = (float)_srcHeight / (float)_dstHeight;
-		fixed f_dx = ftofx(dx);
-		fixed f_dy = ftofx(dy);
-		fixed f_1 = itofx(1);
-		fixed f_2 = itofx(2);
-		fixed f_4 = itofx(4);
-		fixed f_6 = itofx(6);
-		fixed f_gama = ftofx(1.04f);
+		bmfixed f_dx = ftofx(dx);
+		bmfixed f_dy = ftofx(dy);
+		bmfixed f_1 = itofx(1);
+		bmfixed f_2 = itofx(2);
+		bmfixed f_4 = itofx(4);
+		bmfixed f_6 = itofx(6);
+		bmfixed f_gama = ftofx(1.04f);
 
 		// Draw bitmap
 		DWORD dwDstHorizontalStartOffset = _dstStartX * m_iBpp;
@@ -11970,14 +11965,14 @@ void CBitmapEx::_DrawCombinedBicubic(long dstX, long dstY, long dstWidth, long d
 				dwDstTotalOffset = dwDstVerticalOffset + dwDstHorizontalOffset;
 
 				// Update bitmap
-				fixed f_i = itofx(i);
-				fixed f_j = itofx(j);
-				fixed f_a = Mulfx(f_i, f_dy);
-				fixed f_b = Mulfx(f_j, f_dx);
+				bmfixed f_i = itofx(i);
+				bmfixed f_j = itofx(j);
+				bmfixed f_a = Mulfx(f_i, f_dy);
+				bmfixed f_b = Mulfx(f_j, f_dx);
 				long m = fxtoi(f_a);
 				long n = fxtoi(f_b);
-				fixed f_f = f_a - itofx(m);
-				fixed f_g = f_b - itofx(n);
+				bmfixed f_f = f_a - itofx(m);
+				bmfixed f_g = f_b - itofx(n);
 				dwSrcTotalOffset = (_height-_srcStartY-m-1)*_pitch + (n+_srcStartX)*_bpp;
 				DWORD dwSrcOffsets[16];
 				dwSrcOffsets[0] = dwSrcTotalOffset + _pitch - _bpp;
@@ -12026,50 +12021,50 @@ void CBitmapEx::_DrawCombinedBicubic(long dstX, long dstY, long dstWidth, long d
 				dwSrcOffsets[15] = dwSrcTotalOffset - _pitch - _pitch + _bpp + _bpp;
 				if ((m >= _height-2) || (n >= _width-2))
 					dwSrcOffsets[15] = dwSrcTotalOffset;
-				fixed f_red=0, f_green=0, f_blue=0;
+				bmfixed f_red=0, f_green=0, f_blue=0;
 				for (long k=-1; k<3; k++)
 				{
-					fixed f = itofx(k)-f_f;
-					fixed f_fm1 = f - f_1;
-					fixed f_fp1 = f + f_1;
-					fixed f_fp2 = f + f_2;
-					fixed f_a = 0;
+					bmfixed f = itofx(k)-f_f;
+					bmfixed f_fm1 = f - f_1;
+					bmfixed f_fp1 = f + f_1;
+					bmfixed f_fp2 = f + f_2;
+					bmfixed f_a = 0;
 					if (f_fp2 > 0)
 						f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-					fixed f_b = 0;
+					bmfixed f_b = 0;
 					if (f_fp1 > 0)
 						f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-					fixed f_c = 0;
+					bmfixed f_c = 0;
 					if (f > 0)
 						f_c = Mulfx(f,Mulfx(f,f));
-					fixed f_d = 0;
+					bmfixed f_d = 0;
 					if (f_fm1 > 0)
 						f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-					fixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+					bmfixed f_RY = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
 					for (long l=-1; l<3; l++)
 					{
-						fixed f = itofx(l)-f_g;
-						fixed f_fm1 = f - f_1;
-						fixed f_fp1 = f + f_1;
-						fixed f_fp2 = f + f_2;
-						fixed f_a = 0;
+						bmfixed f = itofx(l)-f_g;
+						bmfixed f_fm1 = f - f_1;
+						bmfixed f_fp1 = f + f_1;
+						bmfixed f_fp2 = f + f_2;
+						bmfixed f_a = 0;
 						if (f_fp2 > 0)
 							f_a = Mulfx(f_fp2,Mulfx(f_fp2,f_fp2));
-						fixed f_b = 0;
+						bmfixed f_b = 0;
 						if (f_fp1 > 0)
 							f_b = Mulfx(f_fp1,Mulfx(f_fp1,f_fp1));
-						fixed f_c = 0;
+						bmfixed f_c = 0;
 						if (f > 0)
 							f_c = Mulfx(f,Mulfx(f,f));
-						fixed f_d = 0;
+						bmfixed f_d = 0;
 						if (f_fm1 > 0)
 							f_d = Mulfx(f_fm1,Mulfx(f_fm1,f_fm1));
-						fixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
-						fixed f_R = Mulfx(f_RY,f_RX);
+						bmfixed f_RX = Divfx((f_a-Mulfx(f_4,f_b)+Mulfx(f_6,f_c)-Mulfx(f_4,f_d)),f_6);
+						bmfixed f_R = Mulfx(f_RY,f_RX);
 						long _k = ((k+1)*4) + (l+1);
-						fixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
-						fixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_rs = itofx(_GetRValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_gs = itofx(_GetGValue(lpSrcData[dwSrcOffsets[_k]>>2]));
+						bmfixed f_bs = itofx(_GetBValue(lpSrcData[dwSrcOffsets[_k]>>2]));
 						f_red += Mulfx(f_rs,f_R);
 						f_green += Mulfx(f_gs,f_R);
 						f_blue += Mulfx(f_bs,f_R);
@@ -12205,15 +12200,15 @@ void CBitmapEx::DrawTextA(long dstX, long dstY, LPSTR lpszText, _PIXEL textColor
 						{
 							long index = iVerticalOffset + iHorizontalOffset;
 							_PIXEL pixel = GetPixel(dstX+j+iLetterOffset+iHorizontalSkip, dstY+i+iVerticalSkip+iLineOffset);
-							fixed f_value = ftofx(lpFontBitmap[index]);
-							fixed f_alpha = Mulfx(Divfx(f_value,ftofx(65.0f)),Divfx(itofx(textAlpha),ftofx(100.0f)));
-							fixed f_1malpha = itofx(1) - f_alpha;
-							fixed f_sred = itofx(_GetRValue(textColor));
-							fixed f_sgreen = itofx(_GetGValue(textColor));
-							fixed f_sblue = itofx(_GetBValue(textColor));
-							fixed f_dred = itofx(_GetRValue(pixel));
-							fixed f_dgreen = itofx(_GetGValue(pixel));
-							fixed f_dblue = itofx(_GetBValue(pixel));
+							bmfixed f_value = ftofx(lpFontBitmap[index]);
+							bmfixed f_alpha = Mulfx(Divfx(f_value,ftofx(65.0f)),Divfx(itofx(textAlpha),ftofx(100.0f)));
+							bmfixed f_1malpha = itofx(1) - f_alpha;
+							bmfixed f_sred = itofx(_GetRValue(textColor));
+							bmfixed f_sgreen = itofx(_GetGValue(textColor));
+							bmfixed f_sblue = itofx(_GetBValue(textColor));
+							bmfixed f_dred = itofx(_GetRValue(pixel));
+							bmfixed f_dgreen = itofx(_GetGValue(pixel));
+							bmfixed f_dblue = itofx(_GetBValue(pixel));
 							BYTE red = (BYTE)fxtoi(Mulfx(f_alpha,f_sred) + Mulfx(f_1malpha,f_dred));
 							BYTE green = (BYTE)fxtoi(Mulfx(f_alpha,f_sgreen) + Mulfx(f_1malpha,f_dgreen));
 							BYTE blue = (BYTE)fxtoi(Mulfx(f_alpha,f_sblue) + Mulfx(f_1malpha,f_dblue));
@@ -12301,15 +12296,15 @@ void CBitmapEx::DrawTextW(long dstX, long dstY, LPWSTR lpszText, _PIXEL textColo
 						{
 							long index = iVerticalOffset + iHorizontalOffset;
 							_PIXEL pixel = GetPixel(dstX+j+iLetterOffset+iHorizontalSkip, dstY+i+iVerticalSkip+iLineOffset);
-							fixed f_value = ftofx(lpFontBitmap[index]);
-							fixed f_alpha = Mulfx(Divfx(f_value,ftofx(65.0f)),Divfx(itofx(textAlpha),ftofx(100.0f)));
-							fixed f_1malpha = itofx(1) - f_alpha;
-							fixed f_sred = itofx(_GetRValue(textColor));
-							fixed f_sgreen = itofx(_GetGValue(textColor));
-							fixed f_sblue = itofx(_GetBValue(textColor));
-							fixed f_dred = itofx(_GetRValue(pixel));
-							fixed f_dgreen = itofx(_GetGValue(pixel));
-							fixed f_dblue = itofx(_GetBValue(pixel));
+							bmfixed f_value = ftofx(lpFontBitmap[index]);
+							bmfixed f_alpha = Mulfx(Divfx(f_value,ftofx(65.0f)),Divfx(itofx(textAlpha),ftofx(100.0f)));
+							bmfixed f_1malpha = itofx(1) - f_alpha;
+							bmfixed f_sred = itofx(_GetRValue(textColor));
+							bmfixed f_sgreen = itofx(_GetGValue(textColor));
+							bmfixed f_sblue = itofx(_GetBValue(textColor));
+							bmfixed f_dred = itofx(_GetRValue(pixel));
+							bmfixed f_dgreen = itofx(_GetGValue(pixel));
+							bmfixed f_dblue = itofx(_GetBValue(pixel));
 							BYTE red = (BYTE)fxtoi(Mulfx(f_alpha,f_sred) + Mulfx(f_1malpha,f_dred));
 							BYTE green = (BYTE)fxtoi(Mulfx(f_alpha,f_sgreen) + Mulfx(f_1malpha,f_dgreen));
 							BYTE blue = (BYTE)fxtoi(Mulfx(f_alpha,f_sblue) + Mulfx(f_1malpha,f_dblue));
@@ -12544,11 +12539,11 @@ void CBitmapEx::ReplaceColor(_PIXEL oldColor, _PIXEL newColor)
 		BYTE nwGreen = _GetGValue(newColor);
 		BYTE nwBlue = _GetBValue(newColor);
 		float _alpha = 1;
-		fixed f_1 = itofx(1);
-		fixed f_alpha = ftofx(_alpha);
-		fixed f_dred = itofx(_GetRValue(newColor));
-		fixed f_dgreen = itofx(_GetGValue(newColor));
-		fixed f_dblue = itofx(_GetBValue(newColor));
+		bmfixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alpha);
+		bmfixed f_dred = itofx(_GetRValue(newColor));
+		bmfixed f_dgreen = itofx(_GetGValue(newColor));
+		bmfixed f_dblue = itofx(_GetBValue(newColor));
 		float _error = 1;
 		_error = _error * _error;
 			// Replace bitmap image color
@@ -12644,11 +12639,11 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 		BYTE reffGreen = _GetGValue(reffPixel);
 		BYTE reffBlue = _GetBValue(reffPixel);
 		float _alpha = max(0, min(alpha, 100)) / 100.0f;
-		fixed f_1 = itofx(1);
-		fixed f_alpha = ftofx(_alpha);
-		fixed f_dred = itofx(_GetRValue(newColor));
-		fixed f_dgreen = itofx(_GetGValue(newColor));
-		fixed f_dblue = itofx(_GetBValue(newColor));
+		bmfixed f_1 = itofx(1);
+		bmfixed f_alpha = ftofx(_alpha);
+		bmfixed f_dred = itofx(_GetRValue(newColor));
+		bmfixed f_dgreen = itofx(_GetGValue(newColor));
+		bmfixed f_dblue = itofx(_GetBValue(newColor));
 		float _error = (float)max(0, min(error, 442));
 		_error = _error * _error;
 
@@ -12679,9 +12674,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 					float _diff = _hueDiff + _satDiff + _valDiff;
 					if (_diff < _error)
 					{
-						fixed f_sred = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
-						fixed f_sgreen = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
-						fixed f_sblue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
+						bmfixed f_sred = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
+						bmfixed f_sgreen = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
+						bmfixed f_sblue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
 						BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_1-f_alpha) + Mulfx(f_dred, f_alpha));
 						BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_1-f_alpha) + Mulfx(f_dgreen, f_alpha));
 						BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_1-f_alpha) + Mulfx(f_dblue, f_alpha));
@@ -12731,9 +12726,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 				float _diff = _hueDiff + _satDiff + _valDiff;
 				if ((_diff < _error) && (pMask[pPixels[count].y*m_bih.biHeight+pPixels[count].x]))
 				{
-					fixed f_sred = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
-					fixed f_sgreen = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
-					fixed f_sblue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
+					bmfixed f_sred = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
+					bmfixed f_sgreen = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
+					bmfixed f_sblue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
 					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_1-f_alpha) + Mulfx(f_dred, f_alpha));
 					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_1-f_alpha) + Mulfx(f_dgreen, f_alpha));
 					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_1-f_alpha) + Mulfx(f_dblue, f_alpha));
@@ -12862,9 +12857,9 @@ void CBitmapEx::UpdateFireEffect(BOOL bLarge, long iteration, long height)
 		long i, j;
 		long _height = max(4, min(128, height));
 		long _heightSize = 4*_height + 1;
-		fixed f_w1 = ftofx(0.299f);
-		fixed f_w2 = ftofx(0.587f);
-		fixed f_w3 = ftofx(0.114f);
+		bmfixed f_w1 = ftofx(0.299f);
+		bmfixed f_w2 = ftofx(0.587f);
+		bmfixed f_w3 = ftofx(0.114f);
 
 		// Update fire buffer
 		DWORD dwOffset;
@@ -12941,18 +12936,18 @@ void CBitmapEx::UpdateFireEffect(BOOL bLarge, long iteration, long height)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				fixed f_red = itofx(m_lpFirePalette[m_lpFire[dwOffset]].rgbRed);
-				fixed f_green = itofx(m_lpFirePalette[m_lpFire[dwOffset]].rgbGreen);
-				fixed f_blue = itofx(m_lpFirePalette[m_lpFire[dwOffset]].rgbBlue);
-				fixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
-				fixed f_alpha = Divfx(f_value,ftofx(255.0f));
-				fixed f_1malpha = itofx(1) - f_alpha;
-				fixed f_sred = itofx(_GetRValue(lpSrcData[dwTotalOffset>>2]));
-				fixed f_sgreen = itofx(_GetGValue(lpSrcData[dwTotalOffset>>2]));
-				fixed f_sblue = itofx(_GetBValue(lpSrcData[dwTotalOffset>>2]));
-				fixed f_dred = Mulfx(f_1malpha,f_sred) + Mulfx(f_alpha,f_red);
-				fixed f_dgreen = Mulfx(f_1malpha,f_sgreen) + Mulfx(f_alpha,f_green);
-				fixed f_dblue = Mulfx(f_1malpha,f_sblue) + Mulfx(f_alpha,f_blue);
+				bmfixed f_red = itofx(m_lpFirePalette[m_lpFire[dwOffset]].rgbRed);
+				bmfixed f_green = itofx(m_lpFirePalette[m_lpFire[dwOffset]].rgbGreen);
+				bmfixed f_blue = itofx(m_lpFirePalette[m_lpFire[dwOffset]].rgbBlue);
+				bmfixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
+				bmfixed f_alpha = Divfx(f_value,ftofx(255.0f));
+				bmfixed f_1malpha = itofx(1) - f_alpha;
+				bmfixed f_sred = itofx(_GetRValue(lpSrcData[dwTotalOffset>>2]));
+				bmfixed f_sgreen = itofx(_GetGValue(lpSrcData[dwTotalOffset>>2]));
+				bmfixed f_sblue = itofx(_GetBValue(lpSrcData[dwTotalOffset>>2]));
+				bmfixed f_dred = Mulfx(f_1malpha,f_sred) + Mulfx(f_alpha,f_red);
+				bmfixed f_dgreen = Mulfx(f_1malpha,f_sgreen) + Mulfx(f_alpha,f_green);
+				bmfixed f_dblue = Mulfx(f_1malpha,f_sblue) + Mulfx(f_alpha,f_blue);
 				lpDstData[dwTotalOffset>>2] = _RGB(fxtoi(f_dred), fxtoi(f_dgreen), fxtoi(f_dblue));
 				dwOffset++;
 
@@ -13249,15 +13244,15 @@ void CBitmapEx::UpdateSmokeEffect(long offsetX, long offsetY, long offsetZ)
 					value += smoothValue * _size;
 				}
 				value = (128.0f * value) / initSize;
-				fixed f_value = ftofx(value);
-				fixed f_alpha = Divfx(f_value,ftofx(255.0f));
-				fixed f_1malpha = itofx(1) - f_alpha;
-				fixed f_sred = itofx(_GetRValue(lpSrcData[dwTotalOffset>>2]));
-				fixed f_sgreen = itofx(_GetGValue(lpSrcData[dwTotalOffset>>2]));
-				fixed f_sblue = itofx(_GetBValue(lpSrcData[dwTotalOffset>>2]));
-				fixed f_dred = Mulfx(f_1malpha,f_sred) + Mulfx(f_alpha,f_value);
-				fixed f_dgreen = Mulfx(f_1malpha,f_sgreen) + Mulfx(f_alpha,f_value);
-				fixed f_dblue = Mulfx(f_1malpha,f_sblue) + Mulfx(f_alpha,f_value);
+				bmfixed f_value = ftofx(value);
+				bmfixed f_alpha = Divfx(f_value,ftofx(255.0f));
+				bmfixed f_1malpha = itofx(1) - f_alpha;
+				bmfixed f_sred = itofx(_GetRValue(lpSrcData[dwTotalOffset>>2]));
+				bmfixed f_sgreen = itofx(_GetGValue(lpSrcData[dwTotalOffset>>2]));
+				bmfixed f_sblue = itofx(_GetBValue(lpSrcData[dwTotalOffset>>2]));
+				bmfixed f_dred = Mulfx(f_1malpha,f_sred) + Mulfx(f_alpha,f_value);
+				bmfixed f_dgreen = Mulfx(f_1malpha,f_sgreen) + Mulfx(f_alpha,f_value);
+				bmfixed f_dblue = Mulfx(f_1malpha,f_sblue) + Mulfx(f_alpha,f_value);
 				lpDstData[dwTotalOffset>>2] = _RGB(fxtoi(f_dred), fxtoi(f_dgreen), fxtoi(f_dblue));
 
 				// Update horizontal offset

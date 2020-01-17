@@ -1,10 +1,8 @@
 #include "stdafx.h"
 #include "Game.h"
-#include "Send\SInit.h"
-#include "Receive\Handler.h"
-#include <iostream>
-#include <fstream>
-#include "include/EOServ/eodata.hpp"
+#include "Packet_Handler\Send\SInit.h"
+#include "Packet_Handler\Receive\Handler.h"
+
 USING_PTYPES
 pt::ipstream* ClientStream;
 PacketHandler* Packethandler;

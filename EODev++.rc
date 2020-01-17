@@ -1,11 +1,9 @@
-// Microsoft Visual C++ generated resource script.
-//
-#include "resource.h"
+
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
-// Generated from the TEXTINCLUDE 2 resource.
+// Generated from the TEXTINCLUDE 2 Resource_Manager.
 //
 #define IDC_STATIC -1
 #include <winresrc.h>
@@ -16,9 +14,9 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (U.S.) Resource_Managers
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#if !defined(AFX_Resource_Manager_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
@@ -41,7 +39,7 @@ IDI_MAIN_ICON           ICON                    "Icon.ico"
 
 1 TEXTINCLUDE 
 BEGIN
-    "resource.h\0"
+    "Resource_Manager.h\0"
 END
 
 2 TEXTINCLUDE 
@@ -61,7 +59,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // English (U.S.) resources
+#endif    // English (U.S.) Resource_Managers
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -69,7 +67,7 @@ END
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
-// Generated from the TEXTINCLUDE 3 resource.
+// Generated from the TEXTINCLUDE 3 Resource_Manager.
 //
 
 

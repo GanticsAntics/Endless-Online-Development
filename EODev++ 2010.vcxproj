@@ -32,7 +32,7 @@
     <RootNamespace>EmptyProject</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath11)</VCTargetsPath>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -49,7 +49,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -398,10 +398,71 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Button.cpp" />
-    <ClCompile Include="CharacterModel.cpp" />
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Game_Stage\Map.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_Element\Map_NPC.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_Element\Map_Player.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_CharacterStats.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_GameHelp.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_GameSettings.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_Inventory.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_KeyboardMacros.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_Map.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_News.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_Party.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_PassiveSkills.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_SelectPlayer.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_Skills.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_Talk.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_WhoIsOnline.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_ChatBubbleHandler.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_UI\Map_UI_Cursor.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Menu.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Menu_Element\CharacterModel.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="include\CBitmapEx\BitmapEx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -415,186 +476,165 @@
     <ClCompile Include="include\EOServ\packet.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Map_NPC.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\Handler.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_Player.cpp" />
-    <ClCompile Include="Map_UI.cpp" />
-    <ClCompile Include="Map_UI_Element\Map_UI_CharacterStats.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RAccount.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_GameHelp.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RAppear.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_GameSettings.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RAttack.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_KeyboardMacros.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RAvatar.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_Map.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RCharacter.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_News.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RConnection.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_Party.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RFace.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_PassiveSkills.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RInit.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_SelectPlayer.cpp">
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RItem.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_Skills.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RLogin.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_Talk.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RNpc.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\Map_UI_WhoIsOnline.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RPaperdoll.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Element\UI_ChatBubbleHandler.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RPlayers.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Map_UI_Inventory.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RRefresh.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="Receive\Handler.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RTalk.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RAccount.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RWalk.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RAppear.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RWarp.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RAttack.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Receive\RWelcome.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RAvatar.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SAccount.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RCharacter.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SAttack.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RConnection.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SCharacter.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RFace.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SConnection.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RInit.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SDoor.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RItem.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SFace.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RLogin.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SInit.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RNpc.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SItem.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RPaperdoll.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SLogin.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RPlayers.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SPaperdoll.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RRefresh.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SPlayers.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RTalk.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SRefresh.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RWalk.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\STalk.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RWarp.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SWalk.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Receive\RWelcome.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SWarp.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Resources.cpp" />
-    <ClCompile Include="Send\SAccount.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SAttack.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SCharacter.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SConnection.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SDoor.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SFace.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SInit.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SItem.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SLogin.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SPaperdoll.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SPlayers.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SRefresh.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\STalk.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SWalk.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SWarp.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Send\SWelcome.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Packet_Handler\Send\SWelcome.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Textbox.cpp" />
-    <ClCompile Include="TextTools.cpp" />
-    <ClCompile Include="UI_Cursor.cpp" />
-    <ClCompile Include="UI_Element.cpp" />
-    <ClCompile Include="Utilities\ConfigFile.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    <ClCompile Include="Utilities\Button.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Utilities\UI_MessageBox.cpp" />
+    <ClCompile Include="Utilities\ConfigFile.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Utilities\Messagebox.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Utilities\Resource_Manager.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Utilities\Textbox.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Utilities\TextTools.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Utilities\UI_Element.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Utilities\UI_MessageBox.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Utilities\UI_ScrollBar.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="World.cpp" />
-    <ClInclude Include="CharacterModel.h" />
     <ClInclude Include="Connection.h" />
+    <ClInclude Include="Game_Stage\Map.h" />
+    <ClInclude Include="Game_Stage\Map_Element\Map_NPC.h" />
+    <ClInclude Include="Game_Stage\Map_Element\Map_Player.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_CharacterStats.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_GameHelp.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_GameSettings.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_Inventory.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_KeyboardMacros.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_Map.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_News.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_Party.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_PassiveSkills.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_SelectPlayer.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_Skills.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_Talk.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_WhoIsOnline.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_ChatBubbleHandler.h" />
+    <ClInclude Include="Game_Stage\Map_UI\Map_UI_Cursor.h" />
+    <ClInclude Include="Game_Stage\Menu.h" />
+    <ClInclude Include="Game_Stage\Menu_Element\CharacterModel.h" />
     <ClInclude Include="include\CBitmapEx\BitmapEx.h" />
     <ClInclude Include="include\EOMap\common.hpp" />
     <ClInclude Include="include\EOMap\eo_data.hpp" />
@@ -613,51 +653,31 @@
     <ClInclude Include="include\Ptypes\pstreams.h" />
     <ClInclude Include="include\Ptypes\ptime.h" />
     <ClInclude Include="include\Ptypes\ptypes.h" />
-    <ClInclude Include="Map.h" />
-    <ClInclude Include="Map_NPC.h" />
-    <ClInclude Include="Map_Player.h" />
-    <ClInclude Include="Map_UI.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_CharacterStats.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_GameHelp.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_GameSettings.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_KeyboardMacros.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_Map.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_News.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_Party.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_PassiveSkills.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_SelectPlayer.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_Skills.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_Talk.h" />
-    <ClInclude Include="Map_UI_Element\Map_UI_WhoIsOnline.h" />
-    <ClInclude Include="Map_UI_Element\UI_ChatBubbleHandler.h" />
-    <ClInclude Include="Map_UI_Inventory.h" />
-    <ClInclude Include="Menu.h" />
-    <ClInclude Include="Receive\Handler.h" />
-    <ClInclude Include="Receive\RConstants.h" />
-    <ClInclude Include="Resources.h" />
-    <ClInclude Include="Send\SAccount.h" />
-    <ClInclude Include="Send\SAttack.h" />
-    <ClInclude Include="Send\SCharacter.h" />
-    <ClInclude Include="Send\SConnection.h" />
-    <ClInclude Include="Send\SDoor.h" />
-    <ClInclude Include="Send\SFace.h" />
-    <ClInclude Include="Send\SInit.h" />
-    <ClInclude Include="Send\SItem.h" />
-    <ClInclude Include="Send\SLogin.h" />
-    <ClInclude Include="Send\SPaperdoll.h" />
-    <ClInclude Include="Send\SPlayers.h" />
-    <ClInclude Include="Send\SRefresh.h" />
-    <ClInclude Include="Send\STalk.h" />
-    <ClInclude Include="Send\SWalk.h" />
-    <ClInclude Include="Send\SWarp.h" />
-    <ClInclude Include="Send\SWelcome.h" />
+    <ClInclude Include="Packet_Handler\Receive\Handler.h" />
+    <ClInclude Include="Packet_Handler\Receive\RConstants.h" />
+    <ClInclude Include="Packet_Handler\Send\SAccount.h" />
+    <ClInclude Include="Packet_Handler\Send\SAttack.h" />
+    <ClInclude Include="Packet_Handler\Send\SCharacter.h" />
+    <ClInclude Include="Packet_Handler\Send\SConnection.h" />
+    <ClInclude Include="Packet_Handler\Send\SDoor.h" />
+    <ClInclude Include="Packet_Handler\Send\SFace.h" />
+    <ClInclude Include="Packet_Handler\Send\SInit.h" />
+    <ClInclude Include="Packet_Handler\Send\SItem.h" />
+    <ClInclude Include="Packet_Handler\Send\SLogin.h" />
+    <ClInclude Include="Packet_Handler\Send\SPaperdoll.h" />
+    <ClInclude Include="Packet_Handler\Send\SPlayers.h" />
+    <ClInclude Include="Packet_Handler\Send\SRefresh.h" />
+    <ClInclude Include="Packet_Handler\Send\STalk.h" />
+    <ClInclude Include="Packet_Handler\Send\SWalk.h" />
+    <ClInclude Include="Packet_Handler\Send\SWarp.h" />
+    <ClInclude Include="Packet_Handler\Send\SWelcome.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TextTools.h" />
-    <ClInclude Include="UI_Cursor.h" />
-    <ClInclude Include="UI_Element.h" />
     <ClInclude Include="Utilities\Button.h" />
     <ClInclude Include="Utilities\ConfigFile.h" />
+    <ClInclude Include="Utilities\Resource_Manager.h" />
     <ClInclude Include="Utilities\Textbox.h" />
+    <ClInclude Include="Utilities\TextTools.h" />
+    <ClInclude Include="Utilities\UI_Element.h" />
     <ClInclude Include="Utilities\UI_MessageBox.h" />
     <ClInclude Include="Utilities\UI_ScrollBar.h" />
     <ClInclude Include="World.h" />

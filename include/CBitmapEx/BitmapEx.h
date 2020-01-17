@@ -2,6 +2,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <tchar.h>
+#include <list>
+#include <comdef.h>
+
+
 #if !defined(AFX_BITMAPEX_H__80F20A52_B43F_42C5_B182_AC8D27BF5C0E__INCLUDED_)
 #define AFX_BITMAPEX_H__80F20A52_B43F_42C5_B182_AC8D27BF5C0E__INCLUDED_
 
@@ -23,7 +28,7 @@
 #define _NOISE_DEPTH	64
 
 
-typedef long fixed;												// Our new fixed point type
+typedef long bmfixed;												// Our new fixed point type
 #define itofx(x) ((x) << 8)										// Integer to fixed point
 #define ftofx(x) (long)((x) * 256)								// Float to fixed point
 #define dtofx(x) (long)((x) * 256)								// Double to fixed point

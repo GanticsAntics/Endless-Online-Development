@@ -1,15 +1,15 @@
 using namespace std;
 #include <list>
-#include "include/Ptypes/ptypes.h"
-#include "include/Ptypes/pport.h"
+#include "include\Ptypes\ptypes.h"
+#include "include\Ptypes\pport.h"
 #include "include\EOServ\packet.hpp"
 #include "Utilities\Button.h"
 #include "Utilities\Textbox.h"
-#include "Resources.h"
+#include "Utilities\Resource_Manager.h"
 #include "Connection.h"
 #include "Utilities\ConfigFile.h"
 #include "Utilities\UI_MessageBox.h"
-#include "include/EOServ/eodata.hpp"
+#include "include\EOServ\eodata.hpp"
 
 #ifndef World_h
 #define World_h

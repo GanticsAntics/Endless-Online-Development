@@ -1,10 +1,8 @@
 #ifndef Game_h
 #define Game_h
-#include <time.h>
-#include "Menu.h"
-#include "UI_Cursor.h"
-#include "include/EOServ/eodata.hpp"
-#include "Map_UI.h"
+#include "Game_Stage\Menu.h"
+#include "Game_Stage\Map_UI\Map_UI_Cursor.h"
+#include "Game_Stage\Map_UI\Map_UI.h"
 
 class Game
 {
@@ -25,7 +23,7 @@ public:
 	Map_UI* Map_UserInterface;
 	static bool CancelTrue;
 	int MsgID;
-	UI_Cursor MapCursor;
+	Map_UI_Cursor MapCursor;
 	ENF* ENF_File;
 	ECF* ECF_File;
 	ESF* ESF_File;
@@ -44,10 +42,10 @@ public:
 	byte SendMulti;
 	byte RecvMulti;
 	byte SubStage;
-	Resource::TextureData ExitGameTxt;
-	Resource::TextureData MessageBoxTexture;
-	Resource::TextureData ScrollBarTexture;
-	Resource::TextureData TextIconTexture;
+	Resource_Manager::TextureData ExitGameTxt;
+	Resource_Manager::TextureData MessageBoxTexture;
+	Resource_Manager::TextureData ScrollBarTexture;
+	Resource_Manager::TextureData TextIconTexture;
 	Button* BT_ExitGame;
 	ID3DXFont* DefaultFont;
 	ID3DXFont* MessageFont;
@@ -55,7 +53,7 @@ public:
 	int Counter;
 	World* world;
 	GameStage Stage;
-	Resource* resource;
+	Resource_Manager* ResourceManager;
 	Menu* menu;
 	Map* map;
 	bool Closed;
