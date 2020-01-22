@@ -17,8 +17,7 @@ class UI_Scrollbar
 	std::vector<std::string> SubText;
 	short ElementWidth = 0;
 	short ElementHeight = 0;
-	int x = 0;
-	int y = 0;
+
 	int TextX = 0;
 	int TextY = 0;
 	bool TextOrElement = false;
@@ -32,7 +31,10 @@ class UI_Scrollbar
 	bool Buttonsenabled = true;
 	int MaxIndex = 0;
 	int Numberoflines = 6;
-public:
+	int x = 0;
+	int y = 0;
+public:	
+
 	D3DCOLOR TextCol = D3DCOLOR_ARGB(255, 0, 0, 0);
 	UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeight, int m_BarHeight, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, std::shared_ptr<IDirect3DTexture9> p_IconTexture);
 	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, std::shared_ptr<IDirect3DTexture9> p_IconTexture);
@@ -53,7 +55,7 @@ public:
 		if (this->IsVertical)
 		{
 			this->UI_Scrollbar_Button_Top->SetPosition(std::pair<int, int>(this->x, this->y));
-			this->UI_Scrollbar_Button_Bottom->SetPosition(std::pair<int, int>(this->x, this->y + this->ElementHeight + this->BarHeight));
+			this->UI_Scrollbar_Button_Bottom->SetPosition(std::pair<int, int>(this->x, this->y  + this->BarHeight));
 		}
 		else
 		{

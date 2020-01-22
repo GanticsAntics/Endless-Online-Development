@@ -858,7 +858,7 @@ void Map::Render()
 			int yoffsp = layer_info[layer].yoff - yoff;
 			int tilexp = xoffsp + (player->second->x * 32) - (player->second->y * 32);
 			int tileyp = yoffsp + (player->second->x * 16) + (player->second->y * 16);
-			player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, depth);
+			player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, depth, D3DCOLOR_ARGB(255, 255, 255, 255));
 		//	player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, depth - 0.1);
 		}
 	}
@@ -923,6 +923,7 @@ void Map::Render()
 	}
 	this->world->RenderTextBoxes(this->Sprite, map_game->Stage, map_game->SubStage);
 	this->Sprite->End();
+	
 	this->m_OverlaySprite->End();
 	this->ThreadLock.unlock();
 }

@@ -1,14 +1,7 @@
 #include "stdafx.h"
 #include "game.h"
-
-#include "Game_Stage\Menu.h"
-#include "Game_Stage\Map_UI\Map_UI_Cursor.h"
-#include "Game_Stage\Map_UI\Map_UI.h"
-#include "Game_Stage\Map.h"
-
 ID3DXSprite* sprite;
 std::shared_ptr<IDirect3DTexture9> texture;
-std::shared_ptr<IDirect3DTexture9> GLoginButtonTexture;
 static IDirect3DDevice9* Device;
 bool Game::CancelTrue;
 bool exitinggame;
@@ -21,8 +14,8 @@ void Game::Initialize(IDirect3DDevice9Ptr m_Device, World* _World)
 		D3DXCreateSprite(Device, &sprite);
 		this->FPS = 60;
 		int FontSize = 14;
-		D3DXCreateFont(Device, 18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Arial"), &this->DefaultFont);
-		D3DXCreateFont(Device, 14, 6, FW_EXTRALIGHT, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &this->MessageFont);
+		D3DXCreateFont(Device, 18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, OUT_TT_ONLY_PRECIS, DEFAULT_PITCH | FF_DONTCARE, TEXT("Arial"), &this->DefaultFont);
+		D3DXCreateFont(Device, 14, 6, FW_EXTRALIGHT, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, OUT_TT_ONLY_PRECIS, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &this->MessageFont);
 
 		this->ResourceManager = new Resource_Manager();
 		this->ResourceManager->Initialize(Device);
@@ -60,6 +53,11 @@ void Game::Initialize(IDirect3DDevice9Ptr m_Device, World* _World)
 		this->EIF_File = new EIF("pub\\dat001.eif");
 		this->ESF_File = new ESF("pub\\dsl001.esf");
 		this->ECF_File = new ECF("pub\\dat001.ecf");
+
+		this->world->W_UI_Infobox = new UI_InformationBox(this);
+		this->world->W_UI_Infobox->AddMessage("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus. Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce id purus. Ut varius tincidunt libero. Phasellus dolor. Maecenas vestibulum mollis diam. Pellentesque ut neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In ac felis quis tortor malesuada pretium. Pellentesque auctor neque nec urna. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Aenean viverra rhoncus pede. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Ut non enim eleifend felis pretium feugiat. Vivamus quis mi. Phasellus a est. Phasellus magna. In hac habitasse platea dictumst. Curabitur at lacus ac velit ornare lobortis. Curabitur a felis in nunc fringilla tristique.");
+		this->world->W_UI_Infobox->CreateMessage("Holy fricken shit it works yay", "This is a test message", true);
+		
 }	
 
 void World::ThrowMessage(std::string Title, std::string Message)
@@ -83,15 +81,17 @@ void World::ThrowMessage(std::string Title, std::string Message, bool Okay)
 	World::MBHidden = false;
 	Game::CancelTrue = Okay;
 }
-clock_t init, final, timerrender;
+float timerrender;
+std::chrono::time_point<std::chrono::high_resolution_clock> init, final;
 void Game::Update()
 {
-	init = clock();
+	this->world->W_UI_Infobox->Update();
+	init = std::chrono::high_resolution_clock::now();
 	if(!world->Connected && Stage != Game::PViewCredits)
 	{
 		Stage = Game::GameStage::PMenu;
 	}
-	if(World::MBHidden)
+	if(World::MBHidden && World::UIBox_Hidden)
 	{
 		if (this->Stage < 5)
 		{
@@ -269,7 +269,7 @@ void Game::Render()
 		
 		if(this->Stage > 1)
 		{ this->BT_ExitGame->Draw(sprite); }
-		if(!World::MBHidden)
+		if(!World::MBHidden && World::UIBox_Hidden)
 		{
 			this->Draw(sprite,this->MessageBoxTexture.Texture,this->MessageX,this->MessageY,D3DCOLOR_ARGB(255,255,255,255));
 			if(!this->CancelTrue)
@@ -294,6 +294,7 @@ void Game::Render()
 			this->MessageFont->DrawTextA(sprite,World::MBMessage.c_str(),-1,&rct, DT_LEFT, D3DCOLOR_ARGB(255, 240, 240, 199));
 		}	
 		//Draw stuff the masks above others
+		world->W_UI_Infobox->Draw(sprite);
 		sprite->End();
         Device->EndScene();
     }
@@ -311,20 +312,23 @@ void Game::Render()
 	timerrecorder = timerrender; 
 	}
 	this->DrawTextW(istring.c_str(),33,14,D3DCOLOR_ARGB( 205, 255, 255, 255 ));
-
+	
 	
 	Device->Present( NULL, NULL, NULL, NULL );
-	final= clock();
+	final = std::chrono::high_resolution_clock::now();
+	//if (final - init > 0)
+	{//this->FPS =
+		std::chrono::duration<double> diff = final - init;
+		this->FPS = 1 / diff.count();
+	}
 
-	this->FPS = 1000 / ((double)final - (double)init);
-
+	
+	//World::DebugPrint(std::to_string(FPS).c_str());
 	if(FPS > 30)
 	{
 
 	}
 }
-
-
 void Game::Unload()
 {
 	if(this->DefaultFont){this->DefaultFont->Release();}
@@ -341,13 +345,12 @@ void Game::Unload()
 	{
 	}
 }
-
 void Game::ResetDevice()
 {
 		D3DXCreateSprite(Device,&sprite);
 }
 
-void Game::Draw(ID3DXSprite* Sprite,std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, int Imgw, int Imgh, float Angle, D3DXCOLOR Color)
+void Game::Draw(ID3DXSprite* Sprite,std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, int Imgw, int Imgh, float Angle, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
 {
 		D3DXMATRIX mat;
 		RECT SrcRect;
@@ -368,7 +371,7 @@ void Game::Draw(ID3DXSprite* Sprite,std::shared_ptr<IDirect3DTexture9> Texture, 
 		Sprite->Draw(Texture.get(),NULL,Center, Pos, Color);
 }
 
-void Game::DrawTextW(LPCWSTR str, int x, int y,  D3DXCOLOR Color)
+void Game::DrawTextW(LPCWSTR str, int x, int y, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
 {
 	RECT rct;
 	rct.left= x;
@@ -408,7 +411,7 @@ void Game::DrawText(ID3DXSprite* Sprite,LPCSTR str, int x, int y,  D3DXCOLOR Col
 	
 	this->DefaultFont->DrawTextA(Sprite, str, -1, &rct, 0, Color );
 }
-void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, D3DXCOLOR Color)
+void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
 {
 		D3DXMATRIX mat;
 		RECT SrcRect;
@@ -427,7 +430,7 @@ void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture,
 }
 std::basic_string<wchar_t> Game_istring;
 
-void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, float depth, D3DXCOLOR Color)
+void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, float depth, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
 {
 	D3DXVECTOR3* Pos = new D3DXVECTOR3(x, y, depth);
 	D3DXVECTOR3* Center = new D3DXVECTOR3(1, 1, 0);
@@ -437,7 +440,7 @@ void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture,
 	delete Center;
 }
 
-void Game::Draw(ID3DXSprite* Sprite, IDirect3DTexture9* Texture, int x, int y, D3DXCOLOR Color)
+void Game::Draw(ID3DXSprite* Sprite, IDirect3DTexture9* Texture, int x, int y, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
 {
 		D3DXMATRIX mat;
 		RECT SrcRect;

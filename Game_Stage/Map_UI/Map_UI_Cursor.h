@@ -2,6 +2,7 @@
 #define _MapUICursor_
 #include "..\Map.h"
 #include "..\..\Utilities\UI_Element.h"
+class Map;
 class Map_UI_Cursor : public UI_Element
 {
 private:

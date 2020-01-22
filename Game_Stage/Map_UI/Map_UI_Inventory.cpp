@@ -1159,7 +1159,7 @@ void Map_UI_Inventory::PaperdollCheckElements()
 			if (Ptr_Inv_MapUI->MouseY > yloc && Ptr_Inv_MapUI->MouseY < yloc + Height)
 			{
 				Ptr_Inv_MapUI->DrawHelpMessage("Information", m_item.name.c_str());
-				if (Ptr_Inv_Game->MouseRightPressed && m_item.id != 0)
+				if (Ptr_Inv_Game->MouseRightPressed && m_item.id != 0 && paperdoll.Modifiable)
 				{
 					int subid = 0;
 					if(PaperdollInformation[i].location == EquipLocation::Armlet2 || PaperdollInformation[i].location == EquipLocation::Ring2 || PaperdollInformation[i].location == EquipLocation::Bracer2)

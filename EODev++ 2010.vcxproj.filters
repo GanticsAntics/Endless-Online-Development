@@ -96,9 +96,6 @@
     <ClCompile Include="Utilities\TextTools.cpp">
       <Filter>Utillities</Filter>
     </ClCompile>
-    <ClCompile Include="Utilities\UI_MessageBox.cpp">
-      <Filter>Utillities</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities\UI_ScrollBar.cpp">
       <Filter>Utillities</Filter>
     </ClCompile>
@@ -277,6 +274,9 @@
     <ClCompile Include="Game_Stage\Menu.cpp">
       <Filter>GameStage</Filter>
     </ClCompile>
+    <ClCompile Include="Utilities\UI_InformationBox.cpp">
+      <Filter>Utillities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -346,9 +346,6 @@
       <Filter>Utillities</Filter>
     </ClInclude>
     <ClInclude Include="Utilities\TextTools.h">
-      <Filter>Utillities</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\UI_MessageBox.h">
       <Filter>Utillities</Filter>
     </ClInclude>
     <ClInclude Include="Utilities\UI_ScrollBar.h">
@@ -477,6 +474,9 @@
     </ClInclude>
     <ClInclude Include="Game_Stage\Menu.h">
       <Filter>GameStage</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\UI_InformationBox.h">
+      <Filter>Utillities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

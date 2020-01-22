@@ -606,7 +606,7 @@
     <ClCompile Include="Utilities\UI_Element.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Utilities\UI_MessageBox.cpp">
+    <ClCompile Include="Utilities\UI_InformationBox.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Utilities\UI_ScrollBar.cpp">
@@ -678,7 +678,7 @@
     <ClInclude Include="Utilities\Textbox.h" />
     <ClInclude Include="Utilities\TextTools.h" />
     <ClInclude Include="Utilities\UI_Element.h" />
-    <ClInclude Include="Utilities\UI_MessageBox.h" />
+    <ClInclude Include="Utilities\UI_InformationBox.h" />
     <ClInclude Include="Utilities\UI_ScrollBar.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

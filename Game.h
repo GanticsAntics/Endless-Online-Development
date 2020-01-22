@@ -3,11 +3,13 @@
 #include "Game_Stage\Menu.h"
 #include "Game_Stage\Map_UI\Map_UI_Cursor.h"
 #include "Game_Stage\Map_UI\Map_UI.h"
-
+#include "Game_Stage\Map.h"
+class Map_UI;
 class Game
 {
 	
 public:
+
 	IniConfiguration* Config;
 	enum GameStage
 	{
@@ -42,6 +44,7 @@ public:
 	byte SendMulti;
 	byte RecvMulti;
 	byte SubStage;
+	std::shared_ptr<IDirect3DTexture9> GLoginButtonTexture;
 	Resource_Manager::TextureData ExitGameTxt;
 	Resource_Manager::TextureData MessageBoxTexture;
 	Resource_Manager::TextureData ScrollBarTexture;

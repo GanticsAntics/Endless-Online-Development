@@ -1,4 +1,3 @@
-
 using namespace std;
 
 #ifndef Resource_Manager_h

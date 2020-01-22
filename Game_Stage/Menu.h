@@ -1,9 +1,11 @@
-#include "..\World.h"
-#include "Menu_Element\CharacterModel.h"
-
 #ifndef Menu_h
 #define Menu_h
-
+#include "..\World.h"
+#include "Menu_Element\CharacterModel.h"
+#include "..\Packet_Handler\Send\SLogin.h"
+#include "..\Packet_Handler\Send\SCharacter.h"
+#include "..\Packet_Handler\Send\SAccount.h"
+#include "..\Packet_Handler\Send\SWelcome.h"
 class Menu
 {
 public:

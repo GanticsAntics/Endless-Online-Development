@@ -324,4 +324,3 @@ void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 	
 };
 
-

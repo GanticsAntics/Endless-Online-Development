@@ -20,8 +20,15 @@ CLIENT_F_FUNC(Paperdoll)
 				int _gender = reader.GetChar();
 				reader.GetChar();
 
-				game->Map_UserInterface->map_inventory->paperdoll.Modifiable = true;
 				game->Map_UserInterface->map_inventory->paperdoll._PlayerID = _PlayerID;
+				if (_PlayerID == World::WorldCharacterID)
+				{
+					game->Map_UserInterface->map_inventory->paperdoll.Modifiable = true;
+				}
+				else
+				{
+					game->Map_UserInterface->map_inventory->paperdoll.Modifiable = false;
+				}
 				game->Map_UserInterface->map_inventory->paperdoll._gender = _gender;
 				game->Map_UserInterface->map_inventory->paperdoll._name = _name;
 				game->Map_UserInterface->map_inventory->paperdoll._name[0] = toupper(game->Map_UserInterface->map_inventory->paperdoll._name[0]);

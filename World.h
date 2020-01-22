@@ -1,4 +1,5 @@
-using namespace std;
+#include "Game.h"
+#include "Utilities\UI_InformationBox.h"
 #include <list>
 #include "include\Ptypes\ptypes.h"
 #include "include\Ptypes\pport.h"
@@ -8,17 +9,17 @@ using namespace std;
 #include "Utilities\Resource_Manager.h"
 #include "Connection.h"
 #include "Utilities\ConfigFile.h"
-#include "Utilities\UI_MessageBox.h"
 #include "include\EOServ\eodata.hpp"
-
+#include "Utilities\UI_InformationBox.h"
 #ifndef World_h
 #define World_h
+class Game;
 class World
 {
 public:
-	World(LPVOID _Game);
+	World(Game* _Game);
 	typedef std::list<Textbox> TextType;
-	UI_MessageBox* W_UI_Messagebox;
+	UI_InformationBox* W_UI_Infobox;
 	static int WorldCharacterID;
 	TextType TextBoxLst;
 	Connection* connection;
@@ -26,6 +27,7 @@ public:
 	static std::string MBTitle;
 	static PacketProcessor PProcessor;
 	static bool MBHidden;
+	static bool UIBox_Hidden;
 	static unsigned int World::PacketCount;
 	static unsigned char World::RawPacketCount;
 	static ENF* ENF_File;

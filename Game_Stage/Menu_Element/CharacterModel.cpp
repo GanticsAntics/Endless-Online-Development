@@ -179,6 +179,7 @@ struct LayerInfo
 };
 
 ///All of the equipment alignments are sourced in this table and based on the above struct.
+
 static constexpr LayerInfo layer_info[8] = {
 	{ LayerType::Skin      , 8,   0,0,   -4,-1,   -4,-1,   -4,-1,   -4,-1,   -4,0,   -4,0,    0,-4,    -9,1,    0,18,   0,18,  ep * 2 }, // Skin
 	{ LayerType::Weapon    ,18,  32,17,  32,17,   32,17,   32,17,   32,17,   37,16,   37,16,   32,17,     32,17,     0,0,    32,17,   ep * 1 }, // Weapon
@@ -321,7 +322,7 @@ void CharacterModel::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3D
 	if (this->Stance == PlayerStance::ChairSitting) { IndexOffSet = 2 + 8 + 2 + 4; }
 	if (this->Stance == PlayerStance::GroundSitting) { IndexOffSet = 2 + 8 + 2 + 4 + 2; }
 	if (this->Stance == PlayerStance::BowAttacking) { IndexOffSet = 2 + 8 + 2 + 4 + 4 ; }
-
+	
 	bool ShieldIsWing = false;
 	switch(ShieldID)
 	{

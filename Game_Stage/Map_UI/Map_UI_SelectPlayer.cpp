@@ -3,6 +3,7 @@
 #include "Map_UI.h"
 #include "Map_UI_ChatBubbleHandler.h"
 #include "..\Game.h"
+#include "..\..\Packet_Handler\Send\SPaperdoll.h"
 
 vector<pair<int, int>> menudataypos;
 Map_UI* Ptr_SelectPlayer_MapUI;
@@ -52,12 +53,26 @@ void Map_UI_SelectPlayer::Update()
 				if (mouselocy > menudataypos[i].first && mouselocy < menudataypos[i].first + menudataypos[i].second)
 				{
 					this->CurrentIndex = (SelectIndex)(i + 1);
+					if (Ptr_SelectPlayer_Game->MousePressed)
+					{
+						switch (this->CurrentIndex)
+						{
+						case(SelectIndex::Paperdoll):
+							{
+								SPaperdoll::SendPaperdollRequest(Ptr_SelectPlayer_Game->world->connection->ClientStream, playerid, Ptr_SelectPlayer_Game);
+								break;
+							}
+							default: break;
+						}
+					}
+
 				}
 			}
 			this->MouseoverMenu = true;
 		}
 		else
 		{
+			this->CurrentIndex = SelectIndex::None;
 			this->MouseoverMenu = false;
 		}
 		if (Ptr_SelectPlayer_Game->MousePressed)
@@ -82,6 +97,7 @@ void Map_UI_SelectPlayer::Update()
 				{
 					tempplayerid = player->first;
 					depth = playerdepth;
+					Ptr_SelectPlayer_MapUI->DrawHelpMessage("Action", "Menu belongs to player " + player->second->name);
 
 				}
 			}
@@ -91,7 +107,6 @@ void Map_UI_SelectPlayer::Update()
 		{
 			playerid = tempplayerid;
 			SelectMenuActive = true;
-			World::DebugPrint(Ptr_SelectPlayer_Game->map->m_Players[playerid]->name.c_str());
 		}
 		else
 		{

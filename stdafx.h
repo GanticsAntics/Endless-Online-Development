@@ -43,12 +43,13 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
+#include "Utilities/UI_Element.h"
 #include "Utilities/Button.h"
 #include "Utilities/ConfigFile.h"
 	
 #include "Utilities/Textbox.h"
 #include "Utilities/TextTools.h"
-#include "Utilities/UI_MessageBox.h"
+//#include "Utilities/UI_InformationBox.h"
 #include "Utilities/UI_ScrollBar.h"
 
 #include <Ptypes/pinet.h>

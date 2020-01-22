@@ -1,16 +1,17 @@
 #include "stdafx.h"
 #include "World.h"
-#include "Game.h"
-#include <list>
-using namespace std;
 
+using namespace std;
 Game* Wgame;
 bool World::Connected = false;
 bool World::Connecting = false;
+
+
 std::string World::MBMessage = "";
 std::string World::MBTitle = "";
 PacketProcessor World::PProcessor = PacketProcessor();
 bool World::MBHidden = true;
+bool World::UIBox_Hidden = true;
 unsigned int World::PacketCount = 0;
 unsigned char World::RawPacketCount = 0;
 int World::WorldCharacterID = -1;
@@ -19,14 +20,15 @@ EIF* World::EIF_File;
 ESF* World::ESF_File;
 ECF* World::ECF_File;
 std::vector<World::OnlinePlayerContainer> World::OnlinePlayers;
-World::World(LPVOID _Game)
+World::World(Game* _Game)
 {
-	Wgame = (Game*)_Game;
+	Wgame = _Game;
 	//File_ENF = new ENF("\\pub\\dtn001.enf");
 	ENF_File = new ENF("\pub\\dtn001.enf");
 	EIF_File = new EIF("\pub\\dat001.eif");
 	ESF_File = new ESF("\pub\\dsl001.esf");
 	ECF_File = new ECF("\pub\\dat001.ecf");
+	
 };
 pt::thread* ListenThread;
 void World::HandleTextInput(WPARAM Param, byte phase, byte subphase)
@@ -78,7 +80,6 @@ Textbox* World::RegisterTextBox(Textbox textbox)
 	}
 	return NULL;
 };
-
 void World::UnregisterTextBox(Textbox* textbox)
 {
 	TextType::iterator i;
@@ -91,7 +92,6 @@ void World::UnregisterTextBox(Textbox* textbox)
 		}
 	}
 };
-
 void World::CreateConnection()
 {
 		if(Connecting)
@@ -128,6 +128,7 @@ void World::MassTextBoxReset()
 	}
 	
 }
+
 int BlinkCount = 0;
 bool ShowBlinker = false;
 void World::RenderTextBoxes(ID3DXSprite* m_Sprite, byte phase, byte subphase)
@@ -161,7 +162,6 @@ void World::RenderTextBoxes(ID3DXSprite* m_Sprite, byte phase, byte subphase)
 	}
 
 }
-
 void World::SetFocusedTextbox(Textbox* TxtBox)
 {
 	TextType::iterator i;
@@ -177,7 +177,6 @@ void World::SetFocusedTextbox(Textbox* TxtBox)
 		}
 	}
 }
-
 Textbox* World::GetFocusedTextbox()
 {
 	TextType::iterator i;
@@ -248,7 +247,6 @@ void World::Send(LPVOID game, pt::ipstream* stream, PacketBuilder builder)
 		World::Connected = false;
 	}
 }
-
 std::string World::Receive(LPVOID game, std::string builder)
 {
 	Game* gme = (Game*)game;

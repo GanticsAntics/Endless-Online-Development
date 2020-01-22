@@ -1,10 +1,6 @@
 #include "..\stdafx.h"
-
 #include "..\Game.h"
-#include "..\Packet_Handler\Send\SLogin.h"
-#include "..\Packet_Handler\Send\SCharacter.h"
-#include "..\Packet_Handler\Send\SAccount.h"
-#include "..\Packet_Handler\Send\SWelcome.h"
+
 IDirect3DDevice9* Device;
 
 Game* game;

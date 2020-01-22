@@ -194,7 +194,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 							game.menu->Login();
 						}
 						if (game.Stage == game.PInGame)
-						{
+						{	
 							game.Map_UserInterface->UI_SendMessage();
 							//game.menu->Login();
 						}
@@ -268,6 +268,7 @@ void initD3D(HWND hWnd)
 	d3dpp.BackBufferHeight = ResY;
 	d3dpp.BackBufferWidth = ResX;
 	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
+	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     // create a device class using this information and information from the d3dpp stuct
     d3d->CreateDevice(D3DADAPTER_DEFAULT,
                       D3DDEVTYPE_HAL,
