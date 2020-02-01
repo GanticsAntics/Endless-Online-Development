@@ -41,6 +41,9 @@ public:
 	bool online;
 	bool nowhere;
 	unsigned int CharacterID;
+	
+	clock_t startwalkanimationtimer;
+	clock_t endwalkanimationtimer;
 	//AdminLevel admin;
 	std::string guildname;
 	std::string guildtag;

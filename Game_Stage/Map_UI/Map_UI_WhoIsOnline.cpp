@@ -31,7 +31,7 @@ void Map_UI_WhoIsOnline::Update()
 	case(Map_UI::UI_ElementStage::UI_Element_WhoIsOnline):
 	{
 		WhoisOnlineEndTimer = clock();
-		this->UI_WhoisOnlineScrollbar->Update(Ptr_WhoIsOnline_MapUI->MouseX, Ptr_WhoIsOnline_MapUI->MouseY, Ptr_WhoIsOnline_MapUI->MousePressed, Ptr_WhoIsOnline_MapUI->MouseHeld, Ptr_WhoIsOnline_Game->FPS);
+		this->UI_WhoisOnlineScrollbar->Update(Ptr_WhoIsOnline_MapUI->MouseX, Ptr_WhoIsOnline_MapUI->MouseY, Ptr_WhoIsOnline_Game->MouseWheelVal, Ptr_WhoIsOnline_MapUI->MousePressed, Ptr_WhoIsOnline_MapUI->MouseHeld, Ptr_WhoIsOnline_Game->FPS);
 		if (WhoisOnlineEndTimer - WhosisOnlineStartTimer > 1000)
 		{
 			WhosisOnlineStartTimer = clock();

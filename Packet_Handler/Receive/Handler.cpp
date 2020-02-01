@@ -30,6 +30,7 @@ void PacketHandler::HandlePacket(PacketReader reader, Game* H_game, pt::ipstream
 		CLIENT_F_HANDLE(PACKET_REFRESH, Refresh);
 		CLIENT_F_HANDLE(PACKET_WARP, Warp);
 		CLIENT_F_HANDLE(PACKET_NPC, NPC);
+		CLIENT_F_HANDLE(PACKET_SHOP, Shop);
 		CLIENT_F_HANDLE(PACKET_APPEAR, Appear);
 		CLIENT_F_HANDLE(PACKET_TALK, Talk);
 		CLIENT_F_HANDLE(PACKET_ITEM, Item);

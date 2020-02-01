@@ -442,7 +442,9 @@ void Map_UI_ChatBubbleHandler::AddMapMessage(std::string Message, int PlayerID, 
 	newcontainer.TextCol_color = TextCol_color;
 	this->ChatBubbleList.push_back(newcontainer);
 }
+
 Map_UI_ChatBubbleHandler::~Map_UI_ChatBubbleHandler()
 {
 
 }
+

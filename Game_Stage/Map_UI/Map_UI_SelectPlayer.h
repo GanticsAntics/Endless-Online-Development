@@ -15,7 +15,6 @@ public:
 		Freind = 7,
 		Ignore = 8
 	};
-	
 	SelectIndex CurrentIndex = SelectIndex::None;
 	bool SelectMenuActive = false;
 	bool MouseoverMenu = false;

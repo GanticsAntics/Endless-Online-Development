@@ -56,7 +56,7 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeig
 	this->UI_Scrollbar_Button_Top = new Button(m_Game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
 	this->UI_Scrollbar_Button_Bottom = new Button(m_Game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
 };
-void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseHeld, int FPS)
+void UI_Scrollbar::Update(int MouseX, int MouseY, int MouseWheelValue, bool MousePressed, bool MouseHeld, int FPS)
 {
 	if (this->Buttonsenabled)
 	{
@@ -167,6 +167,20 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, bool MousePressed, bool MouseH
 		this->Lineindex--;
 		mousepressed = true;
 	}
+	if (MouseWheelValue < 0)
+	{
+		this->Lineindex -= 1;
+		this->BarPercent = (float)(this->Lineindex) / (float)(this->MaxIndex);
+		this->Barpos = ((float)(this->BarPercent) * (float)(this->BarHeight - 32));
+		mousepressed = true;
+	}
+	else if (MouseWheelValue > 0)
+	{
+		this->Lineindex += 1;
+		this->BarPercent = (float)(this->Lineindex) / (float)(this->MaxIndex);
+		this->Barpos = ((float)(this->BarPercent) * (float)(this->BarHeight - 32));
+		mousepressed = true;
+	}
 
 	if (mousepressed)
 	{
@@ -262,7 +276,8 @@ void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 				D3DXVECTOR3* IconPos = new D3DXVECTOR3(this->x + this->TextX - 18, this->y + this->TextY + count*16, 0);
 				D3DXVECTOR3* IconCentre = new D3DXVECTOR3(0, 0, 0);
 				_Sprite->Draw(p_IconTexture.get(), &IconSrcRect, Center, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
-
+				delete IconPos;
+				delete IconCentre;
 				RECT rct;
 				rct.left = this->x + this->TextX;
 				rct.right = this->x + this->TextX + this->ElementWidth;
@@ -318,9 +333,9 @@ void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 				count++;
 			}
 		}
-		delete Pos;
-		delete Center;
+
 	}
-	
+			delete Pos;
+		delete Center;
 };
 

@@ -210,7 +210,7 @@ void Map_UI::Render()
 	if (this->HelpMessageTitle != "")
 	{
 		time_t curtime = clock();
-		if (curtime - this->HelpMessageTimer < 4000)
+		if (curtime - this->HelpMessageTimer < 2000)
 		{
 			D3DCOLOR col = D3DCOLOR_XRGB(0, 0, 0);
 			RECT BoxRect = { 0,0 ,0,0 };

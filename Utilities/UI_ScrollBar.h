@@ -63,7 +63,7 @@ public:
 			this->UI_Scrollbar_Button_Bottom->SetPosition(std::pair<int, int>(this->x + this->ElementHeight + this->BarHeight, this->y));
 		}
 	}
-	void Update(int MouseX, int MouseY, bool MousePressed, bool MouseHeld, int FPS);
+	void Update(int MouseX, int MouseY, int MouseWheelValue, bool MousePressed, bool MouseHeld, int FPS);
 	void BottomLineIndex()
 	{
 		if (p_container == NULL)

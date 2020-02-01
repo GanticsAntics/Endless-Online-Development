@@ -164,6 +164,7 @@ void World::RenderTextBoxes(ID3DXSprite* m_Sprite, byte phase, byte subphase)
 }
 void World::SetFocusedTextbox(Textbox* TxtBox)
 {
+	if (TxtBox == NULL) { return; }
 	TextType::iterator i;
 	for(i = this->TextBoxLst.begin(); i != this->TextBoxLst.end();i++)
 	{

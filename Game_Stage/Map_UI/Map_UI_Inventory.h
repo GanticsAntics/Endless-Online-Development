@@ -97,8 +97,8 @@ public:
 	LPDIRECT3DTEXTURE9 p_BlackBoxTexture;
 	bool IsDropMenuActive = false;
 	bool DropOrJunk = false;
-	int DropMenuX = 0;
-	int DropMenuY = 0;
+	int DropMenuX = 320;
+	int DropMenuY = 220;
 	int DropAmount = 0;
 	int DropID = -1;
 	int DropX = 0;
@@ -141,7 +141,31 @@ public:
 			}
 		}
 	}
-
+	void RemoveItem(int ID, int amount)
+	{
+		for (int i = 0; i < this->inventory.size(); i++)
+		{
+			if (inventory[i].id == ID)
+			{
+				inventory[i].amount -= amount;
+				if (inventory[i].amount <= 0)
+				{
+					inventory.erase(inventory.begin() + i);
+					for (int ii = 0; ii < 56; ii++)
+					{
+						if (InventoryGrid[ii].ID == ID)
+						{
+							InventoryGrid[ii].ID = -1;
+							InventoryGrid[ii].MouseOver = false;
+							InventoryGrid[ii].MousePressed = false;
+						}
+					}
+					this->childMPindex = -1;
+				}
+				return;
+			}
+		}
+	}
 
 	void ClearInventory() { this->inventory.clear();  int Count = 0;
 	for (int y = 0; y < 4; y++)
@@ -154,7 +178,7 @@ public:
 		}
 	}
 	};
-	void DisplayDropDialogye(bool _DropOrJunk, int DropMaxamount, int ID, int X, int Y)
+	void DisplayDropDialogue(bool _DropOrJunk, int DropMaxamount, int ID, int X, int Y)
 	{
 		this->DropJunkScrollBar->SetIndex(1);
 		this->DropJunkScrollBar->SetNumberOfLines(1);
@@ -167,6 +191,29 @@ public:
 		this->DropY = Y;
 		this->DropOrJunk = _DropOrJunk;
 		this->IsDropMenuActive = true;
+	}
+	int ContainsItem(int ItemID)
+	{
+		for each (InventoryItem item in inventory)
+		{
+			if (item.id == ItemID)
+			{
+				return item.amount;
+			}
+		}
+		return 0;
+	}
+	bool SetAmount(int ItemID, int Amount)
+	{
+		for each (InventoryItem item in inventory)
+		{
+			if (item.id == ItemID)
+			{
+				item.amount = Amount;
+				return true;
+			}
+		}
+		return false;
 	}
 	void PaperdollCheckElements();
 	void RenderPaperdoll();

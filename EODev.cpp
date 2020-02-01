@@ -65,8 +65,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
                           L"WindowClass1",    // name of the window class
                           L"EoDEV++",   // title of the window
                           WS_OVERLAPPEDWINDOW,    // window style
-                          300,    // x-position of the window
-                          100,    // y-position of the window
+                          386,    // x-position of the window
+                          142,    // y-position of the window
                           689,    // width of the window
                           488,    // height of the window
                           NULL,    // we have no parent window, NULL
@@ -229,6 +229,18 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 				game.RAWMousePressed = true;
 				return 0;
 				
+			}	
+		case WM_MOUSEWHEEL:
+			{
+			if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
+			{
+				game.MouseWheelVal -= 1;
+			}
+			else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
+				game.MouseWheelVal += 1;
+			}
+				return 0;
+				
 			}
 		case WM_RBUTTONDOWN:
 		{
@@ -281,11 +293,11 @@ void initD3D(HWND hWnd)
 	d3ddev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	d3ddev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
-	d3ddev->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
+	d3ddev->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
 	d3ddev->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	d3ddev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_INVSRCALPHA);
 	d3ddev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCALPHA);
-	//d3ddev->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+
 }
 
 void cleanD3D(void)

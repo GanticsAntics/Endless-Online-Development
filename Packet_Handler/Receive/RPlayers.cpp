@@ -39,7 +39,7 @@ CLIENT_F_FUNC(Players)
 					reader.GetFixedString(3);//PaddedGuildTag
 					newplayer->level = reader.GetChar();
 					newplayer->Gender = reader.GetChar();
-					newplayer->HairStyle = reader.GetChar();
+					newplayer->HairStyle = reader.GetChar() - 1;
 					newplayer->HairCol = reader.GetChar();
 					newplayer->SkinCol = reader.GetChar();
 					newplayer->maxhp = reader.GetShort();

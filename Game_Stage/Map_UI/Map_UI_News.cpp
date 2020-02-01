@@ -22,7 +22,7 @@ void Map_UI_News::Update()
 	case(Map_UI::UI_ElementStage::UI_Element_News):
 	{
 
-		this->UI_TextScrollbar->Update(Ptr_News_MapUI->MouseX, Ptr_News_MapUI->MouseY, Ptr_News_MapUI->MousePressed, Ptr_News_MapUI->MouseHeld, Ptr_News_Game->FPS);
+		this->UI_TextScrollbar->Update(Ptr_News_MapUI->MouseX, Ptr_News_MapUI->MouseY, Ptr_News_Game->MouseWheelVal, Ptr_News_MapUI->MousePressed, Ptr_News_MapUI->MouseHeld, Ptr_News_Game->FPS);
 		ScrollBarFPSCounter = 0;
 		break;
 	}

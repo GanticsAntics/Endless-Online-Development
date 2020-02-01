@@ -22,6 +22,7 @@ void Map_Player::SetStance(PlayerStance m_Stance)
 	this->Stance = m_Stance;
 	fpscounter = 0;
 	this->frame_ID = 0;
+	//startwalkanimationtimer = clock();
 }
 int  Map_Player::FindWalkDirection(int dest_x, int dest_y)
 {
@@ -51,12 +52,13 @@ int  Map_Player::FindWalkDirection(int dest_x, int dest_y)
 
 void Map_Player::MovePlayer(int FPS, int dest_x, int dest_y)
 {
+	endwalkanimationtimer = clock();
 	//std::string str = "Move From " + this->name + ". Player ID " + std::to_string(this->CharacterID);
 	//World::DebugPrint(str.c_str());
 	int move_direction = this->FindWalkDirection(dest_x, dest_y);
 	this->direction = move_direction;
 	moveFPS++;
-	if (moveFPS > FPS / 8.5)
+	if (endwalkanimationtimer - startwalkanimationtimer > (1000/8.5))
 	{
 		switch (move_direction)
 		{
@@ -85,7 +87,8 @@ void Map_Player::MovePlayer(int FPS, int dest_x, int dest_y)
 				break;
 			}
 		}
-		moveFPS = 0;
+		this->frame_ID++;
+		startwalkanimationtimer = clock();
 		WalkCounter++;
 	}
 	if (WalkCounter >= 4)
@@ -118,6 +121,7 @@ void Map_Player::MovePlayer(int FPS, int dest_x, int dest_y)
 		this->xoffset = 0;
 		this->yoffset = 0;
 		WalkCounter = 0;
+		this->frame_ID = 0;
 		this->SetStance(CharacterModel::PlayerStance::Standing);
 	}
 }
@@ -156,7 +160,7 @@ void Map_Player::Update(int FPS)
 	{
 		Deathcounter++;
 	}
-	if (this->time > FPS / 2.5)
+	if (this->time > FPS/2)
 	{
 		this->Damage.clear();
 		this->time = 0;
@@ -169,20 +173,6 @@ void Map_Player::Update(int FPS)
 		{
 			this->frame_ID = 0;
 			fpscounter = 0;
-			break;
-		}
-		case(PlayerStance::Walking):
-		{
-			if (fpscounter > (FPS / 8.5))
-			{
-				this->frame_ID++;
-				if (this->frame_ID > 3)
-				{
-					this->frame_ID = 0;
-					this->SetStance(CharacterModel::Standing);
-				}
-				fpscounter = 0;
-			}
 			break;
 		}
 		case(PlayerStance::BluntAttacking):
@@ -306,7 +296,7 @@ void Map_Player::Map_PlayerRender(ID3DXSprite* _Sprite, int x, int y, float dept
 				IconPos->x -= 9;
 			}
 
-			float alpha = 255 - (160 * ((float)this->time / ((float)m_p_Game->FPS / 2.5)));
+			float alpha = 255 - (160 * ((float)this->time / ((float)m_p_Game->FPS / 2)));
 			m_p_Game->map->Sprite->Draw(m_p_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB((int)alpha, 255, 255, 255));
 
 		}

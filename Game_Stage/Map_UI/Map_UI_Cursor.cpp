@@ -5,7 +5,7 @@
 #include "..\..\Utilities\UI_Element.h"
 #include "Map_UI_Cursor.h"
 #include "..\..\Game.h"
-
+#include "..\..\Packet_Handler\Send\SShop.h"
 Game* p_Game;
 Map_UI_Cursor::Map_UI_Cursor()
 {
@@ -40,45 +40,76 @@ void Map_UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 		this->m_CursorType = CursorType::None;
 		return;
 	}
-	if(hideme)
+	if (hideme)
 	{
 		return;
 	}
 	D3DXMATRIX mat;
 	RECT SrcRect;
-
 	int Height = 0;
 	std::string Name = "";
-
-	if (this->m_CursorType != CursorType::Invisible)
+	cursordat = CursorDat();
+	cursordat._CType = CursorType::None;
+	int MapElementDepth = 0;
+	//if (this->m_CursorType != CursorType::Invisible)
 	{	//p_Map->ThreadLock.lock();
+
 		for (std::map<int, Map_NPC*>::iterator NPC = this->p_Map->m_NPCs.begin(); NPC != this->p_Map->m_NPCs.end(); ++NPC)
 		{
-			if (NPC->second->x == x && NPC->second->y == y)
+			int tilexp = ((NPC->second->x * 32) - (NPC->second->y * 32)) - this->p_Map->xoff;
+			int tileyp = ((NPC->second->x * 16) + (NPC->second->y * 16)) - this->p_Map->yoff;
+			if ((NPC->second->x == x && NPC->second->y == y))
 			{
-				Name = p_Game->ENF_File->data[NPC->second->ID].name;
-				Name[0] = std::toupper(Name[0]);
-			
-				Height = p_Game->ResourceManager->GetImageInfo(21,( p_Game->ENF_File->data[NPC->second->ID].graphic - 1)*40 + 1, true).Height;
-				this->m_CursorType = CursorType::Object;
-				break;
-			}
-		}
-
-		for (std::map<int, Map_Player*>::iterator player = this->p_Map->m_Players.begin(); player != this->p_Map->m_Players.end(); ++player)
-		{
-			if (player->second->x == x && player->second->y == y)
-			{
-				Name = player->second->name;
-				Name[0] = std::toupper(Name[0]);
-				Name += "  " + player->second->guildtag;
-				Height = 65;
-				if (player->second->Stance == Map_Player::PlayerStance::ChairSitting || player->second->Stance == Map_Player::PlayerStance::GroundSitting)
+				if (p_Map->LUTMap[NPC->second->x][NPC->second->y] > MapElementDepth)
 				{
-					Height = 45;
+					cursordat._CType = CursorType::NPC;
+					cursordat.index = NPC->first;
+					cursordat.x = NPC->second->x;
+					cursordat.y = NPC->second->y;
 				}
 				this->m_CursorType = CursorType::Object;
 				break;
+			}
+			else if (((tilexp >= p_Game->MouseX - 41 && tilexp <= p_Game->MouseX - 23) && (tileyp >= p_Game->MouseY - 22 && tileyp <= p_Game->MouseY + 46)))
+			{
+				int NPCDepth = p_Map->LUTMap[NPC->second->x][NPC->second->y];
+				if (NPCDepth > MapElementDepth)
+				{
+					cursordat._CType = CursorType::NPC;
+					cursordat.index = NPC->first;
+					cursordat.x = NPC->second->x;
+					cursordat.y = NPC->second->y;
+					MapElementDepth = NPCDepth;
+				}
+			}
+		}
+		for (std::map<int, Map_Player*>::iterator player = this->p_Map->m_Players.begin(); player != this->p_Map->m_Players.end(); ++player)
+		{
+			int tilexp = ((player->second->x * 32) - (player->second->y * 32)) - this->p_Map->xoff;
+			int tileyp = ((player->second->x * 16) + (player->second->y * 16)) - this->p_Map->yoff;
+			if ((player->second->x == x && player->second->y == y))
+			{
+				if (p_Map->LUTMap[player->second->x][player->second->y] > MapElementDepth)
+				{
+					cursordat._CType = CursorType::Player;
+					cursordat.index = player->first;
+					cursordat.x = player->second->x;
+					cursordat.y = player->second->y;
+				}
+
+				this->m_CursorType = CursorType::Object;
+			}
+			else if (((tilexp >= p_Game->MouseX - 41 && tilexp <= p_Game->MouseX - 23) && (tileyp >= p_Game->MouseY - 22 && tileyp <= p_Game->MouseY + 46)))
+			{
+				int playerdepth = p_Map->LUTMap[player->second->x][player->second->y];
+				if (playerdepth > MapElementDepth)
+				{
+					cursordat._CType = CursorType::Player;
+					cursordat.index = player->first;
+					cursordat.x = player->second->x;
+					cursordat.y = player->second->y;
+					MapElementDepth = playerdepth;
+				}
 			}
 		}
 		for (std::map<int, Map::Map_Item>::iterator m_item = this->p_Map->m_Items.begin(); m_item != this->p_Map->m_Items.end(); ++m_item)
@@ -98,20 +129,20 @@ void Map_UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 				this->m_CursorType = CursorType::Object;
 				if (p_Game->MousePressed)
 				{
-					SItem::SendPickup(p_Game->world->connection->ClientStream,m_item->first, p_Game);
+					SItem::SendPickup(p_Game->world->connection->ClientStream, m_item->first, p_Game);
 				}
 				break;
 			}
 		}
-		//p_Map->ThreadLock.unlock();
+
 		if (!p_Game->RAWMousePressed)
 		{
 			if (p_Game->Map_UserInterface->map_inventory->childMPindex >= 0)
 			{
 				int x = this->x;
 				int y = this->y;
-				if(abs((p_Game->map->m_Players[World::WorldCharacterID]->x - x)) < 2 && abs((p_Game->map->m_Players[World::WorldCharacterID]->y - y)) < 2)
-				{ 
+				if (abs((p_Game->map->m_Players[World::WorldCharacterID]->x - x)) < 2 && abs((p_Game->map->m_Players[World::WorldCharacterID]->y - y)) < 2)
+				{
 					int amount = 0;
 					for (int i = 0; i < p_Game->Map_UserInterface->map_inventory->inventory.size(); i++)
 					{
@@ -127,46 +158,87 @@ void Map_UI_Cursor::Render(ID3DXSprite* m_sprite, float depth)
 					}
 					else if (amount > 1)
 					{
-						p_Game->Map_UserInterface->map_inventory->DisplayDropDialogye(true, amount, p_Game->Map_UserInterface->map_inventory->childMPindex, x, y);
+						p_Game->Map_UserInterface->map_inventory->DisplayDropDialogue(true, amount, p_Game->Map_UserInterface->map_inventory->childMPindex, x, y);
 						p_Game->Map_UserInterface->map_inventory->childMPindex = -1;
 					}
 				}
 			}
 		}
-		SrcRect.bottom = 32;
-		SrcRect.left = 0 + (64 * this->m_CursorType);
-		SrcRect.right = 64 + (64 * this->m_CursorType);
-		SrcRect.top = 0;
-		D3DXMatrixTransformation2D(&mat, NULL, NULL, NULL, NULL, NULL, NULL);
-		int rx = (x - this->p_Map->xpos);
-		int ry = (y - this->p_Map->ypos);
-		int mx = (rx * 32) - (ry * 32)+ 280;
-		int my = (ry * 16) + (rx * 16)+ 170;
+
+		if (this->m_CursorType != CursorType::Invisible)
+		{
+			SrcRect.bottom = 32;
+			SrcRect.left = 0 + (64 * this->m_CursorType);
+			SrcRect.right = 64 + (64 * this->m_CursorType);
+			SrcRect.top = 0;
+			D3DXMatrixTransformation2D(&mat, NULL, NULL, NULL, NULL, NULL, NULL);
+			int rx = (x - this->p_Map->xpos);
+			int ry = (y - this->p_Map->ypos);
+			int mx = (rx * 32) - (ry * 32) + 280;
+			int my = (ry * 16) + (rx * 16) + 170;
 
 
-		D3DXVECTOR3 * Pos = new D3DXVECTOR3(mx, my , depth);
-		D3DXVECTOR3 * Center = new D3DXVECTOR3(1, 1, 0);
+			D3DXVECTOR3* Pos = new D3DXVECTOR3(mx, my, depth);
+			D3DXVECTOR3* Center = new D3DXVECTOR3(1, 1, 0);
 
-		m_sprite->SetTransform(&mat);
-		m_sprite->Draw(p_Game->ResourceManager->CreateTexture(2, 24, true).Texture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
-		delete Pos;
-		delete Center;
-		if (Name != "")
+			m_sprite->SetTransform(&mat);
+			m_sprite->Draw(p_Game->ResourceManager->CreateTexture(2, 24, true).Texture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+			delete Pos;
+			delete Center;
+		}
+		if (Name != "" || cursordat._CType != CursorType::None)
 		{
 			RECT rct;
+			int px = x;
+			int py = y;
+			if (cursordat._CType != CursorType::None)
+			{
+				px = cursordat.x;
+				py = cursordat.y;
+				if (cursordat._CType == CursorType::Player)
+				{
+					Map_Player* player = p_Map->m_Players[cursordat.index];
+					Name = player->name;
+					Name[0] = std::toupper(Name[0]);
+					Name += "  " + player->guildtag;
+					Height = 65;
+					if (player->Stance == Map_Player::PlayerStance::ChairSitting || player->Stance == Map_Player::PlayerStance::GroundSitting)
+					{
+						Height = 45;
+					}
+				}
+				if (cursordat._CType == CursorType::NPC)
+				{
+					Map_NPC* mNPC = p_Map->m_NPCs[cursordat.index];
+					px = cursordat.x;
+					py = cursordat.y;
+					Name = p_Game->ENF_File->data[mNPC->ID].name;
+					Name[0] = std::toupper(Name[0]);
 
+					Height = p_Game->ResourceManager->GetImageInfo(21, (p_Game->ENF_File->data[mNPC->ID].graphic - 1) * 40 + 1, true).Height;
+					if (Height == 0)
+					{
+						Height = p_Game->ResourceManager->GetImageInfo(21, (p_Game->ENF_File->data[mNPC->ID].graphic - 1) * 40 + 2, true).Height;
+					}
+				}
+
+			}
+			int ax = (px - this->p_Map->xpos);
+			int ay = (py - this->p_Map->ypos);
+			int cx = (ax * 32) - (ay * 32) + 280;
+			int cy = (ay * 16) + (ax * 16) + 170;
 			if (p_Game->map->m_Players[World::WorldCharacterID]->direction == 0 || p_Game->map->m_Players[World::WorldCharacterID]->direction == 3)
 			{
-				rct.left = mx - 16 - (p_Game->map->m_Players[World::WorldCharacterID]->xoffset);
+				rct.left = cx - 16 - (p_Game->map->m_Players[World::WorldCharacterID]->xoffset);
 				rct.right = rct.left + 100;
-				rct.top = my - Height - (p_Game->map->m_Players[World::WorldCharacterID]->yoffset);
+				rct.top = cy - Height - (p_Game->map->m_Players[World::WorldCharacterID]->yoffset);
 				rct.bottom = rct.top + 20;
 			}
 			else
 			{
-				rct.left = mx - 16 + (p_Game->map->m_Players[World::WorldCharacterID]->xoffset);
+				rct.left = cx - 16 + (p_Game->map->m_Players[World::WorldCharacterID]->xoffset);
 				rct.right = rct.left + 100;
-				rct.top = my - Height - (p_Game->map->m_Players[World::WorldCharacterID]->yoffset);
+				rct.top = cy - Height - (p_Game->map->m_Players[World::WorldCharacterID]->yoffset);
 				rct.bottom = rct.top + 20;
 			}
 
@@ -220,6 +292,32 @@ void Map_UI_Cursor::Update()
 	int MouseX = p_Game->MouseX + this->p_Map->xoff;
 	int MouseY = p_Game->MouseY + this->p_Map->yoff;
 
+	if (p_Game->MousePressed)
+	{
+		switch (this->cursordat._CType)
+		{
+			case(CursorType::NPC):
+			{
+				this->p_Map->ThreadLock.lock();
+				Map_NPC* m_NPC = this->p_Map->m_NPCs[this->cursordat.index];
+				if (m_NPC)
+				{
+					if (p_Game->ENF_File->data[m_NPC->ID].type == ENF::Type::Shop && p_Game->world->UIBox_Hidden)
+					{
+						SShop::SendShopOpen(p_Game->world->connection->ClientStream, this->cursordat.index, p_Game);
+					}
+				}
+
+				this->p_Map->ThreadLock.unlock();
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}
+	}
+	
 	if (!p_Game->Map_UserInterface->MouseHeld)
 	{
 		p_Game->Map_UserInterface->map_inventory->childMPindex = -1;
@@ -275,7 +373,7 @@ void Map_UI_Cursor::Update()
 		this->p_Map->ThreadLock.unlock();
 	}
 
-
+#ifdef DEBUG 
 	cur_istring.clear();
 	wchar_t xstr[12];
 	cur_istring += L"MouseX = ";
@@ -326,5 +424,5 @@ void Map_UI_Cursor::Update()
 		cur_istring += L"\nFillTile = " + to_wstring(this->p_Map->m_emf.header.fill_tile);
 	}
 	this->p_Map->ThreadLock.unlock();
-
+#endif
 }

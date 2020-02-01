@@ -38,6 +38,7 @@ public:
 	int MessageY;
 	int DragX;
 	int DragY;
+	int MouseWheelVal = 0;
 	Button* BT_Message_OK;
 	bool MessageDragging;
 	bool MessageSelected;

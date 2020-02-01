@@ -71,7 +71,7 @@ void Map_UI_Talk::Update()
 	{
 		for (int i = 0; i < 6; i++)
 		{
-			this->UI_ChatScrollbars[i]->Update(Ptr_Talk_MapUI->MouseX, Ptr_Talk_MapUI->MouseY, Ptr_Talk_MapUI->MousePressed, Ptr_Talk_MapUI->MouseHeld, Ptr_Talk_Game->FPS);
+			this->UI_ChatScrollbars[i]->Update(Ptr_Talk_MapUI->MouseX, Ptr_Talk_MapUI->MouseY, Ptr_Talk_Game->MouseWheelVal, Ptr_Talk_MapUI->MousePressed, Ptr_Talk_MapUI->MouseHeld, Ptr_Talk_Game->FPS);
 		}
 		this->UI_Element_LockText->Update(Ptr_Talk_MapUI->MouseX, Ptr_Talk_MapUI->MouseY, Ptr_Talk_MapUI->MousePressed);
 		for (int i = 0; i < 2; i++)

@@ -233,8 +233,8 @@ CLIENT_F_FUNC(Welcome)
 							for (int i = 0; i < character_spells.length() / 4; i++)
 							{
 								int pos = i * 4;
-								short SpellID = PacketProcessor::Number(character_spells[i], character_spells[i + 1]);
-								short level = PacketProcessor::Number(character_spells[i + 2], character_spells[i + 3]);
+								short SpellID = PacketProcessor::Number(character_spells[pos], character_spells[pos + 1]);
+								short level = PacketProcessor::Number(character_spells[pos + 2], character_spells[pos + 3]);
 							}
 							int numberofplayers = reader.GetChar();
 							reader.GetByte();

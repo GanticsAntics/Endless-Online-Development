@@ -21,7 +21,20 @@ public:
 		Object,
 		Special,
 		Invisible,
+		Player,
+		NPC,
+		Vault,
+		Shop,
+		Board,
+		Bank
 	};
+	struct CursorDat
+	{
+		CursorType _CType;
+		int x, y;
+		int index;
+	};
+	CursorDat cursordat;
 	std::basic_string<wchar_t> cur_istring;
 	std::basic_string<char> scur_istring;
 	CursorType m_CursorType;

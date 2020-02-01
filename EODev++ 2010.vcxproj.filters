@@ -277,6 +277,12 @@
     <ClCompile Include="Utilities\UI_InformationBox.cpp">
       <Filter>Utillities</Filter>
     </ClCompile>
+    <ClCompile Include="Packet_Handler\Send\SShop.cpp">
+      <Filter>Packet_Handler\Send</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet_Handler\Receive\RShop.cpp">
+      <Filter>Packet_Handler\Receive</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -477,6 +483,9 @@
     </ClInclude>
     <ClInclude Include="Utilities\UI_InformationBox.h">
       <Filter>Utillities</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet_Handler\Send\SShop.h">
+      <Filter>Packet_Handler\Send</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

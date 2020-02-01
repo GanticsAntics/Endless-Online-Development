@@ -310,6 +310,7 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	}
 	this->deletetrue = false;
 	this->LastDeleteRequest = -1;
+	
 };
 
 void Menu::TabPressed()

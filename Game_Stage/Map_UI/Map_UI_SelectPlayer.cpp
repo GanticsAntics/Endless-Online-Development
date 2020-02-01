@@ -85,23 +85,11 @@ void Map_UI_SelectPlayer::Update()
 	}
 	if (Ptr_SelectPlayer_Game->MouseRightPressed)
 	{
-		for (std::map<int, Map_Player*>::iterator player = Ptr_SelectPlayer_Game->map->m_Players.begin(); player != Ptr_SelectPlayer_Game->map->m_Players.end(); ++player)
+		if (Ptr_SelectPlayer_Game->MapCursor.cursordat._CType == Map_UI_Cursor::CursorType::Player)
 		{
-			int tilexp = ((player->second->x * 32) - (player->second->y * 32)) - Ptr_SelectPlayer_Game->map->xoff;
-			int tileyp = ((player->second->x * 16) + (player->second->y * 16)) - Ptr_SelectPlayer_Game->map->yoff;
-
-			if ((tilexp >= Ptr_SelectPlayer_Game->MouseX - 41 && tilexp <= Ptr_SelectPlayer_Game->MouseX - 23) && (tileyp >= Ptr_SelectPlayer_Game->MouseY - 22 && tileyp <= Ptr_SelectPlayer_Game->MouseY + 46))
-			{
-				int playerdepth = Ptr_SelectPlayer_Game->map->LUTMap[player->second->x][player->second->y];
-				if (playerdepth > depth)
-				{
-					tempplayerid = player->first;
-					depth = playerdepth;
-					Ptr_SelectPlayer_MapUI->DrawHelpMessage("Action", "Menu belongs to player " + player->second->name);
-
-				}
-			}
+			tempplayerid = Ptr_SelectPlayer_Game->MapCursor.cursordat.index;
 		}
+
 
 		if (tempplayerid != -1)
 		{
@@ -114,6 +102,13 @@ void Map_UI_SelectPlayer::Update()
 			playerid = -1;
 		}
 	}
+	else
+	{
+		if (Ptr_SelectPlayer_Game->MapCursor.m_CursorType != Map_UI_Cursor::CursorType::Invisible && Ptr_SelectPlayer_Game->MapCursor.cursordat._CType == Map_UI_Cursor::CursorType::Player)
+		{
+			Ptr_SelectPlayer_MapUI->DrawHelpMessage("Action", "Menu belongs to player " + Ptr_SelectPlayer_Game->map->m_Players[Ptr_SelectPlayer_Game->MapCursor.cursordat.index]->name);
+		}
+	}
 
 
 }
@@ -124,7 +119,7 @@ void Map_UI_SelectPlayer::Render()
 	{	
 		RECT SrcRect;
 		int width = 96;
-		int height = 136;
+		int height = 137;
 		int tilexp = ((Ptr_SelectPlayer_Game->map->m_Players[playerid]->x * 32) - (Ptr_SelectPlayer_Game->map->m_Players[playerid]->y * 32)) - Ptr_SelectPlayer_Game->map->xoff;
 		int tileyp = ((Ptr_SelectPlayer_Game->map->m_Players[playerid]->x * 16) + (Ptr_SelectPlayer_Game->map->m_Players[playerid]->y * 16)) - Ptr_SelectPlayer_Game->map->yoff;
 

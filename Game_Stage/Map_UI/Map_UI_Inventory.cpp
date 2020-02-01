@@ -395,6 +395,7 @@ void Map_UI_Inventory::Update()
 			this->paperdoll._PlayerID = -1;
 			this->PaperdollVisible = false;
 		}
+		Ptr_Inv_Game->MapCursor.m_CursorType = Map_UI_Cursor::CursorType::Invisible;
 	}
 	if (this->IsDropMenuActive)
 	{
@@ -448,7 +449,7 @@ void Map_UI_Inventory::Update()
 				}
 				else if (amount > 1)
 				{
-					this->DisplayDropDialogye(true, amount, this->childMPindex, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->x, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->y);
+					this->DisplayDropDialogue(true, amount, this->childMPindex, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->x, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->y);
 					this->childMPindex = -1;
 				}
 			}
@@ -473,7 +474,7 @@ void Map_UI_Inventory::Update()
 				}
 				else if (amount > 1)
 				{
-					this->DisplayDropDialogye(false, amount, this->childMPindex, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->x, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->y);
+					this->DisplayDropDialogue(false, amount, this->childMPindex, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->x, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->y);
 					this->childMPindex = -1;
 				}
 			}
@@ -990,7 +991,8 @@ int starty = 0;
 void Map_UI_Inventory::UpdatePaperdoll()
 {
 	this->UI_Element_PpdollOkay->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
-	if (Ptr_Inv_MapUI->MouseX > this->PPdollX && Ptr_Inv_MapUI->MouseX < this->PPdollX + 380)
+	
+if (Ptr_Inv_MapUI->MouseX > this->PPdollX && Ptr_Inv_MapUI->MouseX < this->PPdollX + 380)
 	{
 		if (Ptr_Inv_MapUI->MouseY > this->PPdollY && Ptr_Inv_MapUI->MouseY < this->PPdollY + 290)
 		{
@@ -1062,12 +1064,14 @@ void Map_UI_Inventory::RenderDropJunk()
 	this->UI_Element_DropOkay->Draw(Ptr_Inv_MapUI->Sprite);
 	this->DropJunkTextbox->Render(Ptr_Inv_MapUI->Sprite);
 	this->DropJunkScrollBar->Draw(Ptr_Inv_MapUI->Sprite);
+	delete Pos;
+	delete Centre;
 }
 void Map_UI_Inventory::UpdateDropJunk()
 {
 	this->UI_Element_DropCancel->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
 	this->UI_Element_DropOkay->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
-	this->DropJunkScrollBar->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed, Ptr_Inv_MapUI->MouseHeld, Ptr_Inv_MapUI->FPS);
+	this->DropJunkScrollBar->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_Game->MouseWheelVal, Ptr_Inv_MapUI->MousePressed, Ptr_Inv_MapUI->MouseHeld, Ptr_Inv_MapUI->FPS);
 	if (Ptr_Inv_MapUI->MouseX > this->DropMenuX && Ptr_Inv_MapUI->MouseX < this->DropMenuX + 265)
 	{
 		if (Ptr_Inv_MapUI->MouseY > this->DropMenuY && Ptr_Inv_MapUI->MouseY < this->DropMenuY + 170)
