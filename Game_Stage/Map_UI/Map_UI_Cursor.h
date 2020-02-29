@@ -1,14 +1,12 @@
-#ifndef _MapUICursor_
-#define _MapUICursor_
+#pragma once
 #include "..\Map.h"
-#include "..\..\Utilities\UI_Element.h"
-class Map;
 class Map_UI_Cursor : public UI_Element
 {
 private:
+	Game* m_game;
 	Map* p_Map;
-	IDirect3DDevice9Ptr p_Device;
-	ID3DXSprite* p_Sprite;
+	sf::RenderWindow*p_Device;
+	sf::Sprite* p_Sprite;
 public:
 	int x = 0;
 	int y = 0;
@@ -24,6 +22,7 @@ public:
 		Player,
 		NPC,
 		Vault,
+		Chest,
 		Shop,
 		Board,
 		Bank
@@ -39,10 +38,9 @@ public:
 	std::basic_string<char> scur_istring;
 	CursorType m_CursorType;
 	Map_UI_Cursor();
-	Map_UI_Cursor(VOID* m_Game, Map* m_Map, IDirect3DDevice9Ptr m_Device);
+	Map_UI_Cursor(Game* m_Game, Map* m_Map, sf::RenderWindow*m_Device);
 	~Map_UI_Cursor();
 	void Update();
-	void Render(ID3DXSprite* m_sprite, float depth);
+	void Render(sf::Sprite* m_sprite, float depth);
 };
-#endif
 

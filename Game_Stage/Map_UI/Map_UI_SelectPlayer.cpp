@@ -2,16 +2,15 @@
 #include "Map_UI_SelectPlayer.h"
 #include "Map_UI.h"
 #include "Map_UI_ChatBubbleHandler.h"
-#include "..\Game.h"
+#include "..\game.h"
 #include "..\..\Packet_Handler\Send\SPaperdoll.h"
 
 vector<pair<int, int>> menudataypos;
-Map_UI* Ptr_SelectPlayer_MapUI;
-Game* Ptr_SelectPlayer_Game;
-Map_UI_SelectPlayer::Map_UI_SelectPlayer(void* m_UIElement, void* m_Game)
+
+Map_UI_SelectPlayer::Map_UI_SelectPlayer(Map_UI* m_UIElement, Game* p_Game)
 {
-	Ptr_SelectPlayer_MapUI = (Map_UI*)m_UIElement;
-	Ptr_SelectPlayer_Game = (Game*)m_Game;
+	this->m_MapUI = m_UIElement;
+	this->m_game = p_Game;
 
 	menudataypos.push_back(pair<int, int>(10, 14));
 	menudataypos.push_back(pair<int, int>(24, 14));
@@ -40,26 +39,26 @@ void Map_UI_SelectPlayer::Update()
 		SrcRect.bottom = SrcRect.top + height;
 		SrcRect.left = 0;
 		SrcRect.right = SrcRect.left + width;
-		int tilexp = ((Ptr_SelectPlayer_Game->map->m_Players[playerid]->x * 32) - (Ptr_SelectPlayer_Game->map->m_Players[playerid]->y * 32)) - Ptr_SelectPlayer_Game->map->xoff;
-		int tileyp = ((Ptr_SelectPlayer_Game->map->m_Players[playerid]->x * 16) + (Ptr_SelectPlayer_Game->map->m_Players[playerid]->y * 16)) - Ptr_SelectPlayer_Game->map->yoff;
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(tilexp + 47, tileyp - 65, 1.0f);
+		int tilexp = ((this->m_game->map->m_Players[playerid]->x * 32) - (this->m_game->map->m_Players[playerid]->y * 32)) - this->m_game->map->xoff;
+		int tileyp = ((this->m_game->map->m_Players[playerid]->x * 16) + (this->m_game->map->m_Players[playerid]->y * 16)) - this->m_game->map->yoff;
+		sf::Vector3f* Pos = new sf::Vector3f(tilexp + 47, tileyp - 65, 1.0f);
 
-		if ((Ptr_SelectPlayer_Game->MouseX > Pos->x&& Ptr_SelectPlayer_Game->MouseX < Pos->x + width) && (Ptr_SelectPlayer_Game->MouseY > Pos->y && Ptr_SelectPlayer_Game->MouseY < Pos->y + height))
+		if ((this->m_game->MouseX > Pos->x&& this->m_game->MouseX < Pos->x + width) && (this->m_game->MouseY > Pos->y && this->m_game->MouseY < Pos->y + height))
 		{
-			int mouselocy = Ptr_SelectPlayer_Game->MouseY - Pos->y;
+			int mouselocy = this->m_game->MouseY - Pos->y;
 			this->CurrentIndex = SelectIndex::None;
 			for (int i = 0; i < menudataypos.size(); i++)
 			{
 				if (mouselocy > menudataypos[i].first && mouselocy < menudataypos[i].first + menudataypos[i].second)
 				{
 					this->CurrentIndex = (SelectIndex)(i + 1);
-					if (Ptr_SelectPlayer_Game->MousePressed)
+					if (this->m_game->MousePressed)
 					{
 						switch (this->CurrentIndex)
 						{
 						case(SelectIndex::Paperdoll):
 							{
-								SPaperdoll::SendPaperdollRequest(Ptr_SelectPlayer_Game->world->connection->ClientStream, playerid, Ptr_SelectPlayer_Game);
+								SPaperdoll::SendPaperdollRequest(this->m_game->world->connection->ClientStream, playerid, this->m_game);
 								break;
 							}
 							default: break;
@@ -75,7 +74,7 @@ void Map_UI_SelectPlayer::Update()
 			this->CurrentIndex = SelectIndex::None;
 			this->MouseoverMenu = false;
 		}
-		if (Ptr_SelectPlayer_Game->MousePressed)
+		if (this->m_game->MousePressed)
 		{
 			this->MouseoverMenu = false;
 			SelectMenuActive = false;
@@ -83,11 +82,11 @@ void Map_UI_SelectPlayer::Update()
 		}
 		delete Pos;
 	}
-	if (Ptr_SelectPlayer_Game->MouseRightPressed)
+	if (this->m_game->MouseRightPressed)
 	{
-		if (Ptr_SelectPlayer_Game->MapCursor.cursordat._CType == Map_UI_Cursor::CursorType::Player)
+		if (this->m_game->MapCursor.cursordat._CType == Map_UI_Cursor::CursorType::Player)
 		{
-			tempplayerid = Ptr_SelectPlayer_Game->MapCursor.cursordat.index;
+			tempplayerid = this->m_game->MapCursor.cursordat.index;
 		}
 
 
@@ -104,43 +103,45 @@ void Map_UI_SelectPlayer::Update()
 	}
 	else
 	{
-		if (Ptr_SelectPlayer_Game->MapCursor.m_CursorType != Map_UI_Cursor::CursorType::Invisible && Ptr_SelectPlayer_Game->MapCursor.cursordat._CType == Map_UI_Cursor::CursorType::Player)
+		if (this->m_game->MapCursor.m_CursorType != Map_UI_Cursor::CursorType::Invisible && this->m_game->MapCursor.cursordat._CType == Map_UI_Cursor::CursorType::Player)
 		{
-			Ptr_SelectPlayer_MapUI->DrawHelpMessage("Action", "Menu belongs to player " + Ptr_SelectPlayer_Game->map->m_Players[Ptr_SelectPlayer_Game->MapCursor.cursordat.index]->name);
+			this->m_MapUI->DrawHelpMessage("Action", "Menu belongs to player " + this->m_game->map->m_Players[this->m_game->MapCursor.cursordat.index]->name);
 		}
 	}
 
 
 }
 
-void Map_UI_SelectPlayer::Render()
+void Map_UI_SelectPlayer::Render(float depth)
 {
 	if (playerid != -1)
 	{	
 		RECT SrcRect;
 		int width = 96;
 		int height = 137;
-		int tilexp = ((Ptr_SelectPlayer_Game->map->m_Players[playerid]->x * 32) - (Ptr_SelectPlayer_Game->map->m_Players[playerid]->y * 32)) - Ptr_SelectPlayer_Game->map->xoff;
-		int tileyp = ((Ptr_SelectPlayer_Game->map->m_Players[playerid]->x * 16) + (Ptr_SelectPlayer_Game->map->m_Players[playerid]->y * 16)) - Ptr_SelectPlayer_Game->map->yoff;
+		int tilexp = ((this->m_game->map->m_Players[playerid]->x * 32) - (this->m_game->map->m_Players[playerid]->y * 32)) - this->m_game->map->xoff;
+		int tileyp = ((this->m_game->map->m_Players[playerid]->x * 16) + (this->m_game->map->m_Players[playerid]->y * 16)) - this->m_game->map->yoff;
 
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(tilexp + 47, tileyp - 65, 1.0f);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(1, 1, 0);
-		D3DCOLOR col = D3DCOLOR_ARGB(160, 255, 255, 255);
+		sf::Vector3f* Pos = new sf::Vector3f(tilexp + 47, tileyp - 65, 1.0f);
+		sf::Vector3f* Center = new sf::Vector3f(1, 1, 0);
+		sf::Color col = sf::Color::Color(186, 122, 89, 133);
 
 		SrcRect.top = 0;
 		SrcRect.bottom = SrcRect.top + height;
 		SrcRect.left = 192;
 		SrcRect.right = SrcRect.left + width;
-		Ptr_SelectPlayer_Game->Map_UserInterface->Sprite->Draw(Ptr_SelectPlayer_Game->Map_UserInterface->map_ChatBubbleHandler->ChatBoxBG, &SrcRect, NULL, Pos, col);
-		
-		col = D3DCOLOR_ARGB(255 , 255, 255, 255);
+		//this->m_game->Map_UserInterface->Sprite->Draw(this->m_game->Map_UserInterface->map_ChatBubbleHandler->ChatBoxBG, &SrcRect, NULL, Pos, col);
+		this->m_game->Draw(this->m_game->Map_UserInterface->map_ChatBubbleHandler->ChatBoxBG, Pos->x, Pos->y, col, SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom, sf::Vector2f(1, 1), 0.02f);
+
+		col = sf::Color::Color(255 , 255, 255, 255);
 		SrcRect.top = 0;
 		SrcRect.bottom = SrcRect.top + height;
 		SrcRect.left = 0;
 		SrcRect.right = SrcRect.left + width;
-		Ptr_SelectPlayer_Game->Map_UserInterface->Sprite->Draw(Ptr_SelectPlayer_Game->ResourceManager->CreateTexture(2, 41, true).Texture.get(), &SrcRect, NULL, Pos, col);
-	
-		col = D3DCOLOR_ARGB(255, 255, 255, 255);
+		//this->m_game->Map_UserInterface->Sprite->Draw(this->m_game->ResourceManager->CreateTexture(2, 41, true)._Texture.get(), &SrcRect, NULL, Pos, col);
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 41, true), Pos->x, Pos->y, col, SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom, sf::Vector2f(1, 1), 0.02f);
+
+		col = sf::Color::Color(255, 255, 255, 255);
 
 		switch (this->CurrentIndex)
 		{
@@ -226,7 +227,8 @@ void Map_UI_SelectPlayer::Render()
 				break;
 			}
 		}
-		Ptr_SelectPlayer_Game->Map_UserInterface->Sprite->Draw(Ptr_SelectPlayer_Game->ResourceManager->CreateTexture(2, 41, true).Texture.get(), &SrcRect, NULL, Pos, col);
+		//this->m_game->Map_UserInterface->Sprite->Draw(this->m_game->ResourceManager->CreateTexture(2, 41, true)._Texture.get(), &SrcRect, NULL, Pos, col);
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 41, true), Pos->x, Pos->y, col, SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom, sf::Vector2f(1, 1), 0.02f);
 
 		delete Pos;
 		delete Center;

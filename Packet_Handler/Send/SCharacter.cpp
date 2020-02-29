@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SCharacter.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SCharacter::DeletePlayer(pt::ipstream* ClientStream, int deleteId, LPVOID game)
 {
@@ -37,7 +37,7 @@ void SCharacter::CreatePlayer(pt::ipstream* ClientStream, LPVOID game)
 	builder.AddShort(gme->menu->CCModel->HairStyle + 1);
 	builder.AddShort(gme->menu->CCModel->HairCol);
 	builder.AddShort(gme->menu->CCModel->SkinCol);
-	builder.AddByte(255);//breakID
+	builder.Addbyte(255);//breakID
 	builder.AddBreakString(gme->menu->CCModel->name);
 	//builder.AddBreakString(gme->menu->CCModel->name);
 	World::Send(gme,ClientStream,builder);

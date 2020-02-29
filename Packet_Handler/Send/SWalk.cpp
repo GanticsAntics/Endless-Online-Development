@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SWalk.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SWalk::SendWalk(pt::ipstream* ClientStream, int Direction, int x, int y, LPVOID game)
 {

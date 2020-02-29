@@ -685,7 +685,7 @@ typedef uchar md5_digest[md5_digsize];
 
 // from md5.h
 
-typedef unsigned char md5_byte_t; /* 8-bit byte */
+typedef unsigned char md5_byte_t; /* 8-bitunsigned char  */
 typedef unsigned int md5_word_t; /* 32-bit word */
 
 

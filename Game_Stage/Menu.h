@@ -1,13 +1,13 @@
-#ifndef Menu_h
-#define Menu_h
+#pragma once
 #include "..\World.h"
-#include "Menu_Element\CharacterModel.h"
+#include "Map_Element/CharacterModel.h"
 #include "..\Packet_Handler\Send\SLogin.h"
 #include "..\Packet_Handler\Send\SCharacter.h"
 #include "..\Packet_Handler\Send\SAccount.h"
 #include "..\Packet_Handler\Send\SWelcome.h"
 class Menu
 {
+	Game* m_game;
 public:
 
 	
@@ -77,6 +77,8 @@ public:
 
 	CharacterModel CSModels[3];
 
+	CharacterModel DebugModel;
+
 	int SelectID;
 	int BgID;
 	int FgID;
@@ -87,8 +89,8 @@ public:
 	int LoginFgID;
 	bool deletetrue;
 	World* world;
-	ID3DXSprite* Sprite;
-	ID3DXFont* LoginFont;
+	sf::Sprite* Sprite;
+	sf::Font* LoginFont;
 	
 	Resource_Manager::TextureData LoginBoxTex;
 	Resource_Manager::TextureData BgTex;
@@ -98,7 +100,7 @@ public:
 	Resource_Manager::TextureData CreateCharTex;
 	Resource_Manager::TextureData ChangePassTex;
 
-	void Initialize(World* _World, IDirect3DDevice9Ptr m_Device, LPVOID* m_game);
+	void Initialize(World* _World, sf::RenderWindow*m_Device, Game* m_game);
 	void ChangePass();
 	void Login();
 	void TabPressed();
@@ -106,5 +108,5 @@ public:
 	void Update();
 	void CreateAccount();
 	void Release();
+	void randomizeppdoll();
 };
-#endif Menu_h

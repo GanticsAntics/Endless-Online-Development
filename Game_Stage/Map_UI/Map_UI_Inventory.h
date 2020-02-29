@@ -1,9 +1,10 @@
 #pragma once
-#include "..\..\Utilities\Button.h"
-#include "..\..\Utilities\UI_ScrollBar.h"
-#include "..\..\Utilities\Textbox.h"
+class Map_UI;
 class Map_UI_Inventory
 {
+private:
+	Map_UI* m_MapUI;
+	Game* m_game;
 public:
 
 	struct InventoryGridCell
@@ -81,8 +82,8 @@ public:
 		InventoryItem(short id, int amount) : id(id), amount(amount) { }
 	};
 	
-	std::shared_ptr<IDirect3DTexture9> p_PPDollTexture;
-	std::shared_ptr<IDirect3DTexture9> p_DropJunkTexture;
+	std::shared_ptr<sf::Texture> p_PPDollTexture;
+	std::shared_ptr<sf::Texture> p_DropJunkTexture;
 	Textbox* DropJunkTextbox;
 	Button* UI_Element_PpdollOkay;
 	Button* UI_Element_DropOkay;
@@ -94,7 +95,7 @@ public:
 	int childMOindex = -1;
 	int PPdollX = 145;
 	int PPdollY = 20;
-	LPDIRECT3DTEXTURE9 p_BlackBoxTexture;
+	Resource_Manager::TextureData* p_BlackBoxTexture;
 	bool IsDropMenuActive = false;
 	bool DropOrJunk = false;
 	int DropMenuX = 320;
@@ -110,7 +111,7 @@ public:
 	Button* UI_Element_InventoryDrop;
 	std::vector<InventoryItem> inventory;
 	//Map_UI_Inventory();
-	Map_UI_Inventory(void* m_MapUI, void* m_Game);
+	Map_UI_Inventory(Map_UI* m_MapUI, Game* m_Game);
 	void AddItem(InventoryItem _item) 
 	{
 		AddInventoryItem(_item);
@@ -129,6 +130,31 @@ public:
 					for (int ii = 0; ii < 56; ii++)
 					{
 						if (InventoryGrid[ii].ID == _item.id)
+						{
+							InventoryGrid[ii].ID = -1;
+							InventoryGrid[ii].MouseOver = false;
+							InventoryGrid[ii].MousePressed = false;
+						}
+					}
+					this->childMPindex = -1;
+				}
+				return;
+			}
+		}
+	}
+	void SetItem(int ID, int amount)
+	{
+		for (int i = 0; i < this->inventory.size(); i++)
+		{
+			if (inventory[i].id == ID)
+			{
+				inventory[i].amount = amount;
+				if (inventory[i].amount <= 0)
+				{
+					inventory.erase(inventory.begin() + i);
+					for (int ii = 0; ii < 56; ii++)
+					{
+						if (InventoryGrid[ii].ID == ID)
 						{
 							InventoryGrid[ii].ID = -1;
 							InventoryGrid[ii].MouseOver = false;
@@ -182,8 +208,8 @@ public:
 	{
 		this->DropJunkScrollBar->SetIndex(1);
 		this->DropJunkScrollBar->SetNumberOfLines(1);
-		this->DropJunkTextbox->text = L"1";
-		this->DropJunkTextbox->Rendertext = L"1";
+		this->DropJunkTextbox->text = "1";
+		this->DropJunkTextbox->Rendertext = "1";
 		this->DropJunkScrollBar->SetMaxIndex(DropMaxamount);
 		this->DropAmount = DropMaxamount;
 		this->DropID = ID;
@@ -216,14 +242,14 @@ public:
 		return false;
 	}
 	void PaperdollCheckElements();
-	void RenderPaperdoll();
+	void RenderPaperdoll(float depth);
 	void UpdatePaperdoll();
 	void UpdateDropJunk();
 	void RenderDropJunk();
 	void RecalculateInventory();
 	void AddInventoryItem(InventoryItem m_Item);
 	void Update();
-	void Render();
+	void Render(float depth);
 	~Map_UI_Inventory();
 };
 

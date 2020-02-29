@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SInit.h"
-#include "..\Game.h"
+#include "..\game.h"
 static int stupid_hash(int i)
 {
 ++i;

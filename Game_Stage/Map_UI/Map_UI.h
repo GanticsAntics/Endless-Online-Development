@@ -18,13 +18,16 @@
 
 class Map_UI
 {
+private:
+	Game* m_game;
 public:
 	Map_UI();
-	ID3DXSprite* Sprite;
+	sf::Sprite* Sprite;
 	World* m_world;
-	IDirect3DDevice9Ptr m_Device;
+	sf::RenderWindow*m_Device;
 	Textbox* ChatTextbox;
-	std::shared_ptr<IDirect3DTexture9> HudStatsTexture;
+	std::shared_ptr<sf::Texture> HudStatsTexture;
+	Resource_Manager::TextureData* TxBG;
 	bool isactive = false;
 	enum UI_ElementStage
 	{
@@ -41,6 +44,7 @@ public:
 		UI_Element_GameSettings,
 		UI_Element_GameHelp,
 	};
+
 	time_t HelpMessageTimer;
 	std::string HelpMessageTitle = "";
 	std::string HelpMessage= "";
@@ -67,7 +71,7 @@ public:
 	bool MouseHeld;
 	int FPS;
 	void SetStage(UI_ElementStage m_Stage, int m_substage = 0) { this->UI_Stage = m_Stage; this->Substage = m_substage; }
-	void Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_game);
+	void Initialize(World* _world, sf::RenderWindow*m_Device, Game* m_game);
 	void UI_SendMessage();
 	void Render();
 	void Update();

@@ -1,5 +1,5 @@
 #pragma once
-#include "..\..\Game_Stage\Menu_Element\CharacterModel.h"
+#include "..\..\Game_Stage\Map_Element\CharacterModel.h"
 class Map_Player : public CharacterModel
 {
 	int FindWalkDirection(int dest_x, int dest_y);
@@ -36,7 +36,7 @@ public:
 	void SetStance(PlayerStance m_Stance);
 	void MovePlayer(int FPS, int dest_x, int dest_y);
 
-	void Initialize(LPVOID* M_Game);
+	void Initialize(Game* M_Game);
 	int login_time;
 	bool online;
 	bool nowhere;
@@ -85,11 +85,11 @@ public:
 	std::list<Character_Spell> spells;
 	int time = 0;
 	int Deathcounter = 0;
-	std::vector<BYTE> Damage;
+	std::vector<unsigned char> Damage;
 	void DealDamage(int Damage);
 	void PlayerKill();
 	bool isattacked = false;
-	void Map_PlayerRender(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR _Color = D3DCOLOR_ARGB(255, 255, 255, 255));
+	void Map_PlayerRender(sf::Sprite* _Sprite, int x, int y, float depth, sf::Color _Color = sf::Color::White );
 	Map_Player();
 	~Map_Player();
 };

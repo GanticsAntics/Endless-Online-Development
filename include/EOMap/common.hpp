@@ -34,7 +34,7 @@ template <class... Args>
 using w_ptr = std::weak_ptr<Args...>;
 
 template <class... Args>
-using u_ptr = std::unique_ptr<Args...>;
+using u_ptr = std::shared_ptr<Args...>;
 
 template <class... Args>
 using func = std::function<Args...>;

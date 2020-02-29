@@ -1,14 +1,13 @@
 #include "..\..\stdafx.h"
 #include "Map_UI.h"
-#include "..\Game.h"
-Map_UI* Ptr_News_MapUI;
-Game* Ptr_News_Game;
-Map_UI_News::Map_UI_News(void* m_UIElement, void* m_Game)
+#include "..\game.h"
+
+Map_UI_News::Map_UI_News(Map_UI* m_UIElement, Game* m_Game)
 {
-	Ptr_News_MapUI = (Map_UI*)m_UIElement;
-	Ptr_News_Game = (Game*)m_Game;
+	this->m_MapUI = m_UIElement;
+	this->m_game = m_Game;
 	//imgw = 16,16
-	this->UI_TextScrollbar = new UI_Scrollbar(568, 351, 450, 117, -465, 0, 82, "",Ptr_News_Game->ScrollBarTexture.Texture, m_Game, Ptr_News_Game->MessageFont, Ptr_News_Game->TextIconTexture.Texture);
+	this->UI_TextScrollbar = new UI_Scrollbar(569, 352, 450, 117, -465, 0, 82, "",this->m_game->ResourceManager->GetResource(2, 29, false), this->m_game, this->m_game->MessageFont, this->m_game->ResourceManager->GetResource(2, 32, true));
 	this->UI_TextScrollbar->SetButtonsEnabled(true);
 	this->UI_TextScrollbar->SetVertical(true);
 	
@@ -16,14 +15,14 @@ Map_UI_News::Map_UI_News(void* m_UIElement, void* m_Game)
 int ScrollBarFPSCounter = 0;
 void Map_UI_News::Update()
 {
-	ScrollBarFPSCounter++;
-	switch (Ptr_News_MapUI->UI_Stage)
+	//ScrollBarFPSCounter++;
+	switch (this->m_MapUI->UI_Stage)
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_News):
 	{
 
-		this->UI_TextScrollbar->Update(Ptr_News_MapUI->MouseX, Ptr_News_MapUI->MouseY, Ptr_News_Game->MouseWheelVal, Ptr_News_MapUI->MousePressed, Ptr_News_MapUI->MouseHeld, Ptr_News_Game->FPS);
-		ScrollBarFPSCounter = 0;
+		this->UI_TextScrollbar->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_game->MouseWheelVal, this->m_MapUI->MousePressed, this->m_MapUI->MouseHeld, this->m_game->FPS);
+		//ScrollBarFPSCounter = 0;
 		break;
 	}
 	default:
@@ -31,14 +30,14 @@ void Map_UI_News::Update()
 	}
 }
 
-void Map_UI_News::Render()
+void Map_UI_News::Render(float depth)
 {
-	switch (Ptr_News_MapUI->UI_Stage)
+	switch (this->m_MapUI->UI_Stage)
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_News):
 	{
-		Ptr_News_Game->Draw(Ptr_News_MapUI->Sprite, Ptr_News_Game->ResourceManager->CreateTexture(2, 48, true).Texture, 102, 332, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
-		this->UI_TextScrollbar->Draw(Ptr_News_MapUI->Sprite);
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 48, false), 102, 332, sf::Color(255, 255, 255, 255),0,0,-1,-1,sf::Vector2f(1,1), depth);
+		this->UI_TextScrollbar->Draw(depth);
 		
 		break;
 	}

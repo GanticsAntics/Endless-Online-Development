@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "Game.h"
+#include "game.h"
 #include "Packet_Handler\Send\SInit.h"
 #include "Packet_Handler\Receive\Handler.h"
-
+#include "Connection.h"
 USING_PTYPES
 pt::ipstream* ClientStream;
 PacketHandler* Packethandler;
@@ -20,7 +20,7 @@ bool Connection::Initialize(pt::string _IPAddress, int _port)
 char* PacketSize;
 char* buffer;
 bool Initialized;
-unsigned int BufferBytesRecieved;
+unsigned int BufferbytesRecieved;
 unsigned int LengthOfBuffer = 0;
 PacketProcessor proc;
 clock_t Tinit, timer;
@@ -208,16 +208,16 @@ void Connection::execute()
 						val += 2;
 					}
 
-					if (val + BufferBytesRecieved <= LengthOfBuffer)
+					if (val + BufferbytesRecieved <= LengthOfBuffer)
 					{
-						BufferBytesRecieved += val;
+						BufferbytesRecieved += val;
 					}
-					else if (val + BufferBytesRecieved > LengthOfBuffer)
+					else if (val + BufferbytesRecieved > LengthOfBuffer)
 					{
-						BufferBytesRecieved = LengthOfBuffer;
+						BufferbytesRecieved = LengthOfBuffer;
 					}
 
-					if (BufferBytesRecieved >= LengthOfBuffer)
+					if (BufferbytesRecieved >= LengthOfBuffer)
 					{
 						ClientStream->read(buffer, LengthOfBuffer);
 
@@ -228,20 +228,20 @@ void Connection::execute()
 							newbuf += buffer[i];
 						}
 
-						newbuf = World::Receive(V_Game, newbuf);
+						newbuf = World::Receive(this->V_Game, newbuf);
 						PacketReader* reader = new PacketReader(newbuf);
 
 						int familyID = reader->Family();
 						int ActionID = reader->Action();
 						if (familyID == 255 && ActionID == 255 && ConnectionAccepted)
 						{
-							int ID = reader->GetByte();
+							int ID = reader->Getbyte();
 							if (ID <= FileType::Map)
 							{
 								Connection::FileContainer filecont;
 								filecont.File_Type = FileType::Map;
 	
-								Game* gme = (Game*)V_Game;
+								Game* gme =  V_Game;
 								filecont.ID = gme->map->MapID;
 								std::string str = reader->GetEndString();
 								ProcessFile(str.c_str(), filecont);
@@ -252,7 +252,7 @@ void Connection::execute()
 								//FriendsList
 								
 								int numberofplayers = reader->GetShort();
-								reader->GetByte();
+								reader->Getbyte();
 								World::OnlinePlayers.clear();
 								std::vector<World::OnlinePlayerContainer> Sortedcontainer;
 								for (int i = 0; i < numberofplayers; i++)
@@ -261,7 +261,7 @@ void Connection::execute()
 									_player._Name = reader->GetBreakString();
 									_player._Name[0] = toupper(_player._Name[0]);
 									_player._Title = reader->GetBreakString();
-									reader->GetByte();
+									reader->Getbyte();
 									_player._Icon = reader->GetChar();
 									_player._ClassID = reader->GetChar();
 									_player._GuildTag = reader->GetBreakString();
@@ -321,7 +321,7 @@ void Connection::execute()
 						delete [] PacketSize;
 						PacketSize = nullptr;
 						delete [] buffer;
-						BufferBytesRecieved = 0;
+						BufferbytesRecieved = 0;
 						LengthOfBuffer = 0;
 					}
 					else

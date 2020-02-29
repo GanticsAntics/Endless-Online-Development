@@ -1,24 +1,23 @@
 #include "..\..\stdafx.h"
 #include "Map_UI.h"
-#include "..\..\Game.h"
-Map_UI* Ptr_PassiveSkills_MapUI;
-Game* Ptr_PassiveSkills_Game;
-Map_UI_PassiveSkills::Map_UI_PassiveSkills(void* m_UIElement, void* m_Game)
-{
-	Ptr_PassiveSkills_MapUI = (Map_UI*)m_UIElement;
-	Ptr_PassiveSkills_Game = (Game*)m_Game;
+#include "..\..\game.h"
 
-	this->UI_Element_PassiveSkillsButton = new Button(m_Game, 62, 390, 0, 57, 36, 19, false, Ptr_PassiveSkills_Game->ResourceManager->CreateTexture(2, 25, false).Texture);
+Map_UI_PassiveSkills::Map_UI_PassiveSkills(Map_UI* m_UIElement, Game* m_Game)
+{
+	this->m_MapUI = (Map_UI*)m_UIElement;
+	this->m_game = m_Game;
+
+	this->UI_Element_PassiveSkillsButton = new Button(this->m_game, 62, 390, 0, 57, 36, 19, false, this->m_game->ResourceManager->GetResource(2, 25, false));
 }
 
 void Map_UI_PassiveSkills::Update()
 {
-	this->UI_Element_PassiveSkillsButton->Update(Ptr_PassiveSkills_MapUI->MouseX, Ptr_PassiveSkills_MapUI->MouseY, Ptr_PassiveSkills_MapUI->MousePressed);
+	this->UI_Element_PassiveSkillsButton->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_MapUI->MousePressed);
 	if (this->UI_Element_PassiveSkillsButton->MouseClickedOnElement())
 	{
-		Ptr_PassiveSkills_MapUI->SetStage(Map_UI::UI_ElementStage::UI_Element_PassiveSkills, 0);
+		this->m_MapUI->SetStage(Map_UI::UI_ElementStage::UI_Element_PassiveSkills, 0);
 	}
-	switch (Ptr_PassiveSkills_MapUI->UI_Stage)
+	switch (this->m_MapUI->UI_Stage)
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_PassiveSkills):
 	{
@@ -29,14 +28,14 @@ void Map_UI_PassiveSkills::Update()
 	}
 }
 
-void Map_UI_PassiveSkills::Render()
+void Map_UI_PassiveSkills::Render(float depth)
 {
-	this->UI_Element_PassiveSkillsButton->Draw(Ptr_PassiveSkills_MapUI->Sprite);
-	switch (Ptr_PassiveSkills_MapUI->UI_Stage)
+	this->UI_Element_PassiveSkillsButton->Draw();
+	switch (this->m_MapUI->UI_Stage)
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_PassiveSkills):
 	{
-		Ptr_PassiveSkills_Game->Draw(Ptr_PassiveSkills_MapUI->Sprite, Ptr_PassiveSkills_Game->ResourceManager->CreateTexture(2, 62, false).Texture, 102, 332, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 62, false), 101, 331, sf::Color(255, 255, 255, 255), 0, 0, -1, -1, sf::Vector2f(1, 1), depth);
 		break;
 	}
 	default:

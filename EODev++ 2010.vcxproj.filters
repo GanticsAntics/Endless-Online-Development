@@ -39,9 +39,6 @@
     <Filter Include="GameStage\Map_UI">
       <UniqueIdentifier>{73d36283-d4b0-420c-88c8-aed4d866d2ab}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameStage\Menu_Element">
-      <UniqueIdentifier>{1fe96f03-8640-4ba4-9555-bb3b959fd651}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Packet_Handler">
       <UniqueIdentifier>{a12348a6-0210-4eba-8c15-53cb2d3d1423}</UniqueIdentifier>
     </Filter>
@@ -50,9 +47,6 @@
     </Filter>
     <Filter Include="Packet_Handler\Send">
       <UniqueIdentifier>{1acd82c4-40aa-4c62-8948-8c596d201baf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utillities\UI_ELement">
-      <UniqueIdentifier>{0e97aacb-c590-4967-9d50-bbeedc31aa17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -156,9 +150,6 @@
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Utilities\Resource_Manager.cpp">
       <Filter>Utillities</Filter>
-    </ClCompile>
-    <ClCompile Include="Game_Stage\Menu_Element\CharacterModel.cpp">
-      <Filter>GameStage\Menu_Element</Filter>
     </ClCompile>
     <ClCompile Include="Packet_Handler\Receive\Handler.cpp">
       <Filter>Packet_Handler\Receive</Filter>
@@ -282,6 +273,15 @@
     </ClCompile>
     <ClCompile Include="Packet_Handler\Receive\RShop.cpp">
       <Filter>Packet_Handler\Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Stage\Map_Element\CharacterModel.cpp">
+      <Filter>GameStage\Map_Element</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet_Handler\Receive\RChest.cpp">
+      <Filter>Packet_Handler\Receive</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet_Handler\Send\SChest.cpp">
+      <Filter>Packet_Handler\Send</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -415,9 +415,6 @@
     <ClInclude Include="Utilities\Resource_Manager.h">
       <Filter>Utillities</Filter>
     </ClInclude>
-    <ClInclude Include="Game_Stage\Menu_Element\CharacterModel.h">
-      <Filter>GameStage\Menu_Element</Filter>
-    </ClInclude>
     <ClInclude Include="Packet_Handler\Receive\Handler.h">
       <Filter>Packet_Handler\Receive</Filter>
     </ClInclude>
@@ -487,6 +484,13 @@
     <ClInclude Include="Packet_Handler\Send\SShop.h">
       <Filter>Packet_Handler\Send</Filter>
     </ClInclude>
+    <ClInclude Include="Game_Stage\Map_Element\CharacterModel.h">
+      <Filter>GameStage\Map_Element</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource_Manager.h" />
+    <ClInclude Include="Packet_Handler\Send\SChest.h">
+      <Filter>Packet_Handler\Send</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -502,5 +506,8 @@
     <ResourceCompile Include="EODev++.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="PublicSans-Regular.otf" />
   </ItemGroup>
 </Project>

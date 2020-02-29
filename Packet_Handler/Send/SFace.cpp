@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SFace.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SFace::SendFace(pt::ipstream* ClientStream, int Direction,LPVOID game)
 {

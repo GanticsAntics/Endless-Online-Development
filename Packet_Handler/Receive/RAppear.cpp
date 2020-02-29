@@ -8,8 +8,8 @@ CLIENT_F_FUNC(Appear)
 		{		
 			case PACKET_REPLY: 
 				{
-				int Type = reader.GetByte();
-				reader.GetByte();
+				int Type = reader.Getbyte();
+				reader.Getbyte();
 				if (Type == 1)
 				{
 					int Index = reader.GetChar();

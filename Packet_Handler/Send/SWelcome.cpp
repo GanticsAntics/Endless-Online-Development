@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SWelcome.h"
-#include "..\Game.h"
+#include "..\game.h"
 #include "..\World.h"
 
 void SWelcome::LoginCharacter(pt::ipstream* ClientStream, int ID, LPVOID game)
@@ -27,7 +27,7 @@ void SWelcome::RequestFile(pt::ipstream* ClientStream, char FileType, LPVOID gam
 	if (FileType > 1)
 	{
 		builder.AddShort(2);
-		builder.AddByte(2);
+		builder.Addbyte(2);
 	}
 	else
 	{

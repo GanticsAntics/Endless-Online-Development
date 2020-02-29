@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SAttack.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 
 void SAttack::SendAttack(pt::ipstream* ClientStream, int Direction,LPVOID game)

@@ -11,8 +11,9 @@ CLIENT_F_FUNC(Players)
 				//Map_Player* MainPlayer = game->map->m_Players[0];
 				//if (newplayer->name == MainPlayer->name)
 				{
-					reader.GetByte();
+					reader.Getbyte();
 					Map_Player* newplayer = new Map_Player();
+					newplayer->Initialize(game);
 					newplayer->name = reader.GetBreakString();
 					newplayer->ID = reader.GetShort();
 					newplayer->mapid = reader.GetShort();

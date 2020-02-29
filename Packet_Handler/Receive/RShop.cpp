@@ -13,7 +13,8 @@ CLIENT_F_FUNC(Shop)
 					//game
 					std::string ShopBuyItems = reader.GetBreakString();
 					game->world->W_UI_Infobox->NewBox();
-					game->world->W_UI_Infobox->CreateMessage(ShopTitle, "", true);
+					game->world->W_UI_Infobox->CreateMessage(ShopTitle, "Welcome to my shop! :3", true);
+					game->world->W_UI_Infobox->SetLocation(70, 20);
 					bool buytabfilled = false;
 					vector<UI_InformationBox::ItemEntry> sellitementries;
 					for (int i = 0; i < ShopBuyItems.length() / 9; i++)

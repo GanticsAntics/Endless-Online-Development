@@ -12,9 +12,12 @@ class Resource_Manager
 		struct TextureData
 		{
 		public:
-			int TextureID;
-			int GfxID;
-			std::shared_ptr<IDirect3DTexture9> Texture;
+			int _TextureID;
+			int _GfxID;
+			std::shared_ptr<sf::Texture> _Texture;
+			std::shared_ptr<sf::Sprite>_Sprite;
+			int _width;
+			int _height;
 		};
 
 		/*
@@ -27,8 +30,7 @@ class Resource_Manager
 			struct TXData
 			{
 			public: 
-				D3DXIMAGE_INFO BitmapInfo;
-				TextureData Data;
+				TextureData* Data;
 			};
 
 			bool loadfailed;
@@ -36,14 +38,13 @@ class Resource_Manager
             HMODULE module;
 			map<int, TXData> data;		
 		};
-
+		
 		Module LoadModule(int file);
-		HRESULT CreateSprite(IDirect3DDevice9Ptr Device, ID3DXSprite* Sprite);
-		HRESULT Initialize(IDirect3DDevice9Ptr Device);
+		HRESULT Initialize(sf::RenderWindow*Device);
 		typedef std::map<int,Module> ModuleType;
 		ModuleType Modules;
-		TextureData CreateTexture(DWORD ModuleID, int GFXID, bool BlackIsTransparent);
-		D3DXIMAGE_INFO GetImageInfo(DWORD ModuleID, int GFXID, bool Transparent);
+		TextureData* GetResource(DWORD ModuleID, int GFXID, bool BlackIsTransparent);
+		TextureData CreateTexture(DWORD ModuleID, int GFXID, bool BlackIsTransparent) { return TextureData(); }
 		static struct Resource_Managers
 		{
 				enum Resource_ManagerIDs
@@ -75,7 +76,7 @@ class Resource_Manager
 					Gfx025 = 25
 				 };
 		};
-		LPDIRECT3DTEXTURE9 CacheTexture;
+		TextureData* CacheTexture;
 		void Release();
 		void DumpGFX(Resource_Managers Resource_ManagerID);
 		void DestroyTexture(int FileID, int GfxID);

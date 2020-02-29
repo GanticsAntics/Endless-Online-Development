@@ -1,8 +1,5 @@
 #include "..\stdafx.h"
-#include "Map.h"
-#include "Map_Element\Map_NPC.h"
-#include "Map_Element\Map_Player.h"
-#include "..\Game.h"
+#include "..\game.h"
 #include "..\World.h"
 #include "..\Packet_Handler\Send\SFace.h"
 #include "..\Packet_Handler\Send\SWalk.h"
@@ -11,9 +8,9 @@
 #include "..\Packet_Handler\Send\SItem.h"
 #include "..\Packet_Handler\Send\SDoor.h"
 #include "..\Packet_Handler\Send\SWelcome.h"
+#include "Map.h"
 
-IDirect3DDevice9* map_d3d_Device;
-Game* map_game;
+sf::RenderWindow* map_d3d_Device;
 bool rendering = true;
 Map::Map()
 {
@@ -90,14 +87,14 @@ void Map::LoadMap(int ID)
 	this->ThreadLock.unlock();
 }
 
-void Map::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_game)
+void Map::Initialize(World* _world, sf::RenderWindow*m_Device, Game* p_game)
 {
 	world = _world;
 	map_d3d_Device = m_Device;
-	D3DXCreateSprite(map_d3d_Device, &this->Sprite);
-	D3DXCreateSprite(map_d3d_Device, &m_OverlaySprite);
+	//D3DXCreateSprite(map_d3d_Device, &this->Sprite);
+	//D3DXCreateSprite(map_d3d_Device, &m_OverlaySprite);
 	
-	map_game = (Game*)m_game;
+	this->m_game = p_game;
 
 	int mapid = 5;
 	wchar_t* st = new wchar_t[8];
@@ -118,37 +115,34 @@ void Map::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_game
 	this->Do_Open(str_proc.c_str());
 	
 }
-//std::vector<int> PlayerRemoveQueue;
+
 void Map::ClearMap()
 {
 	this->ThreadLock.lock();
-	Map_Player* MainPlayer = m_Players[World::WorldCharacterID];
-	
-	for (auto p : m_Players)
+
+	for (std::map<int, Map_Player*>::iterator it = this->m_Players.begin(); it != this->m_Players.end(); ++it)
 	{
-		if (p.first != World::WorldCharacterID)
+		if (it->first != World::WorldCharacterID)
 		{
-			delete p.second;
+			this->ClearPlayerIDList.push_back(it->first);
+		}
+		else
+		{
+			it->second->x = 0;
+			it->second->y = 0;
+			it->second->destination_x = -1;
+			it->second->destination_y = -1;
+			it->second->xoffset = 0;
+			it->second->yoffset = 0;
+			it->second->WalkCounter = 0;
+			it->second->SetStance(Map_Player::PlayerStance::Standing);
 		}
 	}
-	for (auto p : m_NPCs)
+	for (std::map<int, Map_NPC*>::iterator it = this->m_NPCs.begin(); it != this->m_NPCs.end(); ++it)
 	{
-		delete  p.second;
+		this->ClearNPCIDList.push_back(it->first);
 	}
-	m_Players.clear();
-	if (MainPlayer)
-	{
-		MainPlayer->x = 0;
-		MainPlayer->y = 0;
-		MainPlayer->destination_x = -1;
-		MainPlayer->destination_y = -1;
-		MainPlayer->xoffset = 0;
-		MainPlayer->yoffset = 0;
-		MainPlayer->WalkCounter = 0;
-		MainPlayer->SetStance(Map_Player::PlayerStance::Standing);
-	}
-	m_Players[World::WorldCharacterID] = MainPlayer;
-	m_NPCs.clear();
+
 	m_Items.clear();
 	this->ThreadLock.unlock();
 }
@@ -156,7 +150,7 @@ int map_UpdateFPS = 0;
 void Map::Update()
 {
 	map_UpdateFPS++;
-	if (map_UpdateFPS > map_game->FPS / 4)
+	if (map_UpdateFPS > this->m_game->FPS / 4)
 	{
 		this->MapAnimIndex++;
 		if (this->MapAnimIndex > 4)
@@ -174,17 +168,20 @@ void Map::Update()
 
 		for (std::map<int, Map_Player*>::iterator player = this->m_Players.begin(); player != m_Players.end(); ++player)
 		{
-			player->second->Update(map_game->FPS);
+			if (player->second)
+			{
+				player->second->Update(this->m_game->FPS);
+			}
 		}
 		for (std::map<int, Map_NPC*>::iterator NPC = this->m_NPCs.begin(); NPC != m_NPCs.end(); ++NPC)
 		{
-			NPC->second->Update(map_game->FPS);
+			NPC->second->Update(this->m_game->FPS);
 		}
 		this->ThreadLock.unlock();
 
 		for (std::map<int, Map_NPC*>::iterator NPC = this->m_NPCs.begin(); NPC != m_NPCs.end(); ++NPC)
 		{
-			if (NPC->second->Deathcounter > (map_game->FPS / 2.5))
+			if (NPC->second->Deathcounter > (this->m_game->FPS / 2.5))
 			{
 				this->RemoveNPC(NPC->first);
 				break;
@@ -195,37 +192,46 @@ void Map::Update()
 void Map::RemovePlayer(int ID)
 {
 	this->ThreadLock.lock();
-	this->m_Players.erase(ID);
+	this->ClearPlayerIDList.push_back(ID);
 	this->ThreadLock.unlock();
 }
 
 void Map::ChangeAvatar(int ID, short ShoeID, short HatID, short WeaponID, short ShieldID, short ArmorID)
 {
 	this->ThreadLock.lock();
-	this->m_Players[ID]->ShoeID = ShoeID;
-	this->m_Players[ID]->HatID = HatID;
-	this->m_Players[ID]->WeaponID = WeaponID;
-	this->m_Players[ID]->ShieldID = ShieldID;
-	this->m_Players[ID]->ArmorID = ArmorID;
+	std::map<int, Map_Player*>::iterator _Player = m_Players.find(ID);
+	_Player->second->ShoeID = ShoeID;
+	_Player->second->HatID = HatID;
+	_Player->second->WeaponID = WeaponID;
+	_Player->second->ShieldID = ShieldID;
+	_Player->second->ArmorID = ArmorID;
+	_Player->second->UpdateAppearence();
 	this->ThreadLock.unlock();
 }
 void Map::AddPlayer(Map_Player* m_Player)
 {
-	m_Player->Initialize((LPVOID*)map_game);
 	this->ThreadLock.lock();
+	if (m_Player->ID != World::WorldCharacterID)
+	{
+		m_Player->UpdateAppearence();
+	}
 	this->m_Players[m_Player->ID] = m_Player;
 	this->ThreadLock.unlock();
 }
 void Map::KillNPC(int ID)
 {
 	this->ThreadLock.lock();
-	this->m_NPCs.at(ID)->NPCKill();
+	std::map<int, Map_NPC*>::iterator _NPC = m_NPCs.find(ID);
+	if (_NPC != m_NPCs.end())
+	{
+		_NPC->second->NPCKill();
+	}
 	this->ThreadLock.unlock();
 }
 void Map::RemoveNPC(int ID)
 {
 	this->ThreadLock.lock();
-	this->m_NPCs.erase(ID);
+	this->ClearNPCIDList.push_back(ID);
 	this->ThreadLock.unlock();
 }
 void Map::AddNPC(Map_NPC * m_NPC)
@@ -244,36 +250,29 @@ void Map::WalkPlayer(int ID, int direction, int DestX, int DestY)
 		if (direction == 0)
 		{
 			///Down
-			//this->m_Players[m_PlayerID]->direction = 0;
 			FromY--;
 		}
 		if (direction == 1)
 		{
 			///Left
-			//this->m_Players[m_PlayerID]->direction = 1;
 			FromX++;
 		}
 		if (direction == 2)
 		{
 			///UP
-			//this->m_Players[m_PlayerID]->direction = 3;
-			//FromX++;
 			FromY++;
 		}
 		if (direction == 3)
 		{
 			///Right
-			//this->m_Players[m_PlayerID]->direction = 2;
 			FromX--;
 		}
-		//std::string str = "Walk Request From : " + std::to_string(FromX) + " , " + std::to_string(FromY);
-		//World::DebugPrint(str.c_str());
 		if (m_Players.count(m_PlayerID) > 0)
 		{
 			this->ThreadLock.lock();
 			this->m_Players[m_PlayerID]->x = FromX;
 			this->m_Players[m_PlayerID]->y = FromY;
-			this->m_Players[m_PlayerID]->MovePlayer(map_game->FPS, DestX, DestY);
+			this->m_Players[m_PlayerID]->MovePlayer(this->m_game->FPS, DestX, DestY);
 			this->m_Players[m_PlayerID]->SetStance(CharacterModel::PlayerStance::Walking);
 			this->ThreadLock.unlock();
 		}
@@ -314,7 +313,7 @@ void Map::WalkNPC(int ID, int direction, int DestX, int DestY)
 			this->m_NPCs[m_NPCID]->x = FromX;
 			this->m_NPCs[m_NPCID]->y = FromY;
 			this->m_NPCs[m_NPCID]->SetStance(Map_NPC::NPC_Stance::Walking);
-			this->m_NPCs[m_NPCID]->MoveNPC(map_game->FPS, DestX, DestY);
+			this->m_NPCs[m_NPCID]->MoveNPC(this->m_game->FPS, DestX, DestY);
 			this->ThreadLock.unlock();
 		}
 	}
@@ -332,15 +331,15 @@ void Map::WalkGameCharacter(int ID, int direction, int _X, int _Y)
 	
 	if (tmeta.warp.door == 1)
 	{
-		SDoor::SendDoorOpen(map_game->world->connection->ClientStream, _X, _Y, (LPVOID)map_game);
+		SDoor::SendDoorOpen(this->m_game->world->connection->ClientStream, _X, _Y, (LPVOID)this->m_game);
 
 	}
 	
 	if (tmeta.spec == EMF_Tile_Spec::None || (tmeta.spec >= EMF_Tile_Spec::NPCBoundary && tmeta.spec <= EMF_Tile_Spec::FakeWall) || (tmeta.spec >= EMF_Tile_Spec::Jump))
 	{
-		this->m_Players[ID]->MovePlayer(map_game->FPS, _X, _Y);
+		this->m_Players[ID]->MovePlayer(this->m_game->FPS, _X, _Y);
 		this->m_Players[ID]->SetStance(CharacterModel::PlayerStance::Walking);
-		SWalk::SendWalk(map_game->world->connection->ClientStream, this->m_Players[ID]->direction, _X, _Y, (LPVOID)map_game);
+		SWalk::SendWalk(this->m_game->world->connection->ClientStream, this->m_Players[ID]->direction, _X, _Y, (LPVOID)this->m_game);
 	}
 
 	this->ThreadLock.unlock();
@@ -363,9 +362,10 @@ void Map::OnKeyPress(WPARAM args)
 			if (this->m_Players[m_playerID]->Stance == CharacterModel::PlayerStance::Standing)
 			{
 				this->m_Players[m_playerID]->SetStance(CharacterModel::PlayerStance::BluntAttacking);
-				SAttack::SendAttack(map_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)map_game);
+				SAttack::SendAttack(this->m_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)this->m_game);
 
 			}
+
 			break;
 		}
 		case(VK_F3):
@@ -373,7 +373,7 @@ void Map::OnKeyPress(WPARAM args)
 			if ((m_arrowendkeytimer - m_arrowstartkeytimer) > delay)
 			{
 				m_arrowstartkeytimer = clock();
-				SRefresh::RequestRefresh(map_game->world->connection->ClientStream, (LPVOID)map_game);
+				SRefresh::RequestRefresh(this->m_game->world->connection->ClientStream, (LPVOID)this->m_game);
 			}
 			break;
 		}
@@ -399,8 +399,8 @@ void Map::OnKeyPress(WPARAM args)
 					{
 						m_standkeytimer = clock();
 						m_arrowstartkeytimer = clock();
-						this->m_Players[m_playerID]->direction = 3;
-						SFace::SendFace(map_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)map_game);
+						this->m_Players[m_playerID]->direction = (unsigned char)3;
+						SFace::SendFace(this->m_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)this->m_game);
 					}
 				}
 				else if((m_arrowendkeytimer - m_arrowstartkeytimer) > delay)
@@ -421,7 +421,7 @@ void Map::OnKeyPress(WPARAM args)
 						m_standkeytimer = clock();
 						m_arrowstartkeytimer = clock();
 						this->m_Players[m_playerID]->direction = 1;
-						SFace::SendFace(map_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)map_game);
+						SFace::SendFace(this->m_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)this->m_game);
 					}
 				}
 				else if ((m_arrowendkeytimer - m_arrowstartkeytimer) > delay)
@@ -442,7 +442,7 @@ void Map::OnKeyPress(WPARAM args)
 						m_arrowstartkeytimer = clock();
 						m_standkeytimer = clock();
 						this->m_Players[m_playerID]->direction = 2;
-						SFace::SendFace(map_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)map_game);
+						SFace::SendFace(this->m_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)this->m_game);
 					}
 				}
 				else if ((m_arrowendkeytimer - m_arrowstartkeytimer) > delay)
@@ -463,7 +463,7 @@ void Map::OnKeyPress(WPARAM args)
 						m_arrowstartkeytimer = clock();
 						m_standkeytimer = clock();
 						this->m_Players[m_playerID]->direction = 0;
-						SFace::SendFace(map_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)map_game);
+						SFace::SendFace(this->m_game->world->connection->ClientStream, this->m_Players[m_playerID]->direction, (LPVOID)this->m_game);
 					}
 				}
 				else if ((m_arrowendkeytimer - m_arrowstartkeytimer) > delay)
@@ -541,21 +541,23 @@ int Map::FindDepthOffset(int X, int Y, int Width, int Height)
 	}
 
 }
+constexpr float ep = 0.0001f;  // gap between depth of each tile on a layer
+constexpr float epi = 0.00001f; // gap between each interleaved layer
+static constexpr LayerInfo layer_info[9] = {
+{ 3,    0,   0, 1.0f - epi * 0 }, // Ground
+{ 4,    0,   0, 0.8f - epi * 0 }, // Objects
+{ 5,   24,   0, 0.8f - epi * 0 }, // Overlay
+{ 6,    0,   0, 0.8f - epi * 1 }, // Down Wall
+{ 6,   32,   0, 0.8f - epi * 2 }, // Right Wall
+{ 7,   32, -64, 0.8f - epi * 1 }, // Roof
+{ 3,   32, -32, 0.8f - epi * 2 }, // Top
+{ 22, -54 + 32, -42 + 30, 0.9f - epi * 0  }, // Shadow
+{ 5,    0,   0, 0.8f - epi * 0 }, // Overlay 2
+};
 void Map::Render()
 {
-	constexpr float ep = 0.0001f;  // gap between depth of each tile on a layer
-	constexpr float epi = 0.00001f; // gap between each interleaved layer
-	static constexpr LayerInfo layer_info[9] = {
-	{ 3,    0,   0, 1.0f - epi * 0 }, // Ground
-	{ 4,    0,   0, 0.8f - epi * 0 }, // Objects
-	{ 5,   24,   0, 0.8f - epi * 0 }, // Overlay
-	{ 6,    0,   0, 0.8f - epi * 1 }, // Down Wall
-	{ 6,   32,   0, 0.8f - epi * 2 }, // Right Wall
-	{ 7,   32, -64, 0.8f - epi * 1 }, // Roof
-	{ 3,   32, -32, 0.8f - epi * 2 }, // Top
-	{ 22, -54 + 32, -42 + 30, 0.9f - epi * 0  }, // Shadow
-	{ 5,    0,   0, 0.8f - epi * 0 }, // Overlay 2
-	};
+constexpr float ep = 0.0001f;  // gap between depth of each tile on a layer
+constexpr float epi = 0.00001f; // gap between each interleaved layer
 	this->ThreadLock.lock();
 	if (!IsVisible || this->m_Players.size() == 0 ||World::WorldCharacterID < 0)
 	{
@@ -568,27 +570,15 @@ void Map::Render()
 	{
 		this->xpos = this->m_Players[PlayerIndex]->x;
 		this->ypos = this->m_Players[PlayerIndex]->y;
-		if (this->m_Players[PlayerIndex]->direction == 0 || this->m_Players[PlayerIndex]->direction == 3)
-		{
-			this->xoff = this->m_Players[PlayerIndex]->xoffset + (this->xpos * 32) - (this->ypos * 32) - 280;
-			this->yoff = this->m_Players[PlayerIndex]->yoffset + (this->xpos * 16) + (this->ypos * 16) - 170;
-		}
-		else
-		{
-			this->xoff = -this->m_Players[PlayerIndex]->xoffset + (this->xpos * 32) - (this->ypos * 32) - 280;
-			this->yoff = this->m_Players[PlayerIndex]->yoffset + (this->xpos * 16) + (this->ypos * 16) - 170;
-		}
+		this->xoff = this->m_Players[PlayerIndex]->xoffset + (this->xpos * 32) - (this->ypos * 32) - 280;
+		this->yoff = this->m_Players[PlayerIndex]->yoffset + (this->xpos * 16) + (this->ypos * 16) - 170;
 	}
-	//auto&& gfx = m_emf.gfx.;
+	
 	auto&& emf = m_emf;
 	auto&& emfh = m_emf.header;
 	
 	float depth = layer_info[0].depth;
 	auto next_depth = [&depth, ep]() { return depth -= ep; };
-	//this->ThreadLock.unlock();
-
-	this->Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_DEPTH_FRONTTOBACK);
-	this->m_OverlaySprite->Begin(D3DXSPRITE_ALPHABLEND);
 
 	int RenderWidth = emfh.width;
 	int RenderHeight = emfh.height -1;
@@ -623,8 +613,8 @@ void Map::Render()
 			int xoffs = layer_info[0].xoff - xoff;
 			int yoffs = layer_info[0].yoff - yoff;
 
-			int tilex = xoffs + (x * 32) - (y * 32);
-			int tiley = yoffs + (x * 16) + (y * 16);
+			float tilex = xoffs + (x * 32) - (y * 32);
+			float tiley = yoffs + (x * 16) + (y * 16);
 			short tile = 0;
 			tile = emf.gfx(x, y)[0];
 
@@ -637,26 +627,20 @@ void Map::Render()
 			int var = 60 + varo;
 			if (tile > 0)
 			{
-				D3DXIMAGE_INFO imginfo = map_game->ResourceManager->GetImageInfo(3, tile, true);
-				int frameno = imginfo.Width / 64;
+				int frameno = this->m_game->ResourceManager->GetResource(3, tile, true)->_width / 64;
 				if (frameno > 1)
 				{
 					RECT SrcRect;
 					SrcRect.top = 0;
 					SrcRect.left = 0 + (64 * (this->MapAnimIndex % frameno));
 					SrcRect.right = 64 + (64 * (this->MapAnimIndex % frameno));
-					SrcRect.bottom = SrcRect.top + imginfo.Height;
-
-					D3DXVECTOR3* Pos = new D3DXVECTOR3(tilex, tiley, depth);
-					D3DXVECTOR3* Center = new D3DXVECTOR3(1, 1, 0);
-
-					this->Sprite->Draw(map_game->ResourceManager->CreateTexture(3, tile, true).Texture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(var, 255, 255, 255));
-					delete Pos;
-					delete Center;
+					SrcRect.bottom = this->m_game->ResourceManager->GetResource(3, tile, true)->_height;
+					
+					this->m_game->Draw(this->m_game->ResourceManager->GetResource(3, tile, true),tilex, tiley, sf::Color::White, SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom, sf::Vector2f(1.02,1.02), depth);
 				}
 				else
 				{
-					map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(3, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(var, 255, 255, 255));
+					this->m_game->Draw(this->m_game->ResourceManager->GetResource(3, tile, true), tilex, tiley, sf::Color::White, 0, 0 , -1, -1 , sf::Vector2f(1.02,1.02), depth);
 				}
 			}
 			else if (tile == -1 || tmeta.spec == EMF_Tile_Spec::MapEdge)
@@ -666,12 +650,12 @@ void Map::Render()
 			{
 				if (emfh.fill_tile > 0)
 				{
-					map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(3, emfh.fill_tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(var, 255, 255, 255));
+					this->m_game->Draw(this->m_game->ResourceManager->GetResource(3, emfh.fill_tile, true), tilex, tiley, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(1.02, 1.02), depth);
 				}
 			}
-			if (map_game->MapCursor.x == x && map_game->MapCursor.y == y)
+			if (this->m_game->MapCursor.x == x && this->m_game->MapCursor.y == y)
 			{			
-				map_game->MapCursor.Render(this->Sprite, depth);
+				this->m_game->MapCursor.Render(this->Sprite, depth);
 			}
 			next_depth();
 		}
@@ -715,19 +699,18 @@ void Map::Render()
 				depth -= (this->LUTMap[x][y] * ep);
 				if (tile > 0)
 				{
-					D3DXIMAGE_INFO tile_gfx = map_game->ResourceManager->GetImageInfo(layer_info[layer].file, tile, true);
-					int tile_w = tile_gfx.Width;
-					int tile_h = tile_gfx.Height;
+					int tile_w = this->m_game->ResourceManager->GetResource(layer_info[layer].file, tile, true)->_width;
+					int tile_h = this->m_game->ResourceManager->GetResource(layer_info[layer].file, tile, true)->_height;
 					tilex -= tile_w / (1 + (layer == 1)) - 32;
 					tiley -= tile_h - 32;
 					
 									
 					if (layer == 3 || layer == 4)
 					{
-						D3DXIMAGE_INFO imginfo = map_game->ResourceManager->GetImageInfo(layer_info[layer].file, tile, true);
-						int frameno = 4;//imginfo.Width / 32;
-						int framewidth = imginfo.Width / 4;
-						if(imginfo.Width <= 32)
+						int framewidth = tile_w / 4;
+						int frameno = tile_w / framewidth;
+						
+						if(tile_w <= 32)
 						{
 							frameno = 1;
 						}
@@ -737,34 +720,22 @@ void Map::Render()
 							SrcRect.top = 0;
 							SrcRect.left = 0 + (framewidth * (this->MapAnimIndex % frameno));
 							SrcRect.right = framewidth + (framewidth * (this->MapAnimIndex % frameno));
-							SrcRect.bottom = SrcRect.top + imginfo.Height;
-
-							D3DXVECTOR3* Pos = new D3DXVECTOR3(tilex + imginfo.Width - framewidth + 32, tiley, depth);
-							D3DXVECTOR3* Center = new D3DXVECTOR3(1, 1, 0);
-							this->Sprite->Draw(map_game->ResourceManager->CreateTexture(layer_info[layer].file, tile, true).Texture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
-							//Pos->z -= 0.1;
-							//this->Sprite->Draw(map_game->ResourceManager->CreateTexture(layer_info[layer].file, tile, true).Texture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(150, 255, 255, 255));
-
+							SrcRect.bottom = SrcRect.top + this->m_game->ResourceManager->GetResource(layer_info[layer].file, tile, true)->_height;
+							
+							sf::Vector3f* Pos = new sf::Vector3f(tilex + this->m_game->ResourceManager->GetResource(layer_info[layer].file, tile, true)->_width - framewidth + 32, tiley, depth);
+							
+							this->m_game->Draw(this->m_game->ResourceManager->GetResource(layer_info[layer].file, tile, true), Pos->x, Pos->y, sf::Color::White, SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom, sf::Vector2f(1,1), depth);
 							delete Pos;
-							delete Center;
 						}
 						else
 						{
-							//float varo = ((float)this->LUTMap[x][y]) / (float)(endsuboffset) * (float)50;
-							//int var = 50 + varo;
-							map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(255, 255, 255, 255));
-							//map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(var, 0, 0, 0));
-							//map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth - 0.1, D3DCOLOR_ARGB(150, 255, 255, 255));
-
+							this->m_game->Draw(this->m_game->ResourceManager->GetResource(layer_info[layer].file, tile, true), tilex, tiley, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(1,1), depth);
 						}
 					}
 					else
 					{
-						map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(255, 255, 255, 255));
-						//map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(layer_info[layer].file, tile, true).Texture, tilex, tiley, depth - 0.1, D3DCOLOR_ARGB(150, 255, 255, 255));
-
+						this->m_game->Draw(this->m_game->ResourceManager->GetResource(layer_info[layer].file, tile, true), tilex, tiley, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(1,1), depth);
 					}
-				
 				}
 			}
 		}
@@ -805,7 +776,8 @@ void Map::Render()
 			depth -= (this->LUTMap[x][y] * ep);
 			if (tile > 0)
 			{
-				map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(layer_info[5].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(50, 255, 255, 255));
+				this->m_game->Draw(this->m_game->ResourceManager->GetResource(layer_info[5].file, tile, true), tilex, tiley, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(1, 1), depth);
+				//this->m_game->Draw(this->Sprite, this->m_game->ResourceManager->CreateTexture(layer_info[5].file, tile, true)._Texture, tilex, tiley, depth, sf::Color::Color50, 255, 255, 255));
 			}
 		}
 	}
@@ -843,23 +815,29 @@ void Map::Render()
 			depth -= (this->LUTMap[x][y] * ep);
 			if (tile > 0)
 			{
-				map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(layer_info[7].file, tile, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(50, 255, 255, 255));
+				this->m_game->Draw(this->m_game->ResourceManager->GetResource(layer_info[7].file, tile, true), tilex, tiley, sf::Color::Color(255,255,255,60), 0, 0, -1,-1,sf::Vector2f(1,1), depth);
 			}
 		}
 	}
 	int layer = 1;
 	for (std::map<int, Map_Player*>::iterator player = this->m_Players.begin(); player != m_Players.end(); ++player)
 	{
-		depth = layer_info[layer].depth;
-		depth -= (this->LUTMap[player->second->x][player->second->y] * ep);
-		if (rendering)
+		if (player->second)
 		{
-			int xoffsp = layer_info[layer].xoff - xoff;
-			int yoffsp = layer_info[layer].yoff - yoff;
-			int tilexp = xoffsp + (player->second->x * 32) - (player->second->y * 32);
-			int tileyp = yoffsp + (player->second->x * 16) + (player->second->y * 16);
-			player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, depth, D3DCOLOR_ARGB(177, 255, 255, 255));
-		//	player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, depth - 0.1);
+			depth = layer_info[layer].depth;
+			depth -= (this->LUTMap[player->second->x][player->second->y] * ep);
+			if (rendering)
+			{
+				int xoffsp = layer_info[layer].xoff - xoff;
+				int yoffsp = layer_info[layer].yoff - yoff;
+				int tilexp = xoffsp + (player->second->x * 32) - (player->second->y * 32);
+				int tileyp = yoffsp + (player->second->x * 16) + (player->second->y * 16);
+				player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, depth, sf::Color::Color(255, 255, 255, 255));
+				if (player->first == World::WorldCharacterID)
+				{
+					player->second->Map_PlayerRender(this->Sprite, tilexp + 24, tileyp - 40, 0.1f, sf::Color::Color(255, 255, 255, 140));
+				}
+			}
 		}
 	}
 	for (std::map<int, Map_NPC*>::iterator NPC = this->m_NPCs.begin(); NPC != m_NPCs.end(); ++NPC)
@@ -912,21 +890,50 @@ void Map::Render()
 			}
 		}
 
-		D3DXIMAGE_INFO tile_gfx = map_game->ResourceManager->GetImageInfo(23, graphic - 1, true);
-		int tile_w = tile_gfx.Width;
-		int tile_h = tile_gfx.Height;
+		
+
+		int tile_w = this->m_game->ResourceManager->GetResource(23, (graphic)-1, true)->_width;//tile_gfx.Width;
+		int tile_h = this->m_game->ResourceManager->GetResource(23, (graphic)-1, true)->_height;// tile_gfx.Height;
 
 
-		int tilex = xoffs + (m_item->second.x * 32) - (m_item->second.y * 32) - (tile_gfx.Width / 2);
-		int tiley = yoffs + (m_item->second.x * 16) + (m_item->second.y * 16) - (tile_gfx.Height / 2);
-		map_game->Draw(this->Sprite, map_game->ResourceManager->CreateTexture(23, (graphic)-1, true).Texture, tilex, tiley, depth, D3DCOLOR_ARGB(255, 255, 255, 255));
+		int tilex = xoffs + (m_item->second.x * 32) - (m_item->second.y * 32) - (tile_w / 2);
+		int tiley = yoffs + (m_item->second.x * 16) + (m_item->second.y * 16) - (tile_h / 2);
+
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(23, (graphic)-1, true), tilex, tiley, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(1, 1), depth);
+
+		//this->m_game->Draw(this->Sprite, this->m_game->ResourceManager->CreateTexture(23, (graphic)-1, true)._Texture, tilex, tiley, depth, sf::Color::Color(255, 255, 255, 255));
 	}
-	this->world->RenderTextBoxes(this->Sprite, map_game->Stage, map_game->SubStage);
-	this->Sprite->End();
-	
-	this->m_OverlaySprite->End();
+	this->world->RenderTextBoxes(this->m_game->Stage, this->m_game->SubStage);
+
 	this->ThreadLock.unlock();
 }
 Map::~Map()
 {
+}
+
+void Map::FinalizeMapState()
+{
+	this->ThreadLock.lock();
+	for (int i : this->ClearPlayerIDList)
+	{
+		std::map<int, Map_Player*>::iterator _Player = m_Players.find(i);
+		if (_Player != m_Players.end())
+		{
+			_Player->second->Release();
+			m_Players.erase(i);
+		}
+	}
+
+	for (int i : this->ClearNPCIDList)
+	{
+		std::map<int, Map_NPC*>::iterator _NPC = m_NPCs.find(i);
+		if (_NPC != m_NPCs.end())
+		{
+			m_NPCs.erase(i);
+		}
+	}
+
+	this->ClearPlayerIDList.clear();
+	this->ClearNPCIDList.clear();
+	this->ThreadLock.unlock();
 }

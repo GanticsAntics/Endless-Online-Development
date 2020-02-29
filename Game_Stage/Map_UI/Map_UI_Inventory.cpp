@@ -1,27 +1,25 @@
 #include "..\..\stdafx.h"
-#include "Map_UI_Inventory.h"
+
 #include "Map_UI.h"
-#include "..\..\Game.h"
 #include "..\..\Packet_Handler\Send\SPaperdoll.h"
 #include "..\..\Packet_Handler\Send\SItem.h"
+#include "Map_UI_Inventory.h"
 
-Map_UI* Ptr_Inv_MapUI;
-Game* Ptr_Inv_Game;
 CBitmapEx Black_Bmp;
-ID3DXFont* ItemDescFont;
-Map_UI_Inventory::Map_UI_Inventory(void* m_UIElement, void* m_Game)
+sf::Font* ItemDescFont;
+Map_UI_Inventory::Map_UI_Inventory(Map_UI* m_UIElement, Game* p_Game)
 {
-	Ptr_Inv_MapUI = (Map_UI *) m_UIElement;
-	Ptr_Inv_Game = (Game*)m_Game;
+	this->m_MapUI = m_UIElement;
+	this->m_game = p_Game;
 	Black_Bmp = CBitmapEx();
-	this->DropJunkScrollBar = new UI_Scrollbar(10, 10, 200, 10, 137, Ptr_Inv_Game->ScrollBarTexture.Texture, Ptr_Inv_Game, Ptr_Inv_Game->TextIconTexture.Texture);
+	this->DropJunkScrollBar = new UI_Scrollbar(10, 10, 200, 10, 137, this->m_game->ResourceManager->GetResource(2, 29, false), this->m_game, this->m_game->ResourceManager->GetResource(2, 32, true));
 	this->DropJunkScrollBar->SetPosition(130, 100);
 	this->DropJunkScrollBar->SetVertical(false);
 	this->DropJunkScrollBar->SetButtonsEnabled(false);
 	this->DropJunkScrollBar->SetMaxIndex(100);
-	D3DXCreateFont(Ptr_Inv_MapUI->m_Device, 12, 0, FW_THIN, 1, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &ItemDescFont);
-	this->p_PPDollTexture = Ptr_Inv_Game->ResourceManager->CreateTexture(2, 49, false).Texture;
-	this->p_DropJunkTexture = Ptr_Inv_Game->ResourceManager->CreateTexture(2, 27, false).Texture;
+	//D3DXCreateFont(this->m_MapUI->m_Device, 12, 0, FW_THIN, 1, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &ItemDescFont);
+	this->p_PPDollTexture = this->m_game->ResourceManager->CreateTexture(2, 49, false)._Texture;
+	this->p_DropJunkTexture = this->m_game->ResourceManager->CreateTexture(2, 27, false)._Texture;
 	Black_Bmp.Create(1, 1);
 	Black_Bmp.Clear(_RGB(0, 0, 0));
 	DWORD dwBufferSize = Black_Bmp.GetSize() + sizeof(BITMAPFILEHEADER) + sizeof(RGBQUAD) + sizeof(BITMAPINFOHEADER);
@@ -30,42 +28,52 @@ Map_UI_Inventory::Map_UI_Inventory(void* m_UIElement, void* m_Game)
 	Black_Bmp.Save(buffer);
 	DropMenuY = 120;
 	DropMenuX = 180;
-	D3DXIMAGE_INFO info = D3DXIMAGE_INFO();
-	HRESULT Hr = D3DXCreateTextureFromFileInMemoryEx(Ptr_Inv_MapUI->m_Device, buffer, dwBufferSize, D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8,
-		D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT,NULL, &info, NULL, &this->p_BlackBoxTexture);
 
-	this->UI_Element_PpdollOkay = new Button(*Ptr_Inv_Game->BT_Message_OK);
+	sf::Image resimage;
+	resimage.create(1, 1, sf::Color::Black);
+	this->p_BlackBoxTexture = new Resource_Manager::TextureData();
+	this->p_BlackBoxTexture->_Sprite = std::shared_ptr<sf::Sprite>(new sf::Sprite());
+	this->p_BlackBoxTexture->_Texture = std::shared_ptr<sf::Texture>(new sf::Texture());
+	this->p_BlackBoxTexture->_Texture->loadFromImage(resimage);
+	this->p_BlackBoxTexture->_Texture->setRepeated(true);
+	this->p_BlackBoxTexture->_TextureID = 0;
+	this->p_BlackBoxTexture->_height = resimage.getSize().y;
+	this->p_BlackBoxTexture->_width = resimage.getSize().x;
+	this->p_BlackBoxTexture->_Sprite->setTexture(*this->p_BlackBoxTexture->_Texture);
+
+
+	this->UI_Element_PpdollOkay = new Button(*this->m_game->BT_Message_OK);
 	this->UI_Element_PpdollOkay->SetPosition(std::pair<int, int>(421, 273));
 
-	this->UI_Element_DropOkay = new Button(*Ptr_Inv_Game->BT_Message_OK);
+	this->UI_Element_DropOkay = new Button(*this->m_game->BT_Message_OK);
 	this->UI_Element_DropOkay->SetPosition(std::pair<int, int>(421, 273));
 
-	this->UI_Element_DropCancel = new Button(*Ptr_Inv_Game->BT_CharDeleteCancel);
+	this->UI_Element_DropCancel = new Button(*this->m_game->BT_CharDeleteCancel);
 	this->UI_Element_DropCancel->SetPosition(std::pair<int, int>(421, 273));
 
-	this->UI_Element_InventoryButton = new Button(m_Game, 62, 330, 0, 0, 36, 19, false, Ptr_Inv_Game->ResourceManager->CreateTexture(2, 25, false).Texture);
-	this->UI_Element_InventoryPPdoll = new Button(m_Game, 486, 340, 38, 385, 88, 19, false, Ptr_Inv_Game->ResourceManager->CreateTexture(2, 27, false).Texture);
+	this->UI_Element_InventoryButton = new Button(this->m_game, 62, 330, 0, 0, 36, 19, false, this->m_game->ResourceManager->GetResource(2, 25, false));
+	this->UI_Element_InventoryPPdoll = new Button(this->m_game, 486, 340, 38, 385, 88, 19, false, this->m_game->ResourceManager->GetResource(2, 27, false));
 
-	this->UI_Element_InventoryDrop = new Button(m_Game, 491, 399, 0, 15, 38, 37, true, Ptr_Inv_Game->ResourceManager->CreateTexture(2, 27, false).Texture);
-	this->UI_Element_InventoryJunk = new Button(m_Game, 531, 399, 0, 89, 38, 37, true, Ptr_Inv_Game->ResourceManager->CreateTexture(2, 27, false).Texture);
+	this->UI_Element_InventoryDrop = new Button(this->m_game, 491, 399, 0, 15, 38, 37, true, this->m_game->ResourceManager->GetResource(2, 27, false));
+	this->UI_Element_InventoryJunk = new Button(this->m_game, 531, 399, 0, 89, 38, 37, true, this->m_game->ResourceManager->GetResource(2, 27, false));
 	
 
-	D3DXVECTOR2 Pos;
+	sf::Vector2f Pos;
 	Pos.x = 107;
 	Pos.y = 309;
 
-	D3DXVECTOR2 Size;
+	sf::Vector2f Size;
 	Size.x = 460;
 	Size.y = 30;
 
-	Textbox _DropJunkTextbox = Textbox(Pos, Size, D3DCOLOR_ARGB(200, 255, 255, 255), Ptr_Inv_Game->MessageFont, Game::GameStage::PInGame, 0);
+	Textbox _DropJunkTextbox = Textbox(this->m_game, Pos, Size, sf::Color::Color(255, 255, 255, 200), this->m_game->MessageFont, Game::GameStage::PInGame, 0);
 	_DropJunkTextbox.blinkhidden = false;
 	_DropJunkTextbox.MaxLen = 5;
 	_DropJunkTextbox.nonAcceptedKeyEntered = false;
 	_DropJunkTextbox.acceptspace = true;
 	_DropJunkTextbox.acceptsReturn = true;
 	_DropJunkTextbox.SetKeyMask(Textbox::KeyType::Digit);
-	this->DropJunkTextbox = Ptr_Inv_Game->world->RegisterTextBox(_DropJunkTextbox);
+	this->DropJunkTextbox = this->m_game->world->RegisterTextBox(_DropJunkTextbox);
 
 	int Count = 0;
 	for (int y = 0; y < 4; y++)
@@ -263,8 +271,8 @@ void Map_UI_Inventory::MoveItem(int _item)
 	set<int> ItemIDS;
 	set<int>::iterator it;
 	int Count = 0;
-	int MouseX = Ptr_Inv_MapUI->MouseX;
-	int MouseY = Ptr_Inv_MapUI->MouseY;
+	int MouseX = this->m_MapUI->MouseX;
+	int MouseY = this->m_MapUI->MouseY;
 	
 	int index = 0;
 	InventoryGridCell m_InventoryGrid[56];
@@ -316,7 +324,7 @@ void Map_UI_Inventory::MoveItem(int _item)
 				}
 			}
 			
-			if (!Ptr_Inv_MapUI->MouseHeld)
+			if (!this->m_MapUI->MouseHeld)
 			{
 				for (int i = 0; i < 56; i++)
 				{
@@ -382,57 +390,57 @@ void Map_UI_Inventory::Update()
 {
 	//this->DropJunkTextbox->
 	clicktimerend = clock();
-	this->UI_Element_InventoryButton->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
+	this->UI_Element_InventoryButton->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_MapUI->MousePressed);
 	if (this->UI_Element_InventoryButton->MouseClickedOnElement())
 	{
-		Ptr_Inv_MapUI->SetStage(Map_UI::UI_ElementStage::UI_Element_Inventory, 0);
+		this->m_MapUI->SetStage(Map_UI::UI_ElementStage::UI_Element_Inventory, 0);
 	}
 	if (this->PaperdollVisible)
 	{
 		this->UpdatePaperdoll();
-		if (this->UI_Element_PpdollOkay->MouseOverElement() && Ptr_Inv_Game->MousePressed)
+		if (this->UI_Element_PpdollOkay->MouseOverElement() && this->m_game->MousePressed)
 		{
 			this->paperdoll._PlayerID = -1;
 			this->PaperdollVisible = false;
 		}
-		Ptr_Inv_Game->MapCursor.m_CursorType = Map_UI_Cursor::CursorType::Invisible;
+		this->m_game->MapCursor.m_CursorType = Map_UI_Cursor::CursorType::Invisible;
 	}
 	if (this->IsDropMenuActive)
 	{
 		this->UpdateDropJunk();
-		Ptr_Inv_MapUI->isactive = false;
-		Ptr_Inv_Game->world->SetFocusedTextbox(this->DropJunkTextbox);
+		this->m_MapUI->isactive = false;
+		this->m_game->world->SetFocusedTextbox(this->DropJunkTextbox);
 		
 		this->DropJunkTextbox->position.x = this->DropMenuX + 160;
-		this->DropJunkTextbox->position.y = this->DropMenuY + 95;
-		if (this->UI_Element_DropOkay->MouseOverElement() && Ptr_Inv_Game->MousePressed)
+		this->DropJunkTextbox->position.y = this->DropMenuY + 93;
+		if (this->UI_Element_DropOkay->MouseOverElement() && this->m_game->MousePressed)
 		{
 			this->DropID = -1;
 			this->DropAmount = 0;
 			this->IsDropMenuActive = false;
-			Ptr_Inv_MapUI->isactive = true;
+			this->m_MapUI->isactive = true;
 		}
-		if (this->UI_Element_DropCancel->MouseOverElement() && Ptr_Inv_Game->MousePressed)
+		if (this->UI_Element_DropCancel->MouseOverElement() && this->m_game->MousePressed)
 		{
 			this->DropID = -1;
 			this->DropAmount = 0;
 			this->IsDropMenuActive = false;
-			Ptr_Inv_MapUI->isactive = true;
+			this->m_MapUI->isactive = true;
 		}
 	}
-	switch (Ptr_Inv_MapUI->UI_Stage)
+	switch (this->m_MapUI->UI_Stage)
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_Inventory):
 	{
-		this->UI_Element_InventoryDrop->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
-		this->UI_Element_InventoryJunk->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
-		this->UI_Element_InventoryPPdoll->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
-		int MouseX = Ptr_Inv_MapUI->MouseX;
-		int MouseY = Ptr_Inv_MapUI->MouseY;
+		this->UI_Element_InventoryDrop->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_MapUI->MousePressed);
+		this->UI_Element_InventoryJunk->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_MapUI->MousePressed);
+		this->UI_Element_InventoryPPdoll->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_MapUI->MousePressed);
+		int MouseX = this->m_MapUI->MouseX;
+		int MouseY = this->m_MapUI->MouseY;
 		int index = 0;
 		if (this->UI_Element_InventoryDrop->MouseOverElement())
 		{
-			if (this->childMPindex >= 0 && !Ptr_Inv_MapUI->MouseHeld)
+			if (this->childMPindex >= 0 && !this->m_MapUI->MouseHeld)
 			{
 				int amount = 0;
 				for (int i = 0; i < this->inventory.size(); i++)
@@ -444,19 +452,19 @@ void Map_UI_Inventory::Update()
 				}
 				if (amount == 1)
 				{
-					SItem::SendDrop(Ptr_Inv_Game->world->connection->ClientStream, Ptr_Inv_Game->Map_UserInterface->map_inventory->childMPindex, 1, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->x, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->y, Ptr_Inv_Game);
+					SItem::SendDrop(this->m_game->world->connection->ClientStream, this->m_game->Map_UserInterface->map_inventory->childMPindex, 1, this->m_game->map->m_Players[World::WorldCharacterID]->x, this->m_game->map->m_Players[World::WorldCharacterID]->y, this->m_game);
 					this->childMPindex = -1;
 				}
 				else if (amount > 1)
 				{
-					this->DisplayDropDialogue(true, amount, this->childMPindex, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->x, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->y);
+					this->DisplayDropDialogue(true, amount, this->childMPindex, this->m_game->map->m_Players[World::WorldCharacterID]->x, this->m_game->map->m_Players[World::WorldCharacterID]->y);
 					this->childMPindex = -1;
 				}
 			}
 		}
 		else if (this->UI_Element_InventoryJunk->MouseOverElement())
 		{
-			if (this->childMPindex >= 0 && !Ptr_Inv_MapUI->MouseHeld)
+			if (this->childMPindex >= 0 && !this->m_MapUI->MouseHeld)
 			{
 				int amount = 0;
 				for (int i = 0; i < this->inventory.size(); i++)
@@ -469,19 +477,19 @@ void Map_UI_Inventory::Update()
 				if (amount == 1)
 				{
 					//World::ThrowMessage("Warning!", "Do you really want to junk this item?", true);
-					SItem::SendJunk(Ptr_Inv_Game->world->connection->ClientStream, Ptr_Inv_Game->Map_UserInterface->map_inventory->childMPindex, 1,  Ptr_Inv_Game);
+					SItem::SendJunk(this->m_game->world->connection->ClientStream, this->m_game->Map_UserInterface->map_inventory->childMPindex, 1,  this->m_game);
 					this->childMPindex = -1;
 				}
 				else if (amount > 1)
 				{
-					this->DisplayDropDialogue(false, amount, this->childMPindex, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->x, Ptr_Inv_Game->map->m_Players[World::WorldCharacterID]->y);
+					this->DisplayDropDialogue(false, amount, this->childMPindex, this->m_game->map->m_Players[World::WorldCharacterID]->x, this->m_game->map->m_Players[World::WorldCharacterID]->y);
 					this->childMPindex = -1;
 				}
 			}
 		}
-		if (UI_Element_InventoryPPdoll->MouseOverElement() && Ptr_Inv_Game->MousePressed)
+		if (UI_Element_InventoryPPdoll->MouseOverElement() && this->m_game->MousePressed)
 		{
-			SPaperdoll::SendPaperdollRequest(Ptr_Inv_Game->world->connection->ClientStream, World::WorldCharacterID, Ptr_Inv_Game);
+			SPaperdoll::SendPaperdollRequest(this->m_game->world->connection->ClientStream, World::WorldCharacterID, this->m_game);
 		}
 		for each (InventoryGridCell Cell in this->InventoryGrid)
 		{
@@ -491,7 +499,7 @@ void Map_UI_Inventory::Update()
 				
 				//this->InventoryGrid[index].MouseOver = true;
 				childMOindex = Cell.ID;
-				if (childMPindex == -1 && Ptr_Inv_MapUI->MouseHeld && Cell.ID != -1)
+				if (childMPindex == -1 && this->m_MapUI->MouseHeld && Cell.ID != -1)
 				{
 					if (clicktimerend - clicktimerstart < 500)
 					{
@@ -570,7 +578,7 @@ void Map_UI_Inventory::Update()
 							}
 							if (subid <= 1)
 							{
-								SPaperdoll::SendPaperdollAdd(Ptr_Inv_Game->world->connection->ClientStream, Cell.ID, subid, Ptr_Inv_Game);
+								SPaperdoll::SendPaperdollAdd(this->m_game->world->connection->ClientStream, Cell.ID, subid, this->m_game);
 							}
 						}
 					}
@@ -587,7 +595,7 @@ void Map_UI_Inventory::Update()
 			{
 				this->InventoryGrid[index].MousePressed = true;
 			}
-			if (!Ptr_Inv_MapUI->MouseHeld)
+			if (!this->m_MapUI->MouseHeld)
 			{
 				this->InventoryGrid[index].MousePressed = false;
 			}
@@ -604,61 +612,62 @@ void Map_UI_Inventory::Update()
 	}
 }
 
-void Map_UI_Inventory::Render()
+void Map_UI_Inventory::Render(float depth)
 {
-	this->UI_Element_InventoryButton->Draw(Ptr_Inv_MapUI->Sprite);
-	switch (Ptr_Inv_MapUI->UI_Stage)
+	this->UI_Element_InventoryButton->Draw();
+	switch (this->m_MapUI->UI_Stage)
 	{
 	case(Map_UI::UI_ElementStage::UI_Element_Inventory):
 	{
-		Ptr_Inv_Game->Draw(Ptr_Inv_MapUI->Sprite, Ptr_Inv_Game->ResourceManager->CreateTexture(2, 44, false).Texture, 102, 332, 0.1f, D3DCOLOR_ARGB(255, 255, 255, 255));
-		this->UI_Element_InventoryDrop->Draw(Ptr_Inv_MapUI->Sprite);
-		this->UI_Element_InventoryJunk->Draw(Ptr_Inv_MapUI->Sprite);
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 44, false), 101, 331, sf::Color(255, 255, 255, 255), 0, 0, -1, -1, sf::Vector2f(1, 1), depth);
+		this->UI_Element_InventoryDrop->Draw();
+		this->UI_Element_InventoryJunk->Draw();
 
-		int x = 429;
+		int x = 529;
 		int y = 370;
 		RECT rct;
 		rct.left = x;
-		rct.right = x + 200;
+		rct.right = x + 190;
 		rct.top = y;
 		rct.bottom = y + 50;
 		std::string m_message = "Weight " + to_string(this->Weight) + "/" + to_string(this->MaxWeight);
-
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, m_message.c_str(), -1, &rct, DT_CENTER, D3DCOLOR_ARGB(200, 255, 255, 255));
-		this->UI_Element_InventoryPPdoll->Draw(Ptr_Inv_MapUI->Sprite);
+		this->m_game->DrawTextW(m_message, rct.left, rct.top, sf::Color(255, 255, 255, 200), 12, true, depth,1);
+	
+		this->UI_Element_InventoryPPdoll->Draw();
 		set<int> ItemIDS;
 		set<int>::iterator it;
 		for each (InventoryGridCell Cell in this->InventoryGrid)
 		{
 			RECT SrcRect;
 			SrcRect.left = 0;
-			SrcRect.top = 162;
+			SrcRect.top = 163;
 			SrcRect.bottom = SrcRect.top + 22;
-			SrcRect.right = SrcRect.left + 22;
+			SrcRect.right = SrcRect.left + 23;
 			int x = (114) + (22 * Cell.X) + (Cell.X * 4);
 			int y = (340) + (4 * Cell.Y) + (Cell.Y * 22);
-			D3DXVECTOR3* Pos = new D3DXVECTOR3(x, y, 0);
-			D3DXVECTOR3* Center = new D3DXVECTOR3(0, 0, 0);
-			D3DCOLOR col = D3DCOLOR_ARGB(255, 255, 255, 255);
+			sf::Vector3f* Pos = new sf::Vector3f(x, y, 0);
+			sf::Vector3f* Center = new sf::Vector3f(0, 0, 0);
+			sf::Color col = sf::Color::Color(255, 255, 255, 255);
 
 			if (Cell.MouseOver)
 			{
-				SrcRect.top = 162 + 22;
+				SrcRect.top = 163 + 22;
 				SrcRect.bottom = SrcRect.top + 22;
-				col = D3DCOLOR_ARGB(150, 255, 255, 255);
+				col = sf::Color::Color(150, 255, 255, 255);
 			}
-			Ptr_Inv_MapUI->Sprite->Draw(Ptr_Inv_Game->ResourceManager->CreateTexture(2, 27, true).Texture.get(), &SrcRect, Center, Pos, col);
+			this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 27, false), Pos->x, Pos->y, sf::Color(255, 255, 255, 255), SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom, sf::Vector2f(1, 1), depth);
+
+			//this->m_MapUI->Sprite->Draw(this->m_game->ResourceManager->CreateTexture(2, 27, true)._Texture.get(), &SrcRect, Center, Pos, col);
 			if (Cell.ID != -1 && Cell.ID != childMPindex)
 			{
 				for each (InventoryGridCell ChildCell in this->InventoryGrid)
 				{
 					if (Cell.ID == ChildCell.ID && childMOindex == Cell.ID)
 					{
-						col = D3DCOLOR_ARGB(255, 255, 255, 255);
-						SrcRect.top = 162 + 22;
+						col = sf::Color::Color(255, 255, 255, 255);
+						SrcRect.top = 163 + 22;
 						SrcRect.bottom = SrcRect.top + 22;
-
-						Ptr_Inv_MapUI->Sprite->Draw(Ptr_Inv_Game->ResourceManager->CreateTexture(2, 27, true).Texture.get(), &SrcRect, Center, Pos, col);
+						this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 27, false), Pos->x, Pos->y, sf::Color(255, 255, 255, 255), SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom, sf::Vector2f(1, 1), depth);
 					}
 				}
 			}
@@ -674,9 +683,9 @@ void Map_UI_Inventory::Render()
 			SrcRect.right = SrcRect.left + 22;
 			int x = (114) + (22 * Cell.X) + (Cell.X * 4);
 			int y = (340) + (4 * Cell.Y) + (Cell.Y * 22);
-			D3DXVECTOR3* Pos = new D3DXVECTOR3(x, y, 0);
-			D3DXVECTOR3* Center = new D3DXVECTOR3(0, 0, 0);
-			D3DCOLOR col = D3DCOLOR_ARGB(255, 255, 255, 255);
+			sf::Vector3f* Pos = new sf::Vector3f(x, y, 0);
+			sf::Vector3f* Center = new sf::Vector3f(0, 0, 0);
+			sf::Color col = sf::Color::Color(255, 255, 255, 255);
 
 
 			it = ItemIDS.find(Cell.ID);
@@ -684,20 +693,20 @@ void Map_UI_Inventory::Render()
 			{
 				EIF_Data m_item = World::EIF_File->Get(Cell.ID);
 				
-				D3DXVECTOR3* itemPos = new D3DXVECTOR3(x, y, 0);
-				D3DXVECTOR3* itemCenter = new D3DXVECTOR3(0, 0, 0);
+				sf::Vector3f* itemPos = new sf::Vector3f(x, y, 0);
+				sf::Vector3f* itemCenter = new sf::Vector3f(0, 0, 0);
 				if (Cell.MousePressed)
 				{
-					int m_itemHeight = Ptr_Inv_Game->ResourceManager->GetImageInfo(23, m_item.graphic * 2, true).Height;
-					int m_itemWidth = Ptr_Inv_Game->ResourceManager->GetImageInfo(23, m_item.graphic * 2, true).Width;
+					int m_itemHeight = this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true)->_height;
+					int m_itemWidth = this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true)->_width;
 
-					itemPos->x = Ptr_Inv_Game->MouseX - m_itemWidth / 2;
-					itemPos->y = Ptr_Inv_Game->MouseY - m_itemHeight / 2;
-					Ptr_Inv_MapUI->Sprite->Draw(Ptr_Inv_Game->ResourceManager->CreateTexture(23, m_item.graphic * 2, true).Texture.get(), NULL, itemCenter, itemPos, D3DCOLOR_ARGB(150, 255, 255, 255));
+					itemPos->x = this->m_game->MouseX - m_itemWidth / 2;
+					itemPos->y = this->m_game->MouseY - m_itemHeight / 2;
+					this->m_game->Draw(this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true), itemPos->x, itemPos->y, sf::Color(255, 255, 255, 150), 0, 0, -1, -1, sf::Vector2f(1, 1), 0);
 				}
 				else
 				{
-					Ptr_Inv_MapUI->Sprite->Draw(Ptr_Inv_Game->ResourceManager->CreateTexture(23, m_item.graphic * 2, true).Texture.get(), NULL, itemCenter, itemPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+					this->m_game->Draw(this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true), itemPos->x, itemPos->y, sf::Color(255, 255, 255, 255), 0, 0, -1, -1, sf::Vector2f(1, 1), 0);
 				}
 				ItemIDS.insert(Cell.ID);
 			}
@@ -731,10 +740,8 @@ void Map_UI_Inventory::Render()
 						message = to_string(this->inventory[inventoryindex].amount) + " x "+ m_item.name;
 					}
 				}
-				Ptr_Inv_MapUI->DrawHelpMessage("Item", message);
-				Ptr_Inv_Game->MessageFont->DrawTextA(NULL, message.c_str(), message.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
-				
-				RECT ItemDescriptBox = { 0,0 ,0,0 };
+				this->m_MapUI->DrawHelpMessage("Item", message);
+
 				std::string DecriptionString = "";
 				std::string ItemType = "";
 
@@ -813,51 +820,53 @@ void Map_UI_Inventory::Render()
 					DecriptionString += "+ con	: " + to_string(m_item.str) + "	   + wis	: " + to_string(m_item.wis) + "	   + str	: " + to_string(m_item.str);
 					DecriptionString += "    + cha	: " + to_string(m_item.con) + "	  + int	: " + to_string(m_item.intl) + "\n";
 				}
-
-				ItemDescFont->DrawTextA(NULL, DecriptionString.c_str(), DecriptionString.size(), &ItemDescriptBox, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
-				
-				int m_itemHeight = Ptr_Inv_Game->ResourceManager->GetImageInfo(23, m_item.graphic * 2, true).Height;
-				int m_itemWidth = Ptr_Inv_Game->ResourceManager->GetImageInfo(23, m_item.graphic * 2, true).Width;
+				sf::Vector2f itemdescsize = m_game->GetFontSize(DecriptionString, 9);
+				if (DecriptionString == "")
+				{
+					itemdescsize = m_game->GetFontSize(message, 9);
+				}
+				int m_itemHeight = this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true)->_height;
+				int m_itemWidth = this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true)->_width;
 				int x = (114) + (22 * Cell.X) + (Cell.X * 4) + 8 + m_itemWidth;
 
 				RECT DrawBox = { 0,0 ,0,0 };
 				DrawBox.left =  rcRect.left;
 				DrawBox.top =  rcRect.top;
-				DrawBox.bottom = rcRect.bottom + ItemDescriptBox.bottom + 4;
+				DrawBox.bottom = rcRect.bottom + itemdescsize.y + 6;
 				DrawBox.right = rcRect.right + 4;
-				if (ItemDescriptBox.right > rcRect.right)
+				if (itemdescsize.x > rcRect.right)
 				{
-					DrawBox.right = ItemDescriptBox.right + 4;
+					DrawBox.right = itemdescsize.x + 4;
 				}
 				if (Cell.X > 7)
 				{
-					x = (114) + (22 * Cell.X) + (Cell.X * 4) + 8 - ItemDescriptBox.right;
+					x = (114) + (22 * Cell.X) + (Cell.X * 4) + 8 - itemdescsize.x;
 				}
 				int y = (340) + (4 * Cell.Y) + (Cell.Y * 22) + 4;
 				if (y + DrawBox.bottom + 4 > 480)
 				{
 					y -= ((y + DrawBox.bottom) - (480)) ;
 				}
-				//int x = Ptr_Inv_MapUI->MouseX;
-				//int y = Ptr_Inv_MapUI->MouseY;
-				D3DXVECTOR3* BoxPos = new D3DXVECTOR3(x, y, 0);
-				D3DXVECTOR3* BoxCenter = new D3DXVECTOR3(0, 0, 0);
-				D3DCOLOR Boxcol = D3DCOLOR_ARGB(150, 255, 255, 255);
 
-				Ptr_Inv_MapUI->Sprite->Draw(this->p_BlackBoxTexture, &DrawBox, BoxCenter, BoxPos, Boxcol);
+				sf::Vector3f* BoxPos = new sf::Vector3f(x, y, 0);
+				sf::Vector3f* BoxCenter = new sf::Vector3f(0, 0, 0);
+				sf::Color Boxcol = sf::Color::Color(255, 255, 255, 150);
+
+				this->m_game->Draw(this->p_BlackBoxTexture, BoxPos->x, BoxPos->y, Boxcol, 0, 0, DrawBox.right, DrawBox.bottom, sf::Vector2f(1, 1), depth - 0.02f);
 				
 				RECT BoxRect = { 0,0 ,0,0 };
 				BoxRect.left = x + 2 + DrawBox.left;
 				BoxRect.top = y + 1 + DrawBox.top;
 				BoxRect.bottom = y + 1 + DrawBox.bottom;
 				BoxRect.right = x + 1 + DrawBox.right;
-
-				Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, message.c_str(), -1, &BoxRect, NULL, D3DCOLOR_XRGB(255, 255, 255));
+				this->m_game->DrawTextW(message, BoxRect.left, BoxRect.top, sf::Color::White, 9, false, depth - 0.03f, 0);
+		
 				BoxRect.left = x + 2 + DrawBox.left;
-				BoxRect.top = y + 1 + DrawBox.top + rcRect.bottom;
+				BoxRect.top = y + 10 + DrawBox.top + rcRect.bottom;
 				BoxRect.bottom = y + 1 + DrawBox.bottom + rcRect.bottom;
 				BoxRect.right = x + 1 + DrawBox.right;
-				ItemDescFont->DrawTextA(Ptr_Inv_MapUI->Sprite, DecriptionString.c_str(), -1, &BoxRect, NULL, D3DCOLOR_XRGB(255, 255, 200));
+				this->m_game->DrawTextW(DecriptionString, BoxRect.left, BoxRect.top, sf::Color(255,255,200), 9, false, depth - 0.03f, 0);
+			
 				delete BoxPos;
 				delete BoxCenter;
 				break;
@@ -872,7 +881,7 @@ void Map_UI_Inventory::Render()
 
 	if (this->PaperdollVisible)
 	{
-		this->RenderPaperdoll();
+		this->RenderPaperdoll(depth);
 	}
 	else if (this->IsDropMenuActive)
 	{
@@ -903,84 +912,82 @@ static constexpr PPDollInfo PaperdollInformation[15] = {
 { Map_UI_Inventory::EquipLocation::Bracer1, 150,249,  },
 { Map_UI_Inventory::EquipLocation::Bracer2,  185,249,  },
 };
-void Map_UI_Inventory::RenderPaperdoll()
+void Map_UI_Inventory::RenderPaperdoll(float depth)
 {
-	if (this->paperdoll._PlayerID >= 0)
+	std::map<int, Map_Player*>::iterator _Player = this->m_game->map->m_Players.find(this->paperdoll._PlayerID);
+	if (_Player != this->m_game->map->m_Players.end())
 	{
 		RECT BoxRect = { 0,0 ,0,0 };
 		BoxRect.left = 0;
-		BoxRect.top = Ptr_Inv_Game->map->m_Players[this->paperdoll._PlayerID]->Gender * 290;
+		BoxRect.top = _Player->second->Gender * 290;
 		BoxRect.bottom = BoxRect.top + 290;
 		BoxRect.right = 380;
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(PPdollX, PPdollY, 0.07);
-		D3DXVECTOR3* Centre = new D3DXVECTOR3(0, 0, 0);
-		Ptr_Inv_MapUI->Sprite->Draw(this->p_PPDollTexture.get(), &BoxRect, Centre, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
-		this->UI_Element_PpdollOkay->Draw(Ptr_Inv_MapUI->Sprite);
+		sf::Vector3f* Pos = new sf::Vector3f(PPdollX, PPdollY, 0.07);
+		sf::Vector3f* Centre = new sf::Vector3f(0, 0, 0);
+		
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 49, false), Pos->x, Pos->y, sf::Color::White, BoxRect.left, BoxRect.top, BoxRect.right, BoxRect.bottom, sf::Vector2f(1,1), depth);
+		this->UI_Element_PpdollOkay->Draw();
 
 		for (int i = 0; i < 15; i++)
 		{
-			Pos = new D3DXVECTOR3(PPdollX + PaperdollInformation[i].xoff, PPdollY + PaperdollInformation[i].yoff, 0.07);
+			Pos = new sf::Vector3f(PPdollX + PaperdollInformation[i].xoff, PPdollY + PaperdollInformation[i].yoff, depth);
 			EIF_Data m_item = World::EIF_File->Get(this->paperdoll._paperdoll[i]);
-			Ptr_Inv_MapUI->Sprite->Draw(Ptr_Inv_Game->ResourceManager->CreateTexture(23, m_item.graphic * 2, true).Texture.get(), NULL, Centre, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+			this->m_game->Draw(this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true), Pos->x, Pos->y, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(1, 1), depth);
 		}
 
-		D3DCOLOR col = D3DCOLOR_ARGB(200, 255, 255, 255);
+		sf::Color col = sf::Color::Color(255, 255, 255, 200);
 		BoxRect = { 0,0 ,0,0 };
 		BoxRect.left = this->PPdollX + 232;
-		BoxRect.top = this->PPdollY + 22;
+		BoxRect.top = this->PPdollY + 23;
 		BoxRect.bottom = BoxRect.top + 100;
 		BoxRect.right = BoxRect.left + 250;
 
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, this->paperdoll._name.c_str(), -1, &BoxRect, NULL, col);
+		this->m_game->DrawTextW(this->paperdoll._name.c_str(), BoxRect.left, BoxRect.top, col, 9, false, depth - 0.03f, 0);
+
 
 		BoxRect.left = this->PPdollX + 232;
-		BoxRect.top = this->PPdollY + 22 + (30 * 1);
+		BoxRect.top = this->PPdollY + 23 + (30 * 1);
 		BoxRect.bottom = BoxRect.top + 100;
 		BoxRect.right = BoxRect.left + 250;
 		this->paperdoll._home = "Wanderer";
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, this->paperdoll._home.c_str(), -1, &BoxRect, NULL, col);
+		this->m_game->DrawTextW(this->paperdoll._home.c_str(), BoxRect.left, BoxRect.top, col, 9, false, depth - 0.03f, 0);
 
 		BoxRect.left = this->PPdollX + 232;
-		BoxRect.top = this->PPdollY + 22 + (30 * 2);
+		BoxRect.top = this->PPdollY + 23 + (30 * 2);
 		BoxRect.bottom = BoxRect.top + 100;
 		BoxRect.right = BoxRect.left + 250;
 		this->paperdoll._class = "Warrior";
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, this->paperdoll._class.c_str(), -1, &BoxRect, NULL, col);
+		this->m_game->DrawTextW(this->paperdoll._class.c_str(), BoxRect.left, BoxRect.top, col, 9, false, depth - 0.03f, 0);
 
 		BoxRect.left = this->PPdollX + 232;
-		BoxRect.top = this->PPdollY + 22 + (30 * 3);
+		BoxRect.top = this->PPdollY + 23 + (30 * 3);
 		BoxRect.bottom = BoxRect.top + 100;
 		BoxRect.right = BoxRect.left + 250;
-
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, this->paperdoll._partner.c_str(), -1, &BoxRect, NULL, col);
+		this->m_game->DrawTextW(this->paperdoll._partner.c_str(), BoxRect.left, BoxRect.top, col, 9, false, depth - 0.03f, 0);
 
 		BoxRect.left = this->PPdollX + 232;
-		BoxRect.top = this->PPdollY + 22 + (30 * 4);
+		BoxRect.top = this->PPdollY + 23 + (30 * 4);
 		BoxRect.bottom = BoxRect.top + 100;
 		BoxRect.right = BoxRect.left + 250;
-
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, this->paperdoll._title.c_str(), -1, &BoxRect, NULL, col);
+		this->m_game->DrawTextW(this->paperdoll._title.c_str(), BoxRect.left, BoxRect.top, col, 9, false, depth - 0.03f, 0);
 
 		BoxRect.left = this->PPdollX + 232;
-		BoxRect.top = this->PPdollY + 22 + (30 * 5);
+		BoxRect.top = this->PPdollY + 23 + (30 * 5);
 		BoxRect.bottom = BoxRect.top + 100;
 		BoxRect.right = BoxRect.left + 250;
-
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, this->paperdoll._job.c_str(), -1, &BoxRect, NULL, col);
+		this->m_game->DrawTextW(this->paperdoll._job.c_str(), BoxRect.left, BoxRect.top, col, 9, false, depth - 0.03f, 0);
 
 		BoxRect.left = this->PPdollX + 232;
-		BoxRect.top = this->PPdollY + 22 + (30 * 6);
+		BoxRect.top = this->PPdollY + 23 + (30 * 6);
 		BoxRect.bottom = BoxRect.top + 100;
 		BoxRect.right = BoxRect.left + 250;
-
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, this->paperdoll._guild.c_str(), -1, &BoxRect, NULL, col);
+		this->m_game->DrawTextW(this->paperdoll._guild.c_str(), BoxRect.left, BoxRect.top, col, 9, false, depth - 0.03f, 0);
 
 		BoxRect.left = this->PPdollX + 232;
-		BoxRect.top = this->PPdollY + 22 + (30 * 7);
+		BoxRect.top = this->PPdollY + 23 + (30 * 7);
 		BoxRect.bottom = BoxRect.top + 100;
 		BoxRect.right = BoxRect.left + 250;
-
-		Ptr_Inv_Game->MessageFont->DrawTextA(Ptr_Inv_MapUI->Sprite, this->paperdoll._rank.c_str(), -1, &BoxRect, NULL, col);
+		this->m_game->DrawTextW(this->paperdoll._rank.c_str(), BoxRect.left, BoxRect.top, col, 9, false, depth - 0.03f, 0);
 
 		delete Pos;
 		delete Centre;
@@ -990,24 +997,24 @@ int startx = 0;
 int starty = 0;
 void Map_UI_Inventory::UpdatePaperdoll()
 {
-	this->UI_Element_PpdollOkay->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
+	this->UI_Element_PpdollOkay->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_MapUI->MousePressed);
 	
-if (Ptr_Inv_MapUI->MouseX > this->PPdollX && Ptr_Inv_MapUI->MouseX < this->PPdollX + 380)
+if (this->m_MapUI->MouseX > this->PPdollX && this->m_MapUI->MouseX < this->PPdollX + 380)
 	{
-		if (Ptr_Inv_MapUI->MouseY > this->PPdollY && Ptr_Inv_MapUI->MouseY < this->PPdollY + 290)
+		if (this->m_MapUI->MouseY > this->PPdollY && this->m_MapUI->MouseY < this->PPdollY + 290)
 		{
 			PaperdollCheckElements();
-			if (Ptr_Inv_MapUI->MousePressed)
+			if (this->m_MapUI->MousePressed)
 			{
-				startx = PPdollX - Ptr_Inv_MapUI->MouseX;
-				starty = PPdollY - Ptr_Inv_MapUI->MouseY;
+				startx = PPdollX - this->m_MapUI->MouseX;
+				starty = PPdollY - this->m_MapUI->MouseY;
 			}
 		}
 	}
-	if (Ptr_Inv_MapUI->MouseHeld && startx != 0 && starty != 0)
+	if (this->m_MapUI->MouseHeld && startx != 0 && starty != 0)
 	{
-		this->PPdollX = Ptr_Inv_MapUI->MouseX + startx;
-		this->PPdollY = Ptr_Inv_MapUI->MouseY + starty;
+		this->PPdollX = this->m_MapUI->MouseX + startx;
+		this->PPdollY = this->m_MapUI->MouseY + starty;
 		if(this->PPdollY > 20)
 		{
 			this->PPdollY = 20;
@@ -1018,7 +1025,7 @@ if (Ptr_Inv_MapUI->MouseX > this->PPdollX && Ptr_Inv_MapUI->MouseX < this->PPdol
 		startx = 0;
 		starty = 0;
 	}
-	this->UI_Element_PpdollOkay->SetPosition(std::pair<int, int>(PPdollX + 276, PPdollY + 253));
+	this->UI_Element_PpdollOkay->SetPosition(std::pair<int, int>(PPdollX + 277, PPdollY + 254));
 }
 void Map_UI_Inventory::RenderDropJunk()
 {
@@ -1027,13 +1034,14 @@ void Map_UI_Inventory::RenderDropJunk()
 	BoxRect.top = 0;
 	BoxRect.bottom = BoxRect.top + 170;
 	BoxRect.right = BoxRect.left+265;
-	D3DXVECTOR3* Pos = new D3DXVECTOR3(DropMenuX, DropMenuY, 0.07);
-	D3DXVECTOR3* Centre = new D3DXVECTOR3(0, 0, 0);
-	Ptr_Inv_MapUI->Sprite->Draw(this->p_DropJunkTexture.get(), &BoxRect, Centre, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
-
-	D3DCOLOR col = D3DCOLOR_ARGB(200, 230, 230, 214);
+	sf::Vector3f* Pos = new sf::Vector3f(DropMenuX, DropMenuY, 0.07);
+	sf::Vector3f* Centre = new sf::Vector3f(0, 0, 0);
+	//this->m_MapUI->Sprite->Draw(this->p_DropJunkTexture.get(), &BoxRect, Centre, Pos, sf::Color::Color(255, 255, 255, 255));
+	this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 27, false), Pos->x, Pos->y, sf::Color::White, BoxRect.left, BoxRect.top, BoxRect.right, BoxRect.bottom, sf::Vector2f(1, 1), 0.001f);
 	
-	EIF_Data m_item = Ptr_Inv_Game->world->EIF_File->Get(this->DropID);
+	sf::Color col = sf::Color::Color(214, 230, 230, 200);
+	
+	EIF_Data m_item = this->m_game->world->EIF_File->Get(this->DropID);
 	std::string renderstr = "How much ";
 	renderstr += m_item.name;
 	renderstr +=  "\nwould you like to ";
@@ -1047,7 +1055,9 @@ void Map_UI_Inventory::RenderDropJunk()
 		Pos->y = DropMenuY + 11;
 		Pos->x = DropMenuX + 11;
 		renderstr += "junk?";
-		Ptr_Inv_MapUI->Sprite->Draw(this->p_DropJunkTexture.get(), &BoxRect, Centre, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 27, false), Pos->x, Pos->y, sf::Color::White, BoxRect.left, BoxRect.top, BoxRect.right, BoxRect.bottom, sf::Vector2f(1, 1), 0.001f);
+
+		//this->m_MapUI->Sprite->Draw(this->p_DropJunkTexture.get(), &BoxRect, Centre, Pos, sf::Color::Color(255, 255, 255, 255));
 	}
 	else
 	{
@@ -1058,44 +1068,45 @@ void Map_UI_Inventory::RenderDropJunk()
 	BoxRect.top = this->DropMenuY + 38;
 	BoxRect.bottom = BoxRect.top + 100;
 	BoxRect.right = BoxRect.left + 250;
-
-	Ptr_Inv_Game->DefaultFont->DrawTextA(Ptr_Inv_MapUI->Sprite, renderstr.c_str(), -1, &BoxRect, NULL, col);
-	this->UI_Element_DropCancel->Draw(Ptr_Inv_MapUI->Sprite);
-	this->UI_Element_DropOkay->Draw(Ptr_Inv_MapUI->Sprite);
-	this->DropJunkTextbox->Render(Ptr_Inv_MapUI->Sprite);
-	this->DropJunkScrollBar->Draw(Ptr_Inv_MapUI->Sprite);
+	//this->m_game->Draw(this->m_game->ResourceManager->GetResource(2, 27, false), Pos->x, Pos->y, sf::Color::White, BoxRect.left, BoxRect.top, BoxRect.right, BoxRect.bottom, sf::Vector2f(1, 1), 0.001f);
+	this->m_game->DrawText(renderstr, BoxRect.left, BoxRect.top, col, 14, false, 0.001f);
+	//this->m_game->DefaultFont->DrawTextA(this->m_MapUI->Sprite, renderstr.c_str(), -1, &BoxRect, NULL, col);
+	this->UI_Element_DropCancel->Draw(0.001);
+	this->UI_Element_DropOkay->Draw(0.001);
+	this->DropJunkTextbox->Render(0.001);
+	this->DropJunkScrollBar->Draw(0.0005f);
 	delete Pos;
 	delete Centre;
 }
 void Map_UI_Inventory::UpdateDropJunk()
 {
-	this->UI_Element_DropCancel->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
-	this->UI_Element_DropOkay->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_MapUI->MousePressed);
-	this->DropJunkScrollBar->Update(Ptr_Inv_MapUI->MouseX, Ptr_Inv_MapUI->MouseY, Ptr_Inv_Game->MouseWheelVal, Ptr_Inv_MapUI->MousePressed, Ptr_Inv_MapUI->MouseHeld, Ptr_Inv_MapUI->FPS);
-	if (Ptr_Inv_MapUI->MouseX > this->DropMenuX && Ptr_Inv_MapUI->MouseX < this->DropMenuX + 265)
+	this->UI_Element_DropCancel->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_MapUI->MousePressed);
+	this->UI_Element_DropOkay->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_MapUI->MousePressed);
+	this->DropJunkScrollBar->Update(this->m_MapUI->MouseX, this->m_MapUI->MouseY, this->m_game->MouseWheelVal, this->m_MapUI->MousePressed, this->m_MapUI->MouseHeld, this->m_MapUI->FPS);
+	if (this->m_MapUI->MouseX > this->DropMenuX && this->m_MapUI->MouseX < this->DropMenuX + 265)
 	{
-		if (Ptr_Inv_MapUI->MouseY > this->DropMenuY && Ptr_Inv_MapUI->MouseY < this->DropMenuY + 170)
+		if (this->m_MapUI->MouseY > this->DropMenuY && this->m_MapUI->MouseY < this->DropMenuY + 170)
 		{
 			int DropJunkBarX = this->DropJunkScrollBar->GetPosition().first;
 			int DropJunkBarY = this->DropJunkScrollBar->GetPosition().second;
 			int Height = this->DropJunkScrollBar->GetBarHeight();
-			if (Ptr_Inv_MapUI->MouseX > DropJunkBarX && Ptr_Inv_MapUI->MouseX < DropJunkBarX + Height + 16 && Ptr_Inv_MapUI->MouseY > DropJunkBarY && Ptr_Inv_MapUI->MouseY < DropJunkBarY + 16)
+			if (this->m_MapUI->MouseX > DropJunkBarX && this->m_MapUI->MouseX < DropJunkBarX + Height + 16 && this->m_MapUI->MouseY > DropJunkBarY && this->m_MapUI->MouseY < DropJunkBarY + 16)
 			{
 				
 			}
-			else if (Ptr_Inv_MapUI->MousePressed)
+			else if (this->m_MapUI->MousePressed)
 			{
-				startx = DropMenuX - Ptr_Inv_MapUI->MouseX;
-				starty = DropMenuY - Ptr_Inv_MapUI->MouseY;
+				startx = DropMenuX - this->m_MapUI->MouseX;
+				starty = DropMenuY - this->m_MapUI->MouseY;
 			}
 				
 			
 		}
 	}
-	if (Ptr_Inv_MapUI->MouseHeld && startx != 0 && starty != 0)
+	if (this->m_MapUI->MouseHeld && startx != 0 && starty != 0)
 	{
-		this->DropMenuX = Ptr_Inv_MapUI->MouseX + startx;
-		this->DropMenuY = Ptr_Inv_MapUI->MouseY + starty;
+		this->DropMenuX = this->m_MapUI->MouseX + startx;
+		this->DropMenuY = this->m_MapUI->MouseY + starty;
 		if (this->DropMenuY > 138)
 		{
 			this->DropMenuY = 138;
@@ -1106,14 +1117,14 @@ void Map_UI_Inventory::UpdateDropJunk()
 		startx = 0;
 		starty = 0;
 	}
-	this->UI_Element_DropCancel->SetPosition(std::pair<int, int>(DropMenuX + 153, DropMenuY + 125));
-	this->UI_Element_DropOkay->SetPosition(std::pair<int, int>(DropMenuX + 60, DropMenuY + 125));
+	this->UI_Element_DropCancel->SetPosition(std::pair<int, int>(DropMenuX + 154, DropMenuY + 126));
+	this->UI_Element_DropOkay->SetPosition(std::pair<int, int>(DropMenuX + 61, DropMenuY + 126));
 	this->DropJunkScrollBar->SetPosition(DropMenuX + 10, DropMenuY + 96);
 	
-	if (Ptr_Inv_Game->RAWMousePressed)
+	if (this->m_game->RAWMousePressed)
 	{
-		this->DropJunkTextbox->text = to_wstring(this->DropJunkScrollBar->GetIndex());
-		this->DropJunkTextbox->Rendertext = to_wstring(this->DropJunkScrollBar->GetIndex());
+		this->DropJunkTextbox->text = to_string(this->DropJunkScrollBar->GetIndex());
+		this->DropJunkTextbox->Rendertext = to_string(this->DropJunkScrollBar->GetIndex());
 		this->DropJunkTextbox->UpdateBlinkerOffset();
 	}
 	else if (this->DropJunkTextbox->text.length() > 0)
@@ -1122,8 +1133,8 @@ void Map_UI_Inventory::UpdateDropJunk()
 		if (this->DropJunkScrollBar->GetIndex() > this->DropJunkScrollBar->GetMaxIndex())
 		{
 			this->DropJunkScrollBar->SetIndex(this->DropJunkScrollBar->GetMaxIndex());
-			this->DropJunkTextbox->text = to_wstring(this->DropJunkScrollBar->GetMaxIndex());
-			this->DropJunkTextbox->Rendertext = to_wstring(this->DropJunkScrollBar->GetMaxIndex());
+			this->DropJunkTextbox->text = to_string(this->DropJunkScrollBar->GetMaxIndex());
+			this->DropJunkTextbox->Rendertext = to_string(this->DropJunkScrollBar->GetMaxIndex());
 			this->DropJunkTextbox->UpdateBlinkerOffset();
 		}
 	}
@@ -1139,11 +1150,11 @@ void Map_UI_Inventory::UpdateDropJunk()
 		{
 			if (this->DropOrJunk)
 			{
-				SItem::SendDrop(Ptr_Inv_Game->world->connection->ClientStream, this->DropID, this->DropJunkScrollBar->GetIndex(), this->DropX, this->DropY, Ptr_Inv_Game);
+				SItem::SendDrop(this->m_game->world->connection->ClientStream, this->DropID, this->DropJunkScrollBar->GetIndex(), this->DropX, this->DropY, this->m_game);
 			}
 			else
 			{
-				SItem::SendJunk(Ptr_Inv_Game->world->connection->ClientStream, this->DropID, this->DropJunkScrollBar->GetIndex(), Ptr_Inv_Game);
+				SItem::SendJunk(this->m_game->world->connection->ClientStream, this->DropID, this->DropJunkScrollBar->GetIndex(), this->m_game);
 			}
 		}
 	}
@@ -1153,24 +1164,24 @@ void Map_UI_Inventory::PaperdollCheckElements()
 	for (int i = 0; i < 15; i++)
 	{
 		EIF_Data m_item = World::EIF_File->Get(this->paperdoll._paperdoll[i]);
-		int Height = Ptr_Inv_Game->ResourceManager->GetImageInfo(23, m_item.graphic * 2, true).Height;
-		int Width = Ptr_Inv_Game->ResourceManager->GetImageInfo(23, m_item.graphic * 2, true).Width;
+		int Height = this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true)->_height;
+		int Width = this->m_game->ResourceManager->GetResource(23, m_item.graphic * 2, true)->_width;
 
 		int xloc = this->PPdollX + PaperdollInformation[i].xoff;
 		int yloc = this->PPdollY + PaperdollInformation[i].yoff;
-		if (Ptr_Inv_MapUI->MouseX > xloc && Ptr_Inv_MapUI->MouseX < xloc + Width)
+		if (this->m_MapUI->MouseX > xloc && this->m_MapUI->MouseX < xloc + Width)
 		{
-			if (Ptr_Inv_MapUI->MouseY > yloc && Ptr_Inv_MapUI->MouseY < yloc + Height)
+			if (this->m_MapUI->MouseY > yloc && this->m_MapUI->MouseY < yloc + Height)
 			{
-				Ptr_Inv_MapUI->DrawHelpMessage("Information", m_item.name.c_str());
-				if (Ptr_Inv_Game->MouseRightPressed && m_item.id != 0 && paperdoll.Modifiable)
+				this->m_MapUI->DrawHelpMessage("Information", m_item.name.c_str());
+				if (this->m_game->MouseRightPressed && m_item.id != 0 && paperdoll.Modifiable)
 				{
 					int subid = 0;
 					if(PaperdollInformation[i].location == EquipLocation::Armlet2 || PaperdollInformation[i].location == EquipLocation::Ring2 || PaperdollInformation[i].location == EquipLocation::Bracer2)
 					{
 						subid++;
 					}
-					SPaperdoll::SendPaperdollRemove(Ptr_Inv_Game->world->connection->ClientStream, m_item.id, subid, Ptr_Inv_Game);
+					SPaperdoll::SendPaperdollRemove(this->m_game->world->connection->ClientStream, m_item.id, subid, this->m_game);
 				}
 			}
 		}

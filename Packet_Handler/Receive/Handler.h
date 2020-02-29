@@ -1,5 +1,5 @@
 #include "..\stdafx.h"
-#include "..\Game.h"
+#include "..\game.h"
 #include "RConstants.h"
 
 #define CLIENT_F_FUNC(FUNC) bool PacketHandler::Handle_##FUNC(PacketFamily family, PacketAction action, PacketReader &reader, int act, Game* game, pt::ipstream* clientstream)
@@ -23,7 +23,7 @@ public:
 		CLIENT_F_FUNC(Welcome);
 		CLIENT_F_FUNC(Walk);
 		CLIENT_F_FUNC(Face);
-		CLIENT_F_FUNC(Chair);
+		//CLIENT_F_FUNC(Chair);
 		CLIENT_F_FUNC(Emote);
 		CLIENT_F_FUNC(Attack);
 		CLIENT_F_FUNC(Shop);

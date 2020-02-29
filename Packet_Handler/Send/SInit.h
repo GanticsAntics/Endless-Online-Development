@@ -2,7 +2,7 @@
 class SInit
 {
 	public:
-			static byte DickWinderA;
-			static byte DickWinderB;
+			static unsigned char  DickWinderA;
+			static unsigned char  DickWinderB;
 			static void SendInit(pt::ipstream* ClientStream);
 };

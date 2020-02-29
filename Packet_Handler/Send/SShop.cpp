@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SShop.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SShop::SendShopOpen(pt::ipstream* ClientStream, int ID, LPVOID game)
 {

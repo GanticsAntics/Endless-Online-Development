@@ -12,8 +12,7 @@ void PacketHandler::HandlePacket(PacketReader reader, Game* H_game, pt::ipstream
 
 		PacketFamily family = reader.Family();
 		PacketAction action = reader.Action();
-		
-		//reader = new PacketReader(
+
 		switch(family)
 		{
 		CLIENT_F_HANDLE(PACKET_F_INIT,Init);
@@ -22,6 +21,8 @@ void PacketHandler::HandlePacket(PacketReader reader, Game* H_game, pt::ipstream
 		CLIENT_F_HANDLE(PACKET_CONNECTION,Connection);
 		CLIENT_F_HANDLE(PACKET_ACCOUNT,Account);
 		CLIENT_F_HANDLE(PACKET_WELCOME, Welcome);
+		//CLIENT_F_HANDLE(PACKET_CHAIR, Chair);
+		CLIENT_F_HANDLE(PACKET_CHEST, Chest);
 		CLIENT_F_HANDLE(PACKET_WALK, Walk);
 		CLIENT_F_HANDLE(PACKET_FACE, Face);
 		CLIENT_F_HANDLE(PACKET_ATTACK, Attack);
@@ -37,7 +38,7 @@ void PacketHandler::HandlePacket(PacketReader reader, Game* H_game, pt::ipstream
 		CLIENT_F_HANDLE(PACKET_PAPERDOLL, Paperdoll);
 		default:;
 		}
-		
+
 		#ifdef DEBUG
 		//if (family != PACKET_CONNECTION || action != PACKET_NET)
 		{

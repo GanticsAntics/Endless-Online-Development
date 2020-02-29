@@ -1,8 +1,8 @@
 #include "..\stdafx.h"
 
-Button::Button(VOID* m_Game, int _X, int _Y, int _ImgX, int _ImgY, int _ImgWidth, int _ImgHeight, bool _ClipDown, std::shared_ptr<IDirect3DTexture9> _Texture)
+Button::Button(Game* m_Game, int _X, int _Y, int _ImgX, int _ImgY, int _ImgWidth, int _ImgHeight, bool _ClipDown, Resource_Manager::TextureData* _Texture)
 {
-	this->SetPosition(std::pair<int, int>(_X, _Y));
+	this->SetPosition(std::pair<int, int>(_X + 1, _Y + 1));
 	this->ImgX = _ImgX;
 	this->ImgY = _ImgY;
 	this->SetSize(std::pair<int, int>(_ImgWidth, _ImgHeight));
@@ -11,16 +11,16 @@ Button::Button(VOID* m_Game, int _X, int _Y, int _ImgX, int _ImgY, int _ImgWidth
 	this->AssignTexture(_Texture);
 	this->Initialize(m_Game);
 };
-Button::Button(VOID* m_Game, int _X, int _Y, int _ImgWidth, int _ImgHeight, std::shared_ptr<IDirect3DTexture9> _Texture_1, std::shared_ptr<IDirect3DTexture9> _Texture_2)
+Button::Button(Game* m_Game, int _X, int _Y, int _ImgWidth, int _ImgHeight, Resource_Manager::TextureData* _Texture, Resource_Manager::TextureData* _Texture_2)
 {
-	this->SetPosition(std::pair<int, int>(_X, _Y));
+	this->SetPosition(std::pair<int, int>(_X + 1, _Y + 1));
 	this->ImgX = 0;
 	this->ImgY = 0;
 	this->SetSize(std::pair<int, int>(_ImgWidth, _ImgHeight));
 	this->AssignAnimationDirectionSouthward(false);
 	this->AssignNewTextureForMouseOver(true);
 	this->SetFrameID(0);
-	this->AssignTexture(_Texture_1);
+	this->AssignTexture(_Texture);
 	this->AssignMouseOverTexture(_Texture_2);
 	this->Initialize(m_Game);
 };
@@ -32,11 +32,10 @@ void Button::Update(int MouseX, int MouseY, bool MousePressed)
 	}
 };
 
-void Button::Draw(ID3DXSprite* _Sprite)
+void Button::Draw(float depth)
 {
 	if (this->GetIsActive())
 	{
-		D3DXMATRIX mat;
 		RECT SrcRect;
 		SrcRect.left = this->ImgX;
 		SrcRect.top = this->ImgY;
@@ -53,31 +52,21 @@ void Button::Draw(ID3DXSprite* _Sprite)
 			SrcRect.right = this->ImgX + ((this->GetFrameID() + 1) * (this->GetSize().first));
 		}
 
-		D3DXMatrixTransformation2D(&mat, NULL, NULL, NULL, NULL, NULL, NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(this->GetPosition().first, this->GetPosition().second, 0.05);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(0, 0, 0);
-		_Sprite->SetTransform(&mat);
 
 		if (this->IsNewTextureForMouseOver())
 		{
 			if (this->MouseOverElement())
 			{
-				_Sprite->Draw(this->GetMouseOverTexture().get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+				this->m_game->Draw(this->p_Texture_MouseOver, this->GetPosition().first, this->GetPosition().second, sf::Color::Color(255, 255, 255, 255), 0, 0, -1, -1, sf::Vector2f(1, 1), depth);
 			}
 			else
 			{
-				_Sprite->Draw(this->GetTexture().get(), NULL, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+				this->m_game->Draw(this->p_Texture, this->GetPosition().first, this->GetPosition().second, sf::Color::Color(255, 255, 255, 255), 0, 0, -1, -1, sf::Vector2f(1, 1), depth);
 			}
 		}
 		else
 		{
-
-			_Sprite->Draw(this->GetTexture().get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
-		}
-
-
-		delete Pos;
-		delete Center;
+			this->m_game->Draw(this->p_Texture, this->GetPosition().first - 1, this->GetPosition().second - 1, sf::Color::White, SrcRect.left , SrcRect.top , SrcRect.right, SrcRect.bottom, sf::Vector2f(1, 1), depth);		}
 	}
 };
 

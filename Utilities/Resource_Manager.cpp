@@ -3,12 +3,12 @@
 #include <map>
 #include <iostream>
 #include <conio.h>
-#include "..\include/CBitmapEx/BitmapEx.h"
+//#include "..\include/CBitmapEx/BitmapEx.h"
 #include "Resource_Manager.h"
 
 #define D3D_DEBUG_INFO
 using namespace std;
-static IDirect3DDevice9* Device;
+static sf::RenderWindow* Device;
 
 void padTo(std::wstring &str, const size_t num, const char paddingChar = ' ')
 {     
@@ -52,11 +52,21 @@ Resource_Manager::Module Resource_Manager::LoadModule(int id)
 	}
 	return module;
 }
-HRESULT Resource_Manager::Initialize(IDirect3DDevice9Ptr m_Device)
+HRESULT Resource_Manager::Initialize(sf::RenderWindow*m_Device)
 {
 	Device = m_Device;
-	CBitmapEx Bmp;
-	
+	sf::Image newimg;
+	newimg.create(1, 1);
+	newimg.createMaskFromColor(sf::Color::Black);
+	this->CacheTexture = new Resource_Manager::TextureData();
+	sf::Texture* newtex = new sf::Texture();
+	newtex->loadFromImage(newimg);
+	CacheTexture->_height = 1;
+	CacheTexture->_width = 1;
+	CacheTexture->_GfxID = 0;
+	CacheTexture->_Texture = std::shared_ptr<sf::Texture>(newtex);
+	CacheTexture->_Sprite = std::shared_ptr<sf::Sprite>(new sf::Sprite());
+	CacheTexture->_Sprite->setTexture(*CacheTexture->_Texture);
 	for(int i = 1; i < 26; i++)
 	{
 	Resource_Manager::Module module = LoadModule(i);
@@ -65,50 +75,60 @@ HRESULT Resource_Manager::Initialize(IDirect3DDevice9Ptr m_Device)
 	return 0;
 }
 
-HRESULT Resource_Manager::CreateSprite(IDirect3DDevice9Ptr Device, ID3DXSprite* Sprite)
-{
-	HRESULT hr = D3DXCreateSprite(Device,&Sprite);
-	return hr;
-
-}
-
-Resource_Manager::TextureData Resource_Manager::CreateTexture(DWORD ModuleID, int GFXID, bool BlackIsTransparent)
+Resource_Manager::TextureData* Resource_Manager::GetResource(DWORD ModuleID, int GFXID, bool BlackIsTransparent)
 {
 
 	if(!BlackIsTransparent)
 	{
-		if(!this->Modules[ModuleID].data[GFXID].Data.Texture)
+		if(!this->Modules[ModuleID].data[GFXID].Data)
 		{
-			D3DXIMAGE_INFO info = D3DXIMAGE_INFO();
-			LPDIRECT3DTEXTURE9 text = NULL;
+			sf::Texture* text = new sf::Texture();
 			CBitmapEx bitmapEx;
 			HBITMAP BmpHndle = (HBITMAP)LoadImage(this->Modules[ModuleID].module, MAKEINTRESOURCE(GFXID + 100),0,0,0,0);
-			bitmapEx.Load(BmpHndle);
-
-			DWORD dwBufferSize = bitmapEx.GetSize() + sizeof(BITMAPFILEHEADER) + sizeof(RGBQUAD) + sizeof(BITMAPINFOHEADER);
-			LPBYTE buffer;
-			buffer = (LPBYTE) malloc(dwBufferSize);
-			bitmapEx.Save(buffer);
-
-			HRESULT Hr = D3DXCreateTextureFromFileInMemoryEx(Device,buffer,dwBufferSize,D3DX_DEFAULT_NONPOW2 ,D3DX_DEFAULT_NONPOW2,1,D3DUSAGE_DYNAMIC ,D3DFMT_A8R8G8B8,
-																 D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(0,0,0,0) | D3DCOLOR_ARGB(0,222,0,0),&info,NULL,&text);
-			free(buffer);
-
-			if(text)
+			if (BmpHndle == NULL)
 			{
-				Module::TXData dat;
-				Resource_Manager::TextureData texturedat;
-				texturedat.GfxID = ModuleID;
-				texturedat.TextureID = GFXID;
-				texturedat.Texture = std::shared_ptr<IDirect3DTexture9>(text);
-				dat.Data =  texturedat;
-				dat.BitmapInfo = info;
-				this->Modules[ModuleID].data[GFXID] = dat;
-				return dat.Data;
+				return CacheTexture;
 			}
 			else
 			{
-				return this->Modules[ModuleID].data[GFXID].Data;
+				bitmapEx.Load(BmpHndle);
+				DWORD dwBufferSize = bitmapEx.GetSize() + sizeof(BITMAPFILEHEADER) + sizeof(RGBQUAD) + sizeof(BITMAPINFOHEADER);
+				LPBYTE buffer;
+				buffer = (LPBYTE)malloc(dwBufferSize);
+				bitmapEx.Save(buffer);
+				bool loadsuccesss = text->loadFromMemory(buffer, dwBufferSize);
+				text->generateMipmap();
+				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				//text->setSmooth(true);
+				//if (ModuleID == 3)
+				{
+					//text->setSmooth(false);
+				}
+				free(buffer);
+
+				if (loadsuccesss)
+				{
+					Module::TXData dat;
+					Resource_Manager::TextureData* texturedat = new Resource_Manager::TextureData();
+					sf::Sprite* m_sprite = new sf::Sprite();
+					texturedat->_GfxID = ModuleID;
+					texturedat->_TextureID = GFXID;
+					texturedat->_Texture = std::shared_ptr<sf::Texture>(text);
+					texturedat->_height = bitmapEx.GetHeight();
+					texturedat->_width = bitmapEx.GetWidth();
+					m_sprite->setTexture(*text);
+					texturedat->_Sprite = std::shared_ptr<sf::Sprite>(m_sprite);
+					dat.Data = texturedat;
+
+					this->Modules[ModuleID].data[GFXID] = dat;
+					return dat.Data;
+				}
+				else
+				{
+					delete text;
+					return CacheTexture;
+				}
 			}
 		}
 		else
@@ -119,39 +139,55 @@ Resource_Manager::TextureData Resource_Manager::CreateTexture(DWORD ModuleID, in
 	else
 	{
 		
-		if(!this->Modules[ModuleID].data[GFXID + 1000000].Data.Texture)
+		if(!this->Modules[ModuleID].data[GFXID + 1000000].Data)
 		{
-			D3DXIMAGE_INFO info = D3DXIMAGE_INFO();
-			LPDIRECT3DTEXTURE9 text = NULL;
+			sf::Image resimage;
+			sf::Texture* text = new sf::Texture();
 			CBitmapEx bitmapEx;
 			HBITMAP BmpHndle = (HBITMAP)LoadImage(this->Modules[ModuleID].module, MAKEINTRESOURCE(GFXID + 100),0,0,0,0);
-			bitmapEx.Load(BmpHndle);
-			bitmapEx.MakeTransparent(_RGB(8,0,0));
-			//bitmapEx.
-			DWORD dwBufferSize = bitmapEx.GetSize() + sizeof(BITMAPFILEHEADER) + sizeof(RGBQUAD) + sizeof(BITMAPINFOHEADER);
-			LPBYTE buffer;
-			buffer = (LPBYTE) malloc(dwBufferSize);
-			bitmapEx.Save(buffer);
-
-			HRESULT Hr = D3DXCreateTextureFromFileInMemoryEx(Device,buffer,dwBufferSize,D3DX_DEFAULT_NONPOW2 ,D3DX_DEFAULT_NONPOW2,1,D3DUSAGE_DYNAMIC ,D3DFMT_A8R8G8B8,
-															 D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_FILTER_NONE, D3DCOLOR_ARGB(1,0,0,0),&info,NULL,&text);
-			free(buffer);
-	
-			if(SUCCEEDED(Hr))
+			if (BmpHndle == NULL)
 			{
-				Module::TXData dat;
-				Resource_Manager::TextureData texturedat;
-				texturedat.GfxID = ModuleID;
-				texturedat.TextureID = GFXID + 1000000;
-				texturedat.Texture = std::shared_ptr<IDirect3DTexture9>(text);
-				dat.Data = texturedat;
-				dat.BitmapInfo = info;
-				this->Modules[ModuleID].data[GFXID + 1000000] = dat;
-				return dat.Data;
+				return CacheTexture;
 			}
 			else
 			{
-				return this->Modules[ModuleID].data[GFXID + 1000000].Data;
+				bitmapEx.Load(BmpHndle);
+				DWORD dwBufferSize = bitmapEx.GetSize() + sizeof(BITMAPFILEHEADER) + sizeof(RGBQUAD) + sizeof(BITMAPINFOHEADER);
+				LPBYTE buffer;
+				buffer = (LPBYTE)malloc(dwBufferSize);
+				bitmapEx.Save(buffer);
+				resimage.loadFromMemory(buffer, dwBufferSize);
+				resimage.createMaskFromColor(sf::Color::Black, 0);
+				bool loadsuccesss = text->loadFromImage(resimage);
+				text->generateMipmap();
+
+				//text->setSmooth(true);
+				//if (ModuleID == 3)
+				{
+				//	text->setSmooth(false);
+				}
+				free(buffer);
+				if (loadsuccesss)
+				{
+					Module::TXData dat;
+					Resource_Manager::TextureData* texturedat = new Resource_Manager::TextureData();
+					sf::Sprite* m_sprite = new sf::Sprite();
+					texturedat->_GfxID = ModuleID;
+					texturedat->_TextureID = GFXID + 1000000;
+					texturedat->_Texture = std::shared_ptr<sf::Texture>(text);
+					texturedat->_height = bitmapEx.GetHeight();
+					texturedat->_width = bitmapEx.GetWidth();
+					m_sprite->setTexture(*text);
+					texturedat->_Sprite = std::shared_ptr<sf::Sprite>(m_sprite);
+					dat.Data = texturedat;
+					this->Modules[ModuleID].data[GFXID + 1000000] = dat;
+					return dat.Data;
+				}
+				else
+				{
+					delete text;
+					return CacheTexture;
+				}
 			}
 		}
 		else
@@ -159,18 +195,6 @@ Resource_Manager::TextureData Resource_Manager::CreateTexture(DWORD ModuleID, in
 			return  this->Modules[ModuleID].data[GFXID + 1000000].Data;
 		}
 	}	
-};
-
-D3DXIMAGE_INFO Resource_Manager::GetImageInfo(DWORD ModuleID, int GFXID, bool Transparent)
-{
-	if(Transparent)
-	{
-	return this->Modules[ModuleID].data[GFXID + 1000000].BitmapInfo;
-	}
-	else
-	{
-	return this->Modules[ModuleID].data[GFXID].BitmapInfo;
-	}
 };
 
 void Resource_Manager::Release()
@@ -181,9 +205,9 @@ void Resource_Manager::Release()
 	//	/ map<int, Module::TXData>::iterator d_iter;
 		/// for (d_iter = iter->second.data.begin(); d_iter != iter->second.data.end(); d_iter++) 
 		 {
-			// if(this->Modules[iter->first].data[d_iter->first].Data.Texture) 
+			// if(this->Modules[iter->first].data[d_iter->first].Data._Texture) 
 			 {
-			//	this->Modules[iter->first].data[d_iter->first].Data.Texture.reset();
+			//	this->Modules[iter->first].data[d_iter->first].Data._Texture.reset();
 			 }
 		 }
 	 }
@@ -193,7 +217,7 @@ void Resource_Manager::Release()
 void Resource_Manager::DestroyTexture(int FileID, int GFXID)
 {
 	
-	if(this->Modules[FileID].data[GFXID].Data.Texture)
+	if(this->Modules[FileID].data[GFXID].Data->_Texture)
 		{
 			ZeroMemory(&this->Modules[FileID].data[GFXID],sizeof(this->Modules[FileID].data[GFXID]));
 		}

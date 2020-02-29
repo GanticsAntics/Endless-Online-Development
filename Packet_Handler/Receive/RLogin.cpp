@@ -23,13 +23,12 @@ CLIENT_F_FUNC(Login)
 						}
 					case(3):
 						{
-							BYTE CharacterSize = reader.GetChar();
-							reader.GetByte();
-							reader.GetByte();
+							unsigned char CharacterSize = reader.GetChar();
+							reader.Getbyte();
+							reader.Getbyte();
 							for(int i = 0; i < 3;i++)
 							{
-								game->menu->CSModels[i] = CharacterModel(); 
-								game->menu->CSModels[i].Initialize((LPVOID*)game); 
+								game->menu->CSModels[i].InitializeModel(game);
 							}
 	
 							for (int i = 0; i < CharacterSize; i++)
@@ -56,11 +55,12 @@ CLIENT_F_FUNC(Login)
 								 game->menu->CSModels[i].admin = reader.GetChar();
 								 game->menu->CSModels[i].ShoeID = reader.GetShort() - 1;
 								 game->menu->CSModels[i].ArmorID = reader.GetShort() - 1;
-								 game->menu->CSModels[i].HatID = reader.GetShort() - 1 + 5;
+								 game->menu->CSModels[i].HatID = reader.GetShort() - 1;
 								 game->menu->CSModels[i].ShieldID = reader.GetShort() - 1;
-								 game->menu->CSModels[i].WeaponID = reader.GetShort() - 1;
-								 reader.GetByte();
-							     game->menu->CSModels[i].AlignCharacter();
+								 game->menu->CSModels[i].WeaponID = reader.GetShort() - 1; 
+								 game->menu->CSModels[i].UpdateAppearence();
+								 reader.Getbyte();
+								
 							}
 							game->AccountCharacterSize = CharacterSize;
 							game->Stage = game->PCharacterChoose;

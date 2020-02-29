@@ -1,8 +1,7 @@
 #include "..\..\stdafx.h"
 #include "Map_NPC.h"
-#include "..\..\Game.h"
+#include "..\..\game.h"
 #include "..\..\World.h"
-Game* m_n_Game;
 
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
@@ -25,7 +24,7 @@ Map_NPC::~Map_NPC()
 
 void Map_NPC::Initialize(LPVOID* M_Game)
 {
-	m_n_Game = (Game*)M_Game;
+	m_Game = (Game*)M_Game;
 	this->Deathcounter = 0;
 }
 void Map_NPC::SetStance(NPC_Stance m_Stance)
@@ -61,9 +60,6 @@ int  Map_NPC::FindWalkDirection(int dest_x, int dest_y)
 }
 void Map_NPC::MoveNPC(int FPS, int DestX, int DestY)
 {
-	//std::string str = "Move From " + this->name + ". Player ID " + std::to_string(this->CharacterID);
-	   //World::DebugPrint(str.c_str());
-	
 	int move_direction = this->FindWalkDirection(DestX, DestY);
 	this->direction = move_direction;
 	moveFPS++;
@@ -79,13 +75,13 @@ void Map_NPC::MoveNPC(int FPS, int DestX, int DestY)
 		}
 		case(1):
 		{
-			this->xoffset -= 8;
+			this->xoffset += 8;
 			this->yoffset -= 4;
 			break;
 		}
 		case(2):
 		{
-			this->xoffset -= 8;
+			this->xoffset += 8;
 			this->yoffset += 4;
 			break;
 		}
@@ -213,7 +209,7 @@ void Map_NPC::DealDamage(short HpLeft, int _damage)
 	this->time = 0;
 	for (int i = 0; i < p_Damage.size(); i++)
 	{
-		BYTE damage = p_Damage[i];
+		unsigned char damage = p_Damage[i];
 		this->Damage.push_back(damage);
 	}
 	std::reverse(this->Damage.begin(), this->Damage.end());
@@ -224,7 +220,7 @@ void Map_NPC::NPCKill()
 	this->SetStance(Map_NPC::NPC_Stance::Standing);
 	this->Deathcounter += 1;
 }
-void Map_NPC::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m_color)
+void Map_NPC::Render(sf::Sprite* _Sprite, int x, int y, float depth, sf::Color m_color)
 {
 	int IndexOffSet = 0;
 	int DirectionOffset = 0;
@@ -242,32 +238,24 @@ void Map_NPC::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m
 	{
  		TextureIndex += DirectionOffset;
 	}
-	m_n_Game->ResourceManager->CreateTexture(21, TextureIndex, true);
-	int height = m_n_Game->ResourceManager->GetImageInfo(21, TextureIndex, true).Height;
-	int width = m_n_Game->ResourceManager->GetImageInfo(21, TextureIndex, true).Width;
+	int height = this->m_Game->ResourceManager->GetResource(21, TextureIndex, true)->_height;
+	int width = this->m_Game->ResourceManager->GetResource(21, TextureIndex, true)->_width;
 	
-	D3DXMATRIX mat;
-	D3DXMATRIX * originalTransform = new D3DXMATRIX();
-	_Sprite->GetTransform(originalTransform);
-	D3DXVECTOR2 * position = new D3DXVECTOR2(0, 0);
-	D3DXVECTOR2 * spriteCentre = new D3DXVECTOR2(0.0f, 0.0f);
-	D3DXVECTOR2 * Scale = new D3DXVECTOR2(1 - (Scaleflip * 2), 1);
-	D3DXVECTOR2 * ScaleCntre = new D3DXVECTOR2(x + 32, 1);
-	D3DXMatrixTransformation2D(&mat, ScaleCntre, 0, Scale, NULL, 0.0f, position);
+	sf::Vector2f Scale =  sf::Vector2f(1 - (Scaleflip * 2), 1);
+	sf::Vector2f * ScaleCntre = new sf::Vector2f(x + 32, 1);
+	//D3DXMatrixTransformation2D(&mat, ScaleCntre, 0, Scale, NULL, 0.0f, position);
 	int offsety = max(0, (std::min(41, width - 23)) / 4);
-	D3DXVECTOR3 * Pos = new D3DXVECTOR3(x + 32 - (width / 2) + this->xoffset, offsety + y +  this->yoffset + 22 - height, depth);
-	D3DXVECTOR3 * Center = new D3DXVECTOR3(0, 0, 0);
-	m_color = D3DCOLOR_ARGB(255 - (int)(255 * ((float)this->Deathcounter / ((float)m_n_Game->FPS / 2.5))), 255, 255, 255);
+	sf::Vector3f * Pos = new sf::Vector3f(x + 32 - (width / 2) + this->xoffset, offsety + y +  this->yoffset + 22 - height, depth);
+	sf::Vector3f * Center = new sf::Vector3f(0, 0, 0);
+	m_color = sf::Color::Color(255 - (int)(255 * ((float)this->Deathcounter / ((float)m_Game->FPS / 2.5))), 255, 255, 255);
 
-	_Sprite->SetTransform(&mat);
-	_Sprite->Draw(m_n_Game->ResourceManager->CreateTexture(21, TextureIndex, true).Texture.get(), NULL, Center, Pos, m_color);
-	_Sprite->SetTransform(originalTransform);
+	//_Sprite->SetTransform(&mat);
+	this->m_Game->Draw(this->m_Game->ResourceManager->GetResource(21, TextureIndex, true), Pos->x, Pos->y, sf::Color::White, 0, 0, -1, -1, Scale, depth);
+	//_Sprite->Draw(m_n_Game->ResourceManager->CreateTexture(21, TextureIndex, true)._Texture.get(), NULL, Center, Pos, m_color);
+	//_Sprite->SetTransform(originalTransform);
 
-	delete originalTransform;
-	delete Scale;
+	//delete originalTransform;
 	delete ScaleCntre;
-	delete spriteCentre;
-	delete position;
 	delete Pos;
 	delete Center;
 	
@@ -286,10 +274,11 @@ void Map_NPC::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m
 		{
 			scalex = -1;
 		}
-		//Pos = new D3DXVECTOR3(x + 32 - (width / 2) + this->xoffset, offsety + y + this->yoffset + 22 - height, depth);
-		D3DXVECTOR3* IconPos = new D3DXVECTOR3(x + 32 - 35/2 +this->xoffset * scalex, y + this->yoffset +22 - height, 0);
-		D3DXVECTOR3* IconCentre = new D3DXVECTOR3(0, 0, 0);
-		m_n_Game->map->Sprite->Draw(m_n_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+		//Pos = new sf::Vector3f(x + 32 - (width / 2) + this->xoffset, offsety + y + this->yoffset + 22 - height, depth);
+		sf::Vector3f* IconPos = new sf::Vector3f(x + 32 - 35/2 +this->xoffset * scalex, y + this->yoffset +22 - height, 0);
+		sf::Vector3f* IconCentre = new sf::Vector3f(0, 0, 0);
+	//	m_n_Game->map->Sprite->Draw(m_n_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, sf::Color::Color(255, 255, 255, 255));
+		this->m_Game->Draw(this->m_Game->ResourceManager->GetResource(2, 58, true), IconPos->x, IconPos->y, sf::Color(255, 255, 255, 255), IconSrcRect.left, IconSrcRect.top, IconSrcRect.right, IconSrcRect.bottom, sf::Vector2f(1, 1), 0.02f);
 
 		float HPPercent = (float)this->HP / (float)this->MaxHP;
 		int hpcolormultiplier = 0;
@@ -305,14 +294,16 @@ void Map_NPC::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m
 		IconSrcRect.top = 35 + (hpcolormultiplier*7);
 		IconSrcRect.bottom = IconSrcRect.top + 7;
 		IconSrcRect.right = HPPercent*40;
-		m_n_Game->map->Sprite->Draw(m_n_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+		//m_n_Game->map->Sprite->Draw(m_n_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, sf::Color::Color(255, 255, 255, 255));
+		this->m_Game->Draw(this->m_Game->ResourceManager->GetResource(2, 58, true), IconPos->x, IconPos->y, sf::Color(255, 255, 255, 255), IconSrcRect.left, IconSrcRect.top, IconSrcRect.right, IconSrcRect.bottom, sf::Vector2f(1, 1), 0.02f);
+
 		IconPos->y -= 14;
 		IconPos->x += 20;
 		IconPos->x += (this->Damage.size() * 9) / 2;
-		IconPos->y -= (7 * ((float)this->time / ((float)m_n_Game->FPS / 2.5)));
+		IconPos->y -= (7 * ((float)this->time / ((float)m_Game->FPS / 2.5)));
 		for (int i = 0; i < this->Damage.size(); i++)
 		{
-			BYTE damage = this->Damage[i] - 48;
+			unsigned char damage = this->Damage[i] - 48;
 
 			IconSrcRect.left = 40 + (damage * 9);
 			IconSrcRect.top = 28;
@@ -331,9 +322,10 @@ void Map_NPC::Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m
 				IconPos->x -= 9;
 			}
 			
-			float alpha = 255 - ( 160 * ((float)this->time / ((float)m_n_Game->FPS/2.5)));
-			m_n_Game->map->Sprite->Draw(m_n_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, D3DCOLOR_ARGB((int)alpha, 255, 255, 255));
-			
+			float alpha = 255 - ( 160 * ((float)this->time / ((float)m_Game->FPS/2.5)));
+			//m_n_Game->map->Sprite->Draw(m_n_Game->Map_UserInterface->HudStatsTexture.get(), &IconSrcRect, IconCentre, IconPos, sf::Color::Color(int)alpha, 255, 255, 255));
+			this->m_Game->Draw(this->m_Game->ResourceManager->GetResource(2, 58, true), IconPos->x, IconPos->y, sf::Color(255, 255, 255, alpha), IconSrcRect.left, IconSrcRect.top, IconSrcRect.right, IconSrcRect.bottom, sf::Vector2f(1, 1), 0.02f);
+
 		}
 		delete IconPos;
 		delete IconCentre;

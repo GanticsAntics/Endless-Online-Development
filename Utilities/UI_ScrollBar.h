@@ -9,14 +9,15 @@ class UI_Scrollbar
 {
 	Button* UI_Scrollbar_Button_Top;
 	Button* UI_Scrollbar_Button_Bottom;
-	std::shared_ptr<IDirect3DTexture9> p_ScrollbarTexture;
-	std::shared_ptr<IDirect3DTexture9> p_IconTexture;
+	Resource_Manager::TextureData* p_ScrollbarTexture;
+	Resource_Manager::TextureData* p_IconTexture;
 	std::vector<TextTools::ChatContainer>* p_container;
-	ID3DXFont* ScrollbarReferenceFont;
+	sf::Font* ScrollbarReferenceFont;
 	std::string FullText = "";
 	std::vector<std::string> SubText;
 	short ElementWidth = 0;
 	short ElementHeight = 0;
+	Game* m_game;
 
 	int TextX = 0;
 	int TextY = 0;
@@ -35,10 +36,10 @@ class UI_Scrollbar
 	int y = 0;
 public:	
 
-	D3DCOLOR TextCol = D3DCOLOR_ARGB(255, 0, 0, 0);
-	UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeight, int m_BarHeight, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, std::shared_ptr<IDirect3DTexture9> p_IconTexture);
-	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, std::shared_ptr<IDirect3DTexture9> p_IconTexture);
-	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, std::shared_ptr<IDirect3DTexture9> p_IconTexture);
+	sf::Color TextCol = sf::Color::White;// (255, 0, 0, 0);
+	UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeight, int m_BarHeight, Resource_Manager::TextureData* m_ScrollbarTexture, Game* m_Game, Resource_Manager::TextureData* p_IconTexture);
+	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, Resource_Manager::TextureData* m_ScrollbarTexture, Game* m_Game, sf::Font* m_ScrollbarReferenceFont, Resource_Manager::TextureData* p_IconTexture);
+	UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, Resource_Manager::TextureData* m_ScrollbarTexture, Game* m_Game, sf::Font* m_ScrollbarReferenceFont, Resource_Manager::TextureData* p_IconTexture);
 	float BarPercent = 0;
 	//std::string GetCroppedString() { return this->SubText; }
 	void SetButtonsEnabled(bool value = true) { this->Buttonsenabled = value; }
@@ -117,7 +118,7 @@ public:
 	this->BarPercent = (float)(this->Lineindex) / (float)(this->MaxIndex);
 	this->Barpos = ((float)(this->BarPercent) * (float)(this->BarHeight - 32));
 	}
-	void Draw(ID3DXSprite* _Sprite);
+	void Draw(float depth);
 
 };
 #endif // Button_h

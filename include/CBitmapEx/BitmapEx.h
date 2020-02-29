@@ -20,9 +20,9 @@
 #define _BITS_PER_PIXEL_24	24									// 24-bit color depth
 #define _PIXEL	DWORD											// Pixel
 #define _RGB(r,g,b)	(((r) << 16) | ((g) << 8) | (b))			// Convert to RGB
-#define _GetRValue(c)	((BYTE)(((c) & 0x00FF0000) >> 16))		// Red color component
-#define _GetGValue(c)	((BYTE)(((c) & 0x0000FF00) >> 8))		// Green color component
-#define _GetBValue(c)	((BYTE)((c) & 0x000000FF))				// Blue color component
+#define _GetRValue(c)	((byte)(((c) & 0x00FF0000) >> 16))		// Red color component
+#define _GetGValue(c)	((byte)(((c) & 0x0000FF00) >> 8))		// Green color component
+#define _GetBValue(c)	((byte)((c) & 0x000000FF))				// Blue color component
 #define _NOISE_WIDTH	192
 #define _NOISE_HEIGHT	192
 #define _NOISE_DEPTH	64

@@ -6,24 +6,9 @@ TextTools::TextTools()
 {
 }
 
-int TextTools::GetTextWidth(std::string szText, ID3DXFont* pFont)
-{
-	RECT rcRect = { 0,0,0,0 };
-	if (pFont)
-	{
-		// calculate required rect
-		pFont->DrawText(NULL, LPCWSTR(szText.c_str()), strlen(szText.c_str()), &rcRect, DT_CALCRECT,
-			D3DCOLOR_XRGB(0, 0, 0));
-	}
-
-	// return width
-	return rcRect.right - rcRect.left;
-}
-
 std::vector<TextTools::ChatContainer>* TextTools::ChatGroups[8] = { new std::vector<TextTools::ChatContainer>(), new std::vector<TextTools::ChatContainer>(),new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>() ,new std::vector<TextTools::ChatContainer>(),new std::vector<TextTools::ChatContainer>() };
-std::string TextTools::SnipMessageTextToWidth(std::string szText, int width, ID3DXFont* pFont)
+std::string TextTools::SnipMessageTextToWidth(std::string szText, int width, int Fontsize, Game* m_game)
 {
-	RECT rcRect = { 0,0,0,0 };
 	std::string builder;
 	int strpos = 0;
 	///Generate list of words and then build a new string based on the width.
@@ -32,13 +17,14 @@ std::string TextTools::SnipMessageTextToWidth(std::string szText, int width, ID3
 	std::string tempreturnstr;
 	for (int i = 0; i < szText.size(); i++)
 	{
-		if (pFont)
+		//if (pFont)
 		{
 			// calculate required rect
 			tempreturnstr += szText[i];
-			pFont->DrawTextA(NULL, tempreturnstr.c_str(), tempreturnstr.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
+			sf::Vector2f TextRect = m_game->GetFontSize(tempreturnstr, Fontsize);
+
 			int charsremaining = -1;
-			if (rcRect.right > width)
+			if (TextRect.x > width)
 			{
 				for (int j = 0; j < 4; j++)
 				{
@@ -76,9 +62,8 @@ std::string TextTools::SnipMessageTextToWidth(std::string szText, int width, ID3
 	}
 	return returnstr;
 }
-std::vector<std::string> TextTools::SnipTextToWidth(std::string szText, int width, ID3DXFont* pFont)
+std::vector<std::string> TextTools::SnipTextToWidth(std::string szText, int width, int Fontsize, Game* m_game)
 {
-	RECT rcRect = { 0,0,0,0 };
 	std::string builder;
 	int strpos = 0;
 	std::vector<std::string> Words;
@@ -105,11 +90,11 @@ std::vector<std::string> TextTools::SnipTextToWidth(std::string szText, int widt
 	std::string tempreturnstr;
 	for (int i = 0; i < Words.size(); i++)
 	{
-		if (pFont)
+		//if (pFont)
 		{
 			// calculate required rect
 			tempreturnstr += Words[i];
-			pFont->DrawTextA(NULL, tempreturnstr.c_str(), tempreturnstr.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
+			sf::Vector2f TextRect = m_game->GetFontSize(tempreturnstr, Fontsize);
 			if (returnstr.find('\n') != std::string::npos)
 			{
 				Sentences.push_back(returnstr);
@@ -117,7 +102,7 @@ std::vector<std::string> TextTools::SnipTextToWidth(std::string szText, int widt
 				tempreturnstr.clear();
 				continue;
 			}
-			if (rcRect.right > width)
+			if (TextRect.x > width)
 			{
 				Sentences.push_back(returnstr);
 				returnstr.clear();
@@ -130,60 +115,58 @@ std::vector<std::string> TextTools::SnipTextToWidth(std::string szText, int widt
 	// return width
 	return Sentences;
 }
-void TextTools::AppendChat(ChatIndex m_ChatIndex, int width, int IconIndex, std::string playername, std::string m_message, ID3DXFont* pFont, D3DCOLOR message_col)
+void TextTools::AppendChat(ChatIndex m_ChatIndex, int width, int FontSize, int IconIndex, std::string playername, std::string m_message, Game* m_game, sf::Color message_col)
 {
-	RECT rcRect = { 0,0,0,0 };
 	std::string builder;
 	int strpos = 0;
 	std::vector<std::string> Words;
 	std::vector<std::string> Sentences;
+
 	///Generate list of words and then build a new string based on the width.
 	for (int i = 0; i < m_message.length(); i++)
 	{
 		std::string msg = m_message.substr(i - strpos, strpos + 1);
-		pFont->DrawTextA(NULL, msg.c_str(), msg.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
-		if (m_message[i] == ' ' || m_message[i] == '\n' || rcRect.right > width)
+		std::string Space = playername + "  " + msg;
+		sf::Vector2f TextRect = m_game->GetFontSize(Space, FontSize);
+		//pFont->DrawTextA(NULL, msg.c_str(), msg.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
+		if (m_message[i] == ' ' || m_message[i] == '\n' || TextRect.x > width)
 		{
-			Words.push_back(msg);
-			strpos = 0;
+			Words.push_back(m_message.substr(i - strpos, strpos));
+			strpos = 1;
 			continue;
 		}
 		if (i == m_message.length() - 1 && strpos > 0)
 		{
-			Words.push_back(msg);
-			strpos = 0;
+			Words.push_back(m_message.substr(i - strpos, strpos + 1));
+			strpos = 1;
 			continue;
 		}
 		strpos++;
 	}
-
+	
 	std::string returnstr;
 	std::string tempreturnstr;
 	for (int i = 0; i < Words.size(); i++)
 	{
-		if (pFont)
+		tempreturnstr += Words[i];
+		std::string Space = playername + "  " + tempreturnstr;
+		sf::Vector2f TextRect = m_game->GetFontSize(Space, FontSize);
+
+		if (TextRect.x > width)
 		{
-			// calculate required rect
-			tempreturnstr += Words[i];
-			std::string Space = playername + "  " + tempreturnstr;
-			pFont->DrawTextA(NULL, Space.c_str(), Space.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
-			if (returnstr.find('\n') != std::string::npos)
-			{
-				Sentences.push_back(returnstr);
-				returnstr.clear();
-				tempreturnstr.clear();
-				continue;
-			}
-			if (rcRect.right > width)
-			{
-				Sentences.push_back(returnstr);
-				returnstr.clear();
-				tempreturnstr.clear();
-			}
-			returnstr += Words[i];
+			Sentences.push_back(returnstr);
+			returnstr.clear();
+			tempreturnstr.clear();
+		}
+		returnstr += Words[i];
+		if (i == Words.size() - 1 && returnstr != "")
+		{
+			Sentences.push_back(returnstr);
+			returnstr.clear();
+			tempreturnstr.clear();
 		}
 	}
-	Sentences.push_back(returnstr);
+
 	ChatContainer newcontainer;
 	newcontainer.CharacterName += playername;
 	newcontainer.ChatIndex = m_ChatIndex;
@@ -193,15 +176,14 @@ void TextTools::AppendChat(ChatIndex m_ChatIndex, int width, int IconIndex, std:
 	newcontainer.Chat_Icon = IconIndex;
 	TextTools::ChatGroups[m_ChatIndex]->push_back(newcontainer);
 }
-void TextTools::AppendChat(ChatIndex m_ChatIndex, int width, int IconIndex, std::string playername, std::string pm_message, ID3DXFont* pFont)
+void TextTools::AppendChat(ChatIndex m_ChatIndex, int width, int FontSize, int IconIndex, std::string playername, std::string pm_message, Game* m_game)
 {
-	RECT rcRect = { 0,0,0,0 };
 	std::string builder;
 	int strpos = 0;
 	std::vector<std::string> Words;
 	std::vector<std::string> Sentences;
 	///Generate list of words and then build a new string based on the width.
-	std::string m_message = TextTools::SnipMessageTextToWidth(pm_message, width, pFont);
+	std::string m_message = TextTools::SnipMessageTextToWidth(pm_message, width, FontSize, m_game);
 	for (int i = 0; i < m_message.size(); i++)
 	{
 		std::string msg = m_message.substr(i - strpos, strpos + 1);
@@ -225,12 +207,13 @@ void TextTools::AppendChat(ChatIndex m_ChatIndex, int width, int IconIndex, std:
 	
 	for (int i = 0; i < Words.size(); i++)
 	{
-		if (pFont)
+		//if (pFont)
 		{
 			// calculate required rect
 			tempreturnstr += Words[i];
 			std::string Space = playername + "  " + tempreturnstr;
-			pFont->DrawTextA(NULL, Space.c_str(), Space.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
+			sf::Vector2f TextRect = m_game->GetFontSize(Space, FontSize);
+			//pFont->DrawTextA(NULL, Space.c_str(), Space.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
 			if (tempreturnstr.find('\n') != std::string::npos)
 			{
 				Sentences.push_back(tempreturnstr);
@@ -238,7 +221,7 @@ void TextTools::AppendChat(ChatIndex m_ChatIndex, int width, int IconIndex, std:
 				tempreturnstr.clear();
 				continue;
 			}
-			if (rcRect.right > width)
+			if (TextRect.x > width)
 			{
 				Sentences.push_back(tempreturnstr);
 				returnstr.clear();

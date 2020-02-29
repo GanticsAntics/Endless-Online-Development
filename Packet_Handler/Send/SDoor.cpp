@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SDoor.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SDoor::SendDoorOpen(pt::ipstream* ClientStream, int x, int y,LPVOID game)
 {

@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SItem.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SItem::SendPickup(pt::ipstream* ClientStream, int UID,LPVOID game)
 {

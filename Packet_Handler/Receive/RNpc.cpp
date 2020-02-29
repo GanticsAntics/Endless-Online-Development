@@ -32,7 +32,6 @@ CLIENT_F_FUNC(NPC)
 					game->map->ThreadLock.lock();
 					//game->map->m_Players[PlayerID]->hp -= Damage;
 					game->map->m_Players[PlayerID]->DealDamage(Damage);
-					game->map->ThreadLock.unlock();
 					if (NpcDir == 1)
 					{
 						procDirection = 3;
@@ -46,13 +45,14 @@ CLIENT_F_FUNC(NPC)
 						procDirection = 2;
 					}
 					int npcid = (Index);
-					if (npcid >= 0)
-					{
-						game->map->m_NPCs[npcid]->direction = procDirection;
-						game->map->m_NPCs[npcid]->SetStance(Map_NPC::NPC_Stance::Attacking);
 
+					map<int, Map_NPC*>::iterator it = game->map->m_NPCs.find(npcid);
+					if (it != game->map->m_NPCs.end())
+					{
+						it->second->direction = procDirection;
+						it->second->SetStance(Map_NPC::NPC_Stance::Attacking);
 					}
-					
+					game->map->ThreadLock.unlock();
 				}
 				else ///Walking
 				{

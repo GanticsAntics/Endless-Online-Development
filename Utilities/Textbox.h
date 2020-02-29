@@ -1,9 +1,9 @@
 #include "..\stdafx.h"
-#ifndef Textbox_h
-#define Textbox_h
+#pragma once
 class Textbox
 {
 public:
+		Game* m_game;
 		enum KeyType
 		{
 			None = 0,
@@ -16,9 +16,9 @@ public:
 		};
 
 		RECT TextBounds;
-		byte Phase;
-		byte SubPhase;
-		ID3DXSprite* Sprite;
+		int Phase;
+		int SubPhase;
+		sf::Sprite* Sprite;
 		int WorldID;
         KeyType keyMask;
         bool nonAcceptedKeyEntered;
@@ -29,22 +29,21 @@ public:
 		bool acceptspace = false;
 		wchar_t hashkey;
         int textBoxInnerWidth;
-		D3DXCOLOR color;
-		std::basic_string<wchar_t> Rendertext;
-		std::basic_string<wchar_t> text;
-		D3DXVECTOR2 position, size;
-		Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, int fontSize, D3DXCOLOR labelColor, IDirect3DDevice9* m_Dev, byte _Phase, byte _Subphase);
-		Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColor, ID3DXFont* m_font, byte _Phase, byte _Subphase);
-		ID3DXFont* Font;
+		sf::Color color;
+		std::string Rendertext;
+		std::string text;
+		sf::Vector2f position, size;
+		Textbox(Game* p_game, sf::Vector2f m_position, sf::Vector2f m_size, int fontSize, sf::Color labelColor, sf::RenderWindow*m_Dev,unsigned char  _Phase,unsigned char  _Subphase);
+		Textbox(Game* p_game, sf::Vector2f m_position, sf::Vector2f m_size, sf::Color labelColor, sf::Font* m_font,unsigned char  _Phase, unsigned char _Subphase);
+		sf::Font* Font;
 		KeyType GetKeyType(char c);
 		void UpdateBlinkerOffset();
 		void OnKeyDown(WPARAM args);
 		void OnKeyPress(WPARAM args);
-		void Render(ID3DXSprite* m_Sprite);
+		void Render(float _depth = 0.0f);
 		void Reset();
 		void SetKeyMask(KeyType newKeyMask);
 		bool CheckCollision(int X, int Y);
 		void Release();
 
 };
-#endif //Textbox_h

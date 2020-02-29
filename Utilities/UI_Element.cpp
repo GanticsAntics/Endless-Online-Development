@@ -1,8 +1,4 @@
 #include "..\stdafx.h"
-#include "..\Game.h"
-#include "UI_Element.h"
-
-Game* p_game;
 
 UI_Element::UI_Element()
 {
@@ -16,20 +12,20 @@ UI_Element::~UI_Element()
 {
 }
 
-void UI_Element::Initialize(VOID* m_Game)
+void UI_Element::Initialize(Game* p_game)
 {
-	p_game = (Game*)m_Game;
+	this->m_game = p_game;
 }
 void UI_Element::UpdateElement()
 {
-	if (p_game->MouseX > this->Position.first && p_game->MouseY > this->Position.second && p_game->MouseX < (this->Position.first + this->Size.first) && p_game->MouseY < (this->Position.second + this->Size.second))
+	if (m_game->MouseX > this->Position.first && m_game->MouseY > this->Position.second && m_game->MouseX < (this->Position.first + this->Size.first) && m_game->MouseY < (this->Position.second + this->Size.second))
 	{
 		if (!this->HighlightOnMouseDown)
 		{
 			this->AnimID = 1;
 		}
 		this->MouseOver = true;
-		if (p_game->MousePressed)
+		if (m_game->MousePressed)
 		{
 			if (this->HighlightOnMouseDown)
 			{

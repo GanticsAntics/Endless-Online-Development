@@ -1,39 +1,74 @@
+#include "Game_Stage\Menu.h"
+#include "Game_Stage\Map_UI\Map_UI_Cursor.h"
+#include "Game_Stage\Map_UI\Map_UI.h"
+#include "Game_Stage\Map.h"
+#include "Utilities/ConfigFile.h"
 #include "stdafx.h"
-#include "game.h"
-ID3DXSprite* sprite;
-std::shared_ptr<IDirect3DTexture9> texture;
-static IDirect3DDevice9* Device;
+#include "Resource_Manager.h"
+
+sf::Sprite* sprite;
+std::shared_ptr<sf::Texture> texture;
 bool Game::CancelTrue;
 bool exitinggame;
+//Tempory font grabbing addon.
+bool GetFontData(const HFONT fontHandle, std::vector<char>& data)
+{
+	bool result = false;
+	HDC hdc = ::CreateCompatibleDC(NULL);
+	if (hdc != NULL)
+	{
+		::SelectObject(hdc, fontHandle);
+		const size_t size = ::GetFontData(hdc, 0, 0, NULL, 0);
+		if (size > 0)
+		{
+			char* buffer = new char[size];
+			if (::GetFontData(hdc, 0, 0, buffer, size) == size)
+			{
+				data.resize(size);
+				memcpy(&data[0], buffer, size);
+				result = true;
+			}
+			delete[] buffer;
+		}
+		::DeleteDC(hdc);
+	}
+	return result;
+}
+
 //This class handles all game content and chooses when to activate certain events (Menu stages etc).
-void Game::Initialize(IDirect3DDevice9Ptr m_Device, World* _World)
+void Game::Initialize(sf::RenderWindow*m_Device, World* _World)
 {
 		this->world = _World;
 		this->MouseX,this->MouseY = 0;
-		Device = m_Device;
-		D3DXCreateSprite(Device, &sprite);
+		this->Device = m_Device;
+		//D3DXCreateSprite(Device, &sprite);
 		this->FPS = 60;
-		int FontSize = 14;
-		D3DXCreateFont(Device, 16, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Arial"), &this->DefaultFont);
-		D3DXCreateFont(Device, -11, 0, FW_THIN, 0, FALSE, DEFAULT_CHARSET, OUT_SCREEN_OUTLINE_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_ROMAN, TEXT("MS Sans Serif"), &this->MessageFont);
+
+		this->DefaultFont = new sf::Font();
+		HINSTANCE hResInstance = (HINSTANCE)GetModuleHandle(NULL);
+		HRSRC res = FindResource(hResInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT);
+		HGLOBAL Handle = LoadResource(NULL, res);
+		size_t sizeoffont = SizeofResource(NULL, res);
+		this->DefaultFont->loadFromMemory(Handle, sizeoffont);
+		
+		sf::Text* sftxt = new sf::Text();
+		this->rendertext = std::shared_ptr<sf::Text>(sftxt);
+		this->rendertext->setFont(*this->DefaultFont);
 
 		this->ResourceManager = new Resource_Manager();
 		this->ResourceManager->Initialize(Device);
-		this->ScrollBarTexture  = this->ResourceManager->CreateTexture(2, 29, false);
-		this->TextIconTexture = this->ResourceManager->CreateTexture(2, 32, true);
+
 		menu = new Menu();
 		map = new Map();
-		GLoginButtonTexture = this->ResourceManager->CreateTexture(1, 15, true).Texture;
-		this->ExitGameTxt = this->ResourceManager->CreateTexture(2, 39, true);
-		this->MessageBoxTexture = this->ResourceManager->CreateTexture(1, 18, false);
-		this->BT_Message_OK = new Button(this, MessageX + 180, MessageY + 112, 0, 116, 91, 28, false, GLoginButtonTexture);
-		this->BT_ExitGame = new Button(this, 640 - 51, 0, 0, 0, 50, 53, true, this->ExitGameTxt.Texture);
-		this->BT_CharDeleteOK = new Button(this, MessageX + 180 - 92, MessageY + 112, 0, 116, 91, 28, false, GLoginButtonTexture);
-		this->BT_CharDeleteCancel = new Button(this, MessageX + 180, MessageY + 112, 0, 29, 91, 28, false, GLoginButtonTexture);
+
+		this->BT_Message_OK = new Button(this, MessageX + 180, MessageY + 112, 0, 116, 91, 28, false, this->ResourceManager->GetResource(1, 15, true));
+		this->BT_ExitGame = new Button(this, 640 - 53, -1, -1, -1, 50, 53, true, this->ResourceManager->GetResource(2, 39, true));
+		this->BT_CharDeleteOK = new Button(this, MessageX + 180 - 92, MessageY + 112, 0, 116, 91, 28, false, this->ResourceManager->GetResource(1, 15, true));
+		this->BT_CharDeleteCancel = new Button(this, MessageX + 180, MessageY + 112, 0, 29, 91, 28, false, this->ResourceManager->GetResource(1, 15, true));
 		Map_UserInterface = new Map_UI();
-		menu->Initialize(world, Device, (LPVOID*)this);
-		map->Initialize(world, Device, (LPVOID*)this);
-		Map_UserInterface->Initialize(world, Device, (LPVOID*)this);
+		menu->Initialize(world, Device, this);
+		map->Initialize(world, Device, this);
+		Map_UserInterface->Initialize(world, Device, this);
 
 
 		
@@ -55,7 +90,15 @@ void Game::Initialize(IDirect3DDevice9Ptr m_Device, World* _World)
 		this->ECF_File = new ECF("pub\\dat001.ecf");
 
 		this->world->W_UI_Infobox = new UI_InformationBox(this);	
-
+		#ifndef DEBUG
+		this->world->W_UI_Infobox->NewBox();
+		this->world->W_UI_Infobox->CreateMessage("EODEV Version 0.8", "Welcome to EODev; Gantic's hobby project!");
+		this->world->W_UI_Infobox->AddMessage("Be prepared for bugs - It's held together by scotch tape and zip ties in here!");
+		this->world->W_UI_Infobox->AddMessage("If you don't believe me you can browse through\n the source code and cry yourself to sleep at \ngithub/GanticsAntics/Endless-Online-Development. \nCredits go to the original Endless Online \ndevelopers, and to Sausage & Sordie. \n\nFinally I'd like to thank the remaining EOCommunity who have faithfully stuck to endless after all these years. :)");
+		//this->world->W_UI_Infobox->AddMessage("Welcome to my shop, this is a generic client-sided debug block of text to demonstrate the ability for text to exist with a shop.");
+		//this->world->W_UI_Infobox->AddShopBuyItem(3, 131, 1091,34);
+		this->world->W_UI_Infobox->SetLocation(256, 90);
+		#endif
 }	
 
 void World::ThrowMessage(std::string Title, std::string Message)
@@ -83,7 +126,7 @@ float timerrender;
 std::chrono::time_point<std::chrono::high_resolution_clock> init, final;
 void Game::Update()
 {
-	this->world->W_UI_Infobox->Update();
+
 	init = std::chrono::high_resolution_clock::now();
 	if(!world->Connected && Stage != Game::PViewCredits)
 	{
@@ -94,6 +137,7 @@ void Game::Update()
 		if (this->Stage < 5)
 		{
 			menu->Update();
+			this->world->W_UI_Infobox->Update();
 		}
 		else
 		{
@@ -102,10 +146,10 @@ void Game::Update()
 			{
 				map->Update();
 			}
-
+			this->world->W_UI_Infobox->Update();
 			Map_UserInterface->Update();
 		}
-		
+
 		if(this->Stage > 1)
 		{ this->BT_ExitGame->Update(this->MouseX,this->MouseY,this->MousePressed); }
 		
@@ -121,9 +165,9 @@ void Game::Update()
 			}
 			else
 			{
-			World::ThrowMessage("Return to menu","Are you sure you want to return to the \nmain menu?",true);
-			exitinggame = true;
-			this->BT_ExitGame->MouseClickProccessed();
+				World::ThrowMessage("Return to menu","Are you sure you want to return to the \nmain menu?",true);
+				exitinggame = true;
+				this->BT_ExitGame->MouseClickProccessed();
 			}
 
 		}
@@ -187,9 +231,9 @@ void Game::Update()
                  this->MessageSelected = false;
                 }
            }
-			this->BT_Message_OK->SetPosition(std::pair<int,int>(MessageX + 180,MessageY+ 112));
+			this->BT_Message_OK->SetPosition(std::pair<int,int>(MessageX + 181,MessageY+ 113));
 			this->BT_CharDeleteOK->SetPosition(std::pair<int, int>(MessageX + 180 - 92,MessageY+ 112));
-			this->BT_CharDeleteCancel->SetPosition(std::pair<int, int>(MessageX + 180,MessageY+ 112));
+			this->BT_CharDeleteCancel->SetPosition(std::pair<int, int>(MessageX + 181,MessageY+ 113));
 			if(!this->MessageDragging)
 			{
 				if(!CancelTrue)
@@ -203,10 +247,6 @@ void Game::Update()
 				}
 				else
 				{
-					if(!exitinggame)
-					{
-						
-					}
 					this->BT_CharDeleteOK->Update(MouseX,MouseY,MousePressed);
 					this->BT_CharDeleteCancel->Update(MouseX,MouseY,MousePressed);
 					if(this->BT_CharDeleteOK->MouseClickedOnElement())
@@ -237,88 +277,85 @@ void Game::Update()
 	this->MouseWheelVal = 0;
 }
 long timerrecorder;
-std::basic_string<wchar_t> istring;
+std::string fpsstring;
 int Game_FPSCounter = 0;
 void Game::Render()
 {
+	this->map->FinalizeMapState();
+	this->RenderList.clear();
 	Game_FPSCounter++;
-    // Clear the render target and the zbuffer 
-    Device->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER , D3DCOLOR_ARGB( 255, 0, 0, 0 ), 0.0f, 0 );
-    // Render the scene
-    if( SUCCEEDED( Device->BeginScene() ) )
-    {
-		sprite->Begin(D3DXSPRITE_ALPHABLEND);
-		if (this->Stage <= 4)
+	Device->clear(sf::Color::Black);
+
+	if (this->Stage <= 4)
+	{
+		this->menu->Render();
+	}
+	else
+	{
+		this->map->Render();
+		Map_UserInterface->Render();
+	
+		//this->map->ThreadLock.lock();
+		RECT rct;
+
+		rct.left = 20;
+		rct.right = 300;
+		rct.top = 32;
+		rct.bottom = 300;
+
+		//this->map->Sprite->Begin(D3DXSPRITE_ALPHABLEND);
+		//this->DefaultFont->DrawTextW(this->map->Sprite, this->MapCursor.cur_istring.c_str(), -1, &rct, DT_LEFT, sf::Color::Color(255, 255, 255, 255));
+		//this->map->Sprite->End();
+		//this->map->ThreadLock.unlock();
+	}
+
+	if (this->Stage > 1)
+	{
+		this->BT_ExitGame->Draw();
+	}
+	world->W_UI_Infobox->Draw(0.001f);
+	if (!World::MBHidden)
+	{
+		this->Draw(this->ResourceManager->GetResource(1, 18, false), this->MessageX - 1, this->MessageY - 1, sf::Color::Color(255, 255, 255, 255), 0,0,-1,-1, sf::Vector2f(1,1),0);
+		if (!this->CancelTrue)
 		{
-				this->menu->Render();
+			this->BT_Message_OK->Draw();
 		}
 		else
 		{
-			this->map->Render();
-			Map_UserInterface->Render();
-			this->map->ThreadLock.lock();
-			RECT rct;
-
-			rct.left = 20;
-			rct.right = 300;
-			rct.top = 32;
-			rct.bottom = 300;
-
-			this->map->Sprite->Begin(D3DXSPRITE_ALPHABLEND);
-			this->DefaultFont->DrawTextW(this->map->Sprite, this->MapCursor.cur_istring.c_str(), -1, &rct, DT_LEFT, D3DCOLOR_ARGB(255, 255, 255, 255));
-			this->map->Sprite->End();
-			this->map->ThreadLock.unlock();
+			this->BT_CharDeleteOK->Draw();
+			this->BT_CharDeleteCancel->Draw();
 		}
-		
-		if(this->Stage > 1)
-		{ this->BT_ExitGame->Draw(sprite); }
-		world->W_UI_Infobox->Draw(sprite);
-		if(!World::MBHidden)
-		{
-			this->Draw(sprite,this->MessageBoxTexture.Texture,this->MessageX,this->MessageY,D3DCOLOR_ARGB(255,255,255,255));
-			if(!this->CancelTrue)
-			{
-			this->BT_Message_OK->Draw(sprite);
-			}
-			else
-			{
-				this->BT_CharDeleteOK->Draw(sprite);
-				this->BT_CharDeleteCancel->Draw(sprite);
-			}
-			RECT rct;
-			rct.left= this->MessageX+ 60;
-			rct.right= rct.left + 270;
-			rct.top= this->MessageY+ 25;
-			rct.bottom= rct.top + 30;
-			this->MessageFont->DrawTextA(sprite,World::MBTitle.c_str(),-1,&rct, DT_LEFT, D3DCOLOR_ARGB(255, 240, 240, 199));
-			rct.left= this->MessageX+ 20;
-			rct.right= rct.left + 270;
-			rct.top= this->MessageY+ 60;
-			rct.bottom= rct.top + 130;
-			this->MessageFont->DrawTextA(sprite,World::MBMessage.c_str(),-1,&rct, DT_LEFT, D3DCOLOR_ARGB(255, 240, 240, 199));
-		}	
-		//Draw stuff the masks above others
-	
-		sprite->End();
-        Device->EndScene();
-    }
+		RECT rct;
+		rct.left = this->MessageX + 60;
+		rct.right = rct.left + 270;
+		rct.top = this->MessageY + 25;
+		rct.bottom = rct.top + 30;
+		this->DrawTextW(World::MBTitle.c_str(), rct.left, rct.top, sf::Color::Color(240, 240, 199, 255),  11, false, 0);
+		rct.left = this->MessageX + 20;
+		rct.right = rct.left + 270;
+		rct.top = this->MessageY + 60;
+		rct.bottom = rct.top + 130;
+		this->DrawTextW(World::MBMessage.c_str(), rct.left, rct.top, sf::Color::Color(240, 240, 199,255), 11, false, 0);
+	}
 
 
 	timerrender = clock();
-	if(timerrender - timerrecorder > 1000)
+	if (timerrender - timerrecorder > 100)
 	{
-	istring.clear();
-	wchar_t clockstr[12];
-	_itow_s(FPS,clockstr,7,10);
-	istring += clockstr;
-	istring += L" fps";
-	
-	timerrecorder = timerrender; 
+		fpsstring = to_string((int)FPS);
+		fpsstring += " fps";
+
+		timerrecorder = timerrender;
 	}
-	this->DrawTextW(istring.c_str(),33,14,D3DCOLOR_ARGB( 205, 255, 255, 255 ));
-	
-	
-	Device->Present( NULL, NULL, NULL, NULL );
+
+	this->DrawTextW(fpsstring.c_str(), 33, 14, sf::Color(240, 240, 199, 255), 16, false,0,1);
+	this->FinalizeRender();
+	//this->menu->Render();
+	Device->display();
+
+
+	//Device->Present( NULL, NULL, NULL, NULL );
 	final = std::chrono::high_resolution_clock::now();
 	//if (final - init > 0)
 	{//this->FPS =
@@ -326,23 +363,19 @@ void Game::Render()
 		this->FPS = 1 / diff.count();
 	}
 
-	
-	//World::DebugPrint(std::to_string(FPS).c_str());
-	if(FPS > 30)
-	{
 
-	}
+	//World::DebugPrint(std::to_string(FPS).c_str());
 }
 void Game::Unload()
 {
-	if(this->DefaultFont){this->DefaultFont->Release();}
-	this->DefaultFont = NULL;
+	//if(this->DefaultFont){this->DefaultFont->Release();}
+	//this->DefaultFont = NULL;
 	if(this->menu){this->menu->Release();}
 	if(this->ResourceManager){this->ResourceManager->Release();}
 	//this->ResourceManager = NULL;
 
-	if(sprite){sprite->Release();}
-	sprite = NULL;
+	//if(sprite){sprite->Release();}
+	//sprite = NULL;
 	if(texture){texture.reset();}
 
 	while(true)
@@ -351,116 +384,124 @@ void Game::Unload()
 }
 void Game::ResetDevice()
 {
-		D3DXCreateSprite(Device,&sprite);
+		//D3DXCreateSprite(Device,&sprite);
+}
+void Game::Draw(Resource_Manager::TextureData* dat, int x, int y, sf::Color Color, int imgx, int imgy, int imgw, int  imgh, sf::Vector2f scale, float _Depth)
+{
+	RenderInfo newinfo = RenderInfo(dat, x, y, Color, imgx, imgy, imgw, imgh, scale);
+	this->RenderList.insert(std::pair<float,RenderInfo>(_Depth, newinfo));
 }
 
-void Game::Draw(ID3DXSprite* Sprite,std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, int Imgw, int Imgh, float Angle, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
+void Game::Draw(DWORD ModuleID, int GFXID, bool BlackIsTransparent, int x, int y, sf::Color Color, int imgx, int imgy, int imgw, int  imgh, sf::Vector2f scale, float _Depth)
 {
-		D3DXMATRIX mat;
-		RECT SrcRect;
-		SrcRect.left = x;
-		SrcRect.top = y;
-		SrcRect.bottom = y + Imgh;
-		SrcRect.right = x + Imgw;
-		
-		// out, scaling centre, scaling rotation, scaling, rotation centre, rotation, translation
-		D3DXVECTOR2 rotcentre;
-		rotcentre.x = x + (Imgw / 2);
-		rotcentre.y = y + (Imgh / 2);
+	Resource_Manager::TextureData* _dat = this->ResourceManager->GetResource(ModuleID, GFXID, BlackIsTransparent);
+	RenderInfo newinfo = RenderInfo(_dat, x, y, Color, imgx, imgy, imgw, imgh, scale);
+	this->RenderList.insert(std::pair<float, RenderInfo>(_Depth, newinfo));
+}
+void Game::Draw(std::shared_ptr<sf::Sprite>* _RenderSprite, std::shared_ptr<sf::RenderTexture>*  Rendertex, int x, int y, sf::Color Color, int imgx, int imgy, int imgw, int  imgh, sf::Vector2f Scale, float Depth )
+{
+	RenderInfo newinfo = RenderInfo(_RenderSprite, Rendertex, x, y, Color, imgx, imgy, imgw, imgh, Scale);
+	this->RenderList.insert(std::pair<float, RenderInfo>(Depth, newinfo));
+}
+void Game::DrawText(std::string str, int x, int y, sf::Color Color, int height, bool centered, float _Depth, int outlinethickness, int bottomx, int bottomy)
+{
+	RenderInfo newinfo = RenderInfo(str, x, y, Color, bottomx, bottomy, NULL, height, sf::Vector2f(1,1),centered, outlinethickness);
+	this->RenderList.insert(std::pair<float, RenderInfo>(_Depth, newinfo));
 
-		D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,&rotcentre, Angle  * (3.14 / 180),NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y, 0.1f);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(1,1,0);
-		Sprite->SetTransform(&mat);
-		Sprite->Draw(Texture.get(),NULL,Center, Pos, Color);
 }
+sf::Vector2f Game::GetFontSize(std::string _Message, int fontsize)
+{
+	RenderTextLock.lock();
+	this->rendertext->setString(_Message);
+	this->rendertext->setScale(0.5, 0.5);
+	this->rendertext->setCharacterSize(fontsize * 2);
+	sf::Vector2f returnval = sf::Vector2f(this->rendertext->getGlobalBounds().width, this->rendertext->getGlobalBounds().height);
+	RenderTextLock.unlock();
+	return returnval;
+}
+void Game::FinalizeRender()
+{
+	for (auto const& entry : this->RenderList)
+	{
+		switch (entry.second.ResourceType)
+		{
+			case(RenderInfo::DrawType::Texture):
+			{
+				if (entry.second._TextureData != NULL)
+				{
+					int imgw = entry.second.imgw - entry.second.imgx;
+					int imgh = entry.second.imgh - entry.second.imgy;
+					entry.second._TextureData->_Sprite->setScale(entry.second.Scale);
+					entry.second._TextureData->_Sprite->setPosition(entry.second.x + (entry.second.Scale.x == -1 ? ((imgw + imgh < 0) ? entry.second._TextureData->_width : imgw) : 0), entry.second.y + (entry.second.Scale.y == -1 ? ((imgw + imgh < 0) ? entry.second._TextureData->_height : imgh) : 0));
+					if (imgw + imgh < 0)
+					{
+						entry.second._TextureData->_Sprite->setTextureRect(sf::IntRect(0, 0, entry.second._TextureData->_width, entry.second._TextureData->_height));
+					}
+					else
+					{
+						entry.second._TextureData->_Sprite->setTextureRect(sf::IntRect(entry.second.imgx, entry.second.imgy, imgw, imgh));
+					}
+					entry.second._TextureData->_Sprite->setColor(entry.second.Color);
 
-void Game::DrawTextW(LPCWSTR str, int x, int y, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
-{
-	RECT rct;
-	rct.left= x;
-	rct.right= 640-x;
-	rct.top= y;
-	rct.bottom= 480-y;
-	
-	this->DefaultFont->DrawText(NULL, str, -1, &rct, 0, Color );
-}
-void Game::DrawText(LPCSTR str, int x, int y,  D3DXCOLOR Color)
-{
-	RECT rct;
-	rct.left= x;
-	rct.right= 100;
-	rct.top= y;
-	rct.bottom= 100;
-	
-	this->DefaultFont->DrawTextA(NULL, str, -1, &rct, 0, Color );
-}
-void Game::DrawTextW(ID3DXSprite* Sprite,LPCWSTR str, int x, int y,  D3DXCOLOR Color)
-{
-	RECT rct;
-	rct.left= x;
-	rct.right= 100;
-	rct.top= y;
-	rct.bottom= 100;
-	
-	this->DefaultFont->DrawText(Sprite, str, -1, &rct, 0, Color );
-}
-void Game::DrawText(ID3DXSprite* Sprite,LPCSTR str, int x, int y,  D3DXCOLOR Color)
-{
-	RECT rct;
-	rct.left= x;
-	rct.right= 100;
-	rct.top= y;
-	rct.bottom= 100;
-	
-	this->DefaultFont->DrawTextA(Sprite, str, -1, &rct, 0, Color );
-}
-void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
-{
-		D3DXMATRIX mat;
-		RECT SrcRect;
-		SrcRect.left = x;
-		SrcRect.top = y;
-		SrcRect.bottom = 0;
-		SrcRect.right = 0;
-		
-		D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,NULL, NULL,NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y, 0.1f);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(1,1,0);
-		Sprite->SetTransform(&mat);
-		Sprite->Draw(Texture.get(),NULL,Center, Pos, Color);
-		delete Pos;
-		delete Center;
-}
-std::basic_string<wchar_t> Game_istring;
+					Device->draw(*entry.second._TextureData->_Sprite);
+				}
+				break;
+			}
+			case(RenderInfo::DrawType::Text):
+			{
+				this->RenderTextLock.lock();
+				rendertext->setColor(entry.second.Color);
+				rendertext->setString(entry.second._Message);
+				rendertext->setOutlineThickness(entry.second.borderthickness);
+				rendertext->setOutlineColor(sf::Color::Black);
+				rendertext->setScale(0.5, 0.5);
+				rendertext->setCharacterSize(entry.second.imgh * 2);
+				if (entry.second.textcentered)
+				{
+					sf::FloatRect textRect = rendertext->getGlobalBounds();
+					rendertext->setPosition(entry.second.x - (textRect.width / 2), entry.second.y);
+				}
+				else
+				{
+					rendertext->setPosition(entry.second.x, entry.second.y);
+				}
+				if (entry.second.imgx > 0 || entry.second.imgy > 0)
+				{
+					//rendertext->
+				}
+				Device->draw(*rendertext.get());
+				this->RenderTextLock.unlock();
+				break;
+			}
+			case(RenderInfo::DrawType::MergedTexture):
+			{	
+				sf::RenderTexture* txturhandle = entry.second.RenderTextureTarget->get();
+				sf::Sprite* sptehndle = entry.second.RenderTargetSprite->get();
+				
+				if (txturhandle != nullptr)
+				{
+					int imgw = entry.second.imgw - entry.second.imgx;
+					int imgh = entry.second.imgh - entry.second.imgy;
+					int txturew = txturhandle->getSize().x;
+					int txtureh = txturhandle->getSize().y;
+					entry.second.RenderTargetSprite->get()->setScale(entry.second.Scale);
+					entry.second.RenderTargetSprite->get()->setPosition(entry.second.x + (entry.second.Scale.x == -1 ? ((imgw + imgh < 0) ? txturew : imgw) : 0), entry.second.y);
+					if (imgw + imgh < 0)
+					{
+						entry.second.RenderTargetSprite->get()->setTextureRect(sf::IntRect(0, 0, txturew, txtureh));
+					}
+					else
+					{
+						entry.second.RenderTargetSprite->get()->setTextureRect(sf::IntRect(entry.second.imgx, entry.second.imgy, imgw, imgh));
+					}
+					entry.second.RenderTargetSprite->get()->setColor(entry.second.Color);
 
-void Game::Draw(ID3DXSprite* Sprite, std::shared_ptr<IDirect3DTexture9> Texture, int x, int y, float depth, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
-{
-	D3DXVECTOR3* Pos = new D3DXVECTOR3(x, y, depth);
-	D3DXVECTOR3* Center = new D3DXVECTOR3(1, 1, 0);
-	//Color.a = depth;
-	Sprite->Draw(Texture.get(), NULL, Center, Pos, Color);
-	delete Pos;
-	delete Center;
-}
-
-void Game::Draw(ID3DXSprite* Sprite, IDirect3DTexture9* Texture, int x, int y, D3DXCOLOR Color = D3DCOLOR_ARGB(255, 255, 255, 255))
-{
-		D3DXMATRIX mat;
-		RECT SrcRect;
-		SrcRect.left = x;
-		SrcRect.top = y;
-		SrcRect.bottom = 0;
-		SrcRect.right = 0;
-		
-		D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,NULL, NULL,NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(x,y, 0.1f);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(1,1,0 );
-		Sprite->SetTransform(&mat);
-		Sprite->Draw(Texture,NULL,Center, Pos, Color);
-		
-		delete Pos;
-		delete Center;
+					Device->draw(*entry.second.RenderTargetSprite->get());	
+				}
+				break;
+			}
+		}
+	}
 }
 void Game::SetStage(GameStage _Stage)
 {
@@ -470,4 +511,9 @@ void Game::SetStage(GameStage _Stage)
 Game::~Game()
 {
 	this->Map_UserInterface->~Map_UI();
+}
+
+void Game::Close()
+{
+	Device->close();
 }

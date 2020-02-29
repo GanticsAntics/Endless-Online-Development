@@ -9,17 +9,20 @@ CLIENT_F_FUNC(Refresh)
 			case PACKET_REPLY:
 			{
 				int numberofplayers = reader.GetChar();
-				reader.GetByte();
+				reader.Getbyte();
 				game->map->ThreadLock.lock();
 				Map_Player* MainPlayer = game->map->m_Players[World::WorldCharacterID];
 				int exp = MainPlayer->exp;
 				game->map->ThreadLock.unlock();
-				game->map->ClearMap();
+				std::vector<int> preserveIDList;
+				//				game->map->ClearMap();
 				for (int i = 0; i < numberofplayers; i++)
 				{
 					Map_Player* newplayer = new Map_Player();
+					newplayer->Initialize(game);
 					newplayer->name = reader.GetBreakString();
 					newplayer->ID = reader.GetShort();
+					preserveIDList.push_back(newplayer->ID);
 					newplayer->mapid = reader.GetShort();
 					newplayer->x = reader.GetShort();
 					newplayer->y = reader.GetShort();
@@ -76,39 +79,58 @@ CLIENT_F_FUNC(Refresh)
 						newplayer->SetStance(Map_Player::PlayerStance::Standing);
 					}
 					unsigned char is_hideinvisible = reader.GetChar();
-					reader.GetByte();
+					reader.Getbyte();
 
-					if (newplayer->ID == World::WorldCharacterID)
+					bool playerfound = false;
+					for (auto p : game->map->m_Players)
 					{
-						MainPlayer->exp = exp;
-						//MainPlayer->CharacterID = newplayer->CharacterID;
-						MainPlayer->guildtag = newplayer->guildtag;
-						MainPlayer->mapid = newplayer->mapid;
-						MainPlayer->x = newplayer->x;
-						MainPlayer->y = newplayer->y;
-						MainPlayer->direction = newplayer->direction;
-						MainPlayer->level = newplayer->level;
-						MainPlayer->Gender = newplayer->Gender;
-						MainPlayer->HairStyle = newplayer->HairStyle;
-						MainPlayer->HairCol = newplayer->HairCol;
-						MainPlayer->SkinCol = newplayer->SkinCol;
-						MainPlayer->maxhp = newplayer->maxhp;
-						MainPlayer->hp = newplayer->hp;
-						MainPlayer->maxtp = newplayer->maxtp;
-						MainPlayer->tp = newplayer->tp;
-						MainPlayer->ShoeID = newplayer->ShoeID;
-						MainPlayer->ArmorID = newplayer->ArmorID;
-						MainPlayer->HatID = newplayer->HatID;
-						MainPlayer->ShieldID = newplayer->ShieldID;
-						MainPlayer->WeaponID = newplayer->WeaponID;
-						MainPlayer->SetStance(newplayer->Stance);
-						//game->map->CharacterID = MainPlayer->CharacterID;
-						game->map->AddPlayer(MainPlayer);
-						//game->map->m_Players[World::WorldCharacterID] = MainPlayer;
+						if (newplayer->ID == p.first)
+						{
+							playerfound = true;
+							p.second->exp = exp;
+							p.second->guildtag = newplayer->guildtag;
+							p.second->mapid = newplayer->mapid;
+							p.second->x = newplayer->x;
+							p.second->y = newplayer->y;
+							p.second->direction = newplayer->direction;
+							p.second->level = newplayer->level;
+							p.second->Gender = newplayer->Gender;
+							p.second->HairStyle = newplayer->HairStyle;
+							p.second->HairCol = newplayer->HairCol;
+							p.second->SkinCol = newplayer->SkinCol;
+							p.second->maxhp = newplayer->maxhp;
+							p.second->hp = newplayer->hp;
+							p.second->maxtp = newplayer->maxtp;
+							p.second->tp = newplayer->tp;
+							p.second->ShoeID = newplayer->ShoeID;
+							p.second->ArmorID = newplayer->ArmorID;
+							p.second->HatID = newplayer->HatID;
+							p.second->ShieldID = newplayer->ShieldID;
+							p.second->WeaponID = newplayer->WeaponID;
+							p.second->SetStance(newplayer->Stance);
+							p.second->UpdateAppearence();
+							delete newplayer;
+						}
 					}
-					else
+					if (!playerfound)
 					{
 						game->map->AddPlayer(newplayer);
+					}
+				}
+
+				for (auto p : game->map->m_Players)
+				{
+					bool keepplayer = false;
+					for (int i : preserveIDList)
+					{
+						if (p.first == i)
+						{
+							keepplayer = true;
+						}
+					}
+					if (!keepplayer)
+					{
+						game->map->RemovePlayer(p.first);
 					}
 				}
 

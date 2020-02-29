@@ -1,10 +1,11 @@
 #include "..\stdafx.h"
 #include "UI_ScrollBar.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeighht, int m_BarHeight, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, std::shared_ptr<IDirect3DTexture9> m_IconTexture)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHeighht, int m_BarHeight, Resource_Manager::TextureData* m_ScrollbarTexture, Game* p_Game, Resource_Manager::TextureData* m_IconTexture)
 {
+	this->m_game = p_Game;
 	this->p_container = NULL;
 	this->TextOrElement = false;
 	this->x = m_x;
@@ -14,12 +15,13 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, int m_ElementWidth, int m_ElementHe
 	this->BarHeight = m_BarHeight;
 	this->p_ScrollbarTexture = m_ScrollbarTexture;
 	this->p_IconTexture = m_IconTexture;
-	this->UI_Scrollbar_Button_Top = new Button(m_Game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
-	this->UI_Scrollbar_Button_Bottom = new Button(m_Game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
+	this->UI_Scrollbar_Button_Top = new Button(this->m_game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
+	this->UI_Scrollbar_Button_Bottom = new Button(this->m_game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
 };
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, std::shared_ptr<IDirect3DTexture9> m_IconTexture)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::string m_text, Resource_Manager::TextureData* m_ScrollbarTexture, Game* p_Game,sf::Font*  m_ScrollbarReferenceFont, Resource_Manager::TextureData* m_IconTexture)
 {
+	this->m_game = p_Game;
 	this->p_container = NULL;
 	this->TextOrElement = true;
 	this->x = m_x;
@@ -33,13 +35,15 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeig
 	this->TextX = m_XtextlocationRelativeToX;
 	this->TextY = m_YtextlocationRelativeToY;
 	this->p_IconTexture = m_IconTexture;
-	this->UI_Scrollbar_Button_Top = new Button(m_Game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
-	this->UI_Scrollbar_Button_Bottom = new Button(m_Game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
+	this->TextCol = sf::Color::Black;
+	this->UI_Scrollbar_Button_Top = new Button(this->m_game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
+	this->UI_Scrollbar_Button_Bottom = new Button(this->m_game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
 };
 
 
-UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, std::shared_ptr<IDirect3DTexture9> m_ScrollbarTexture, void* m_Game, ID3DXFont* m_ScrollbarReferenceFont, std::shared_ptr<IDirect3DTexture9> m_IconTexture)
+UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeight, int m_XtextlocationRelativeToX, int m_YtextlocationRelativeToY, int m_BarHeight, std::vector<TextTools::ChatContainer>* m_container, Resource_Manager::TextureData* m_ScrollbarTexture, Game* p_Game,sf::Font*  m_ScrollbarReferenceFont, Resource_Manager::TextureData* m_IconTexture)
 {
+	this->m_game = p_Game;
 	this->p_container = m_container;
 	this->TextOrElement = true;
 	this->x = m_x;
@@ -53,9 +57,11 @@ UI_Scrollbar::UI_Scrollbar(int m_x, int m_y, short m_textWidth, short m_textHeig
 	this->TextX = m_XtextlocationRelativeToX;
 	this->TextY = m_YtextlocationRelativeToY;
 	this->p_IconTexture = m_IconTexture;
-	this->UI_Scrollbar_Button_Top = new Button(m_Game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
-	this->UI_Scrollbar_Button_Bottom = new Button(m_Game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
+	this->TextCol = sf::Color::Black;
+	this->UI_Scrollbar_Button_Top = new Button(this->m_game, this->x, this->y, 0, 45, 16, 15, true, m_ScrollbarTexture);
+	this->UI_Scrollbar_Button_Bottom = new Button(this->m_game, this->x, this->y + this->BarHeight, 0, 15, 16, 15, true, m_ScrollbarTexture);
 };
+int Fontsize = 10;
 void UI_Scrollbar::Update(int MouseX, int MouseY, int MouseWheelValue, bool MousePressed, bool MouseHeld, int FPS)
 {
 	if (this->Buttonsenabled)
@@ -126,10 +132,10 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, int MouseWheelValue, bool Mous
 		this->MaxIndex = this->SubText.size();
 	}
 	ScrollBarFPSCounter++;
-	if (ScrollBarFPSCounter > FPS / 4 || this->SubText.size() > 0)
+	if (ScrollBarFPSCounter > FPS / 4 )
 	{
 		{
-			this->SubText = TextTools::SnipTextToWidth(this->FullText, this->ElementWidth, this->ScrollbarReferenceFont);
+			this->SubText = TextTools::SnipTextToWidth(this->FullText, this->ElementWidth, Fontsize, this->m_game);
 			this->ScrollBarFPSCounter = 0;
 
 		}
@@ -221,20 +227,20 @@ void UI_Scrollbar::Update(int MouseX, int MouseY, int MouseWheelValue, bool Mous
 	}
 };
 
-void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
+void UI_Scrollbar::Draw(float depth)
 {
 	if (this->Buttonsenabled)
 	{
-		this->UI_Scrollbar_Button_Bottom->Draw(_Sprite);
-		this->UI_Scrollbar_Button_Top->Draw(_Sprite);
+		this->UI_Scrollbar_Button_Bottom->Draw(depth);
+		this->UI_Scrollbar_Button_Top->Draw(depth);
 	}
 	RECT SrcRect;
 	SrcRect.left = 0;
 	SrcRect.top = 0;
 	SrcRect.bottom = 15;
 	SrcRect.right = 16;
-	D3DXVECTOR3* Pos = new D3DXVECTOR3(x, y + 16 + this->Barpos, 0);
-	D3DXVECTOR3* Center = new D3DXVECTOR3(0, 0, 0);
+	sf::Vector3f* Pos = new sf::Vector3f(x - 1, y + 16 + this->Barpos, 0);
+	sf::Vector3f* Center = new sf::Vector3f(0, 0, 0);
 	if (!this->IsVertical)
 	{
 		Pos->x = x + 16 + this->Barpos;
@@ -242,7 +248,7 @@ void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 	}
 
 
-	_Sprite->Draw(this->p_ScrollbarTexture.get(), &SrcRect, Center, Pos, D3DCOLOR_ARGB(255, 255, 255, 255));
+	this->m_game->Draw(this->p_ScrollbarTexture, Pos->x, Pos->y, sf::Color(255, 255, 255, 255), SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom, sf::Vector2f(1, 1), depth);
 	if (this->TextOrElement)
 	{
 		if (this->p_container != NULL)
@@ -273,9 +279,9 @@ void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 				IconSrcRect.top = this->p_container->at(i).Chat_Icon*13;
 				IconSrcRect.bottom = IconSrcRect.top+13;
 				IconSrcRect.right = 12;
-				D3DXVECTOR3* IconPos = new D3DXVECTOR3(this->x + this->TextX - 18, this->y + this->TextY + count*16, 0);
-				D3DXVECTOR3* IconCentre = new D3DXVECTOR3(0, 0, 0);
-				_Sprite->Draw(p_IconTexture.get(), &IconSrcRect, Center, IconPos, D3DCOLOR_ARGB(255, 255, 255, 255));
+				sf::Vector3f* IconPos = new sf::Vector3f(this->x + this->TextX - 18, this->y + this->TextY + count*16, 0);
+				sf::Vector3f* IconCentre = new sf::Vector3f(0, 0, 0);
+				this->m_game->Draw(this->p_IconTexture, IconPos->x, IconPos->y, sf::Color(255, 255, 255, 255), IconSrcRect.left, IconSrcRect.top, IconSrcRect.right, IconSrcRect.bottom, sf::Vector2f(1, 1), depth);
 				delete IconPos;
 				delete IconCentre;
 				RECT rct;
@@ -285,19 +291,22 @@ void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 				rct.bottom = this->y + this->TextY + this->ElementHeight + (count * 16);
 
 				std::string message = this->p_container->at(i).CharacterName + "  ";
-				RECT rcRect = { 0,0 ,0,0 };
-				this->ScrollbarReferenceFont->DrawTextA(NULL, message.c_str(), message.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
-				this->ScrollbarReferenceFont->DrawTextA(_Sprite, message.c_str(), -1, &rct, NULL, this->p_container->at(i).message_col);
+
+				sf::Vector2f strsize = this->m_game->GetFontSize(message, Fontsize);
+				//this->ScrollbarReferenceFont->DrawTextA(NULL, message.c_str(), message.size(), &rcRect, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
+				this->m_game->DrawTextW(message, rct.left, rct.top, this->p_container->at(i).message_col, Fontsize, false, depth);
+				//this->ScrollbarReferenceFont->DrawTextA(_Sprite, message.c_str(), -1, &rct, NULL, this->p_container->at(i).message_col);
 
 				for (int ii = subindex; ii < this->p_container->at(i).Message.size(); ii++)
 				{
-					rct.left = this->x + this->TextX + 7 +  rcRect.right;
-					rct.right = this->x + this->TextX + this->ElementWidth + 7 + rcRect.right;
+					rct.left = this->x + this->TextX + 7 + strsize.x;
+					rct.right = this->x + this->TextX + this->ElementWidth + 7 + strsize.x;
 					rct.top = this->y + this->TextY + (count * 16);
 					rct.bottom = this->y + this->TextY + this->ElementHeight + (count * 16);
 					
 					message = this->p_container->at(i).Message[ii];
-					this->ScrollbarReferenceFont->DrawTextA(_Sprite, message.c_str(), -1, &rct, NULL, this->p_container->at(i).message_col);
+					this->m_game->DrawTextW(message, rct.left, rct.top, this->p_container->at(i).message_col, Fontsize, false, depth);
+					//this->ScrollbarReferenceFont->DrawTextA(_Sprite, message.c_str(), -1, &rct, NULL, this->p_container->at(i).message_col);
 
 					if (ii + 1 == this->p_container->at(i).Message.size())
 					{
@@ -329,7 +338,8 @@ void UI_Scrollbar::Draw(ID3DXSprite* _Sprite)
 				{
 					break;
 				}
-				this->ScrollbarReferenceFont->DrawTextA(_Sprite, this->SubText[i].c_str(), -1, &rct, DT_EXPANDTABS, this->TextCol);
+				this->m_game->DrawTextW(this->SubText[i], rct.left, rct.top, this->TextCol, Fontsize, false, depth);
+				//this->ScrollbarReferenceFont->DrawTextA(_Sprite, this->SubText[i].c_str(), -1, &rct, DT_EXPANDTABS, this->TextCol);
 				count++;
 			}
 		}

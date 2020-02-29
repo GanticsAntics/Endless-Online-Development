@@ -2,5 +2,5 @@
 class SLogin
 {
 		public:
-				static void SendLoginRequest(LPVOID _Game, pt::ipstream* ClientStream, std::string AccountName, std::string Password);
+				static void SendLoginRequest(Game* _Game, pt::ipstream* ClientStream, std::string AccountName, std::string Password);
 };

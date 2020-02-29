@@ -1,11 +1,11 @@
 #pragma once
-
-class Game;
+#include "UI_ScrollBar.h"
+#include "Textbox.h"
 class UI_InformationBox : UI_Element
 {
 private:
-	std::shared_ptr<IDirect3DTexture9> InfoBxBGTexture;
-	std::shared_ptr<IDirect3DTexture9> InfoIcons;
+	std::shared_ptr<sf::Texture> InfoBxBGTexture;
+	std::shared_ptr<sf::Texture> InfoIcons;
 	Button* Bt_Cancel;
 	Button* Bt_History;
 	Button* Bt_Okay;
@@ -54,11 +54,11 @@ private:
 		vector<_Hyperlink> _Hyperlinks;
 	};
 	MessageType PhaseType = MessageType::_Text;
-	typedef vector<_MessageContainer> ContainerPhase;
+	typedef std::vector<_MessageContainer> ContainerPhase;
 	void AlignInterface();
 	std::string m_Title = "";
 	int ReturnLineIndexInPhase(int PhaseIndex, int Lineindex);
-	void RenderScrollBox(ID3DXSprite* _Sprite);
+	void RenderScrollBox();
 	bool Phasechanged = false;
 	bool ScrollBoxVisible = false;
 	bool ShopBuyActive = false;
@@ -70,7 +70,7 @@ private:
 	bool AwaitingResponse = false;
 	Button* UI_ScrollBoxElement_Okay;
 	Button* UI_ScrollBoxElement_Cancel;
-	void DrawCraftItemBox(ID3DXSprite* _Sprite, _MessageContainer _entry);
+	void DrawCraftItemBox(_MessageContainer _entry);
 public:
 	enum ScrollBoxType
 	{
@@ -90,7 +90,7 @@ public:
 	};
 
 	UI_InformationBox(Game* p_game);
-	map<int, ContainerPhase> ContainerData;
+	std::map<int, ContainerPhase> ContainerData;
 	vector<Button*> InterfaceButtons;
 	int PhaseID = 0;
 	vector<int> PreviousPhraseIDs;
@@ -104,14 +104,16 @@ public:
 	void AddShopCraftItem(int ShopCraftIndex, CraftItemEntry Item_Entry, int PhaseIndex = -1);
 	void AddStorageItem(int ItemID, int ItemAmount, int PhaseIndex = -1);
 
-	void ShowInformationBox(std::string title, map<int, ContainerPhase> _ContainerData, bool ShowCancel = false);
+	void ShowInformationBox(std::string title, std::map<int, ContainerPhase> _ContainerData, bool ShowCancel = false);
 	void ShowInformationBox(std::string title, std::string Message, bool ShowCancel = false);
 	void AddMessage(std::string Message);
-	void DrawContainerEntry(ID3DXSprite* _Sprite, _MessageContainer _entry, int EntryIndex);
+	void DrawContainerEntry(float depth, _MessageContainer _entry, int EntryIndex);
+	bool IsVisible() { return this->GetIsActive(); }
+	bool MouseOver() { return this->MouseOverElement(); }
 	void NewBox() 
 	{ 
 		ShopBuyActive = false;
-		this->ContainerData = map<int, ContainerPhase>();
+		this->ContainerData = std::map<int, ContainerPhase>();
 		this->PreviousPhraseIDs.push_back(this->PhaseID);
 		this->PhaseID = 0;
 		this->UI_InfoScrollbar->SetIndex(0);
@@ -137,11 +139,15 @@ public:
 	void SetTitle(std::string _title) { this->m_Title = _title; }
 	void CloseBox();
 	void Update();
-	void Draw(ID3DXSprite* _Sprite);
+	void Draw(float _Depth);
 	bool CheckCraftIngredients(CraftItemEntry _item);
 	ScrollBoxType _ScrollType;
 	void UpdateScrollBox();
 	void ShowScrollBox(ScrollBoxType boxtype, int ItemID, int Value, int MaxAmount);
+	void SetLocation(int x, int y)
+	{
+		this->SetPosition(std::pair<int, int>(x, y));
+	}
 	~UI_InformationBox();
 };
 

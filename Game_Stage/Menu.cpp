@@ -1,41 +1,31 @@
 #include "..\stdafx.h"
-#include "..\Game.h"
+#include "..\game.h"
 
-IDirect3DDevice9* Device;
+sf::RenderWindow* Device;
 
-Game* game;
-IDirect3DTexture9* TX_TxtBox;
-IDirect3DTexture9* TX_CATxtBox;
-std::shared_ptr<IDirect3DTexture9> MenuButtonTexture;
-std::shared_ptr<IDirect3DTexture9> LoginButtonTexture;
-std::shared_ptr<IDirect3DTexture9> LoginModificationTexture;
-std::shared_ptr<IDirect3DTexture9> CharacterModificationTexture;
-std::shared_ptr<IDirect3DTexture9> AccountCreateTexture;
-std::string WCharToCharStr(std::basic_string<wchar_t> str);
+sf::Texture* TX_TxtBox;
+sf::Texture* TX_CATxtBox;
+std::shared_ptr<sf::Texture> MenuButtonTexture;
+std::shared_ptr<sf::Texture> LoginButtonTexture;
+std::shared_ptr<sf::Texture> LoginModificationTexture;
+std::shared_ptr<sf::Texture> CharacterModificationTexture;
+std::shared_ptr<sf::Texture> AccountCreateTexture;
+
 int Menu::SrvrCharID = 0;
 int Menu::SrvrDeleteID = 0;
 int Menu::SrvrCreateID = 0;
-void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_game)
+sf::Sprite* testsprite;
+Resource_Manager::TextureData* Txbox_Texture;
+void Menu::Initialize(World* _world, sf::RenderWindow*m_Device, Game* m_game)
 {
+	testsprite = new sf::Sprite();
+	Sprite = new sf::Sprite();
 	world = _world;
 	BgID = 30 + (std::rand() % 6);
 	FgID = 41 + (std::rand() % 4);
 	LoginFgID = 61 + (std::rand() % 8);
-	game = (Game*)m_game;
+	this->m_game = m_game;
 	Device = m_Device;
-	D3DXCreateSprite(Device,&this->Sprite);
-	this->BgTex = game->ResourceManager->CreateTexture(1,BgID,false);
-	this->FgTex = game->ResourceManager->CreateTexture(1,FgID,true);
-	AccountCreateTexture = game->ResourceManager->CreateTexture(1,12,true).Texture;
-	MenuButtonTexture = game->ResourceManager->CreateTexture(1,13,true).Texture;
-	LoginModificationTexture = game->ResourceManager->CreateTexture(1,14,true).Texture;
-	LoginButtonTexture = game->ResourceManager->CreateTexture(1,15,true).Texture;
-	CharacterModificationTexture = game->ResourceManager->CreateTexture(1,22,false).Texture;
-	this->LoginBoxTex = game->ResourceManager->CreateTexture(1,2,false);
-	this->CharacterBox = game->ResourceManager->CreateTexture(1,11,false);
-	this->LoginFgTex = game->ResourceManager->CreateTexture(1,LoginFgID,true);
-	this->CreateCharTex = game->ResourceManager->CreateTexture(1,20,false);
-	this->ChangePassTex = game->ResourceManager->CreateTexture(1,21,false);
 	
 
 	CBitmapEx Box;
@@ -69,14 +59,17 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	LPBYTE buffer;
 	buffer = (LPBYTE) malloc(dwBufferSize);
 	Box.Save(buffer);
-	LPDIRECT3DTEXTURE9 txtbx = NULL;
-	D3DXIMAGE_INFO info = D3DXIMAGE_INFO();
-	HRESULT Hr = D3DXCreateTextureFromFileInMemoryEx(Device,buffer,dwBufferSize,D3DX_DEFAULT_NONPOW2 ,D3DX_DEFAULT_NONPOW2,1,D3DUSAGE_DYNAMIC ,D3DFMT_A8R8G8B8,
-																 D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(0,0,0,0) | D3DCOLOR_ARGB(0,222,0,0),&info,NULL,&txtbx);
-	if(txtbx)
-	{
-	TX_TxtBox = txtbx;
-	}
+
+	Txbox_Texture = new Resource_Manager::TextureData();
+	sf::Texture* txboxtex = new sf::Texture();
+	Txbox_Texture->_height = Box.GetHeight();
+	Txbox_Texture->_width = Box.GetWidth();
+	txboxtex->loadFromMemory(buffer, dwBufferSize);
+	Txbox_Texture->_Texture = std::shared_ptr<sf::Texture>(txboxtex);
+	Txbox_Texture->_Texture->setSmooth(true);
+	sf::Sprite* spr = new sf::Sprite();
+	spr->setTexture(*Txbox_Texture->_Texture);
+	Txbox_Texture->_Sprite = std::shared_ptr<sf::Sprite>(spr);
 
 	CBitmapEx CABox;
 	CABox.Create(242, 20);
@@ -109,27 +102,17 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	LPBYTE cabuffer;
 	cabuffer = (LPBYTE) malloc(cadwBufferSize);
 	CABox.Save(cabuffer);
-	LPDIRECT3DTEXTURE9 catxtbx = NULL;
-	D3DXIMAGE_INFO cainfo = D3DXIMAGE_INFO();
-	HRESULT caHr = D3DXCreateTextureFromFileInMemoryEx(Device,cabuffer,cadwBufferSize,D3DX_DEFAULT_NONPOW2 ,D3DX_DEFAULT_NONPOW2,1,D3DUSAGE_DYNAMIC ,D3DFMT_A8R8G8B8,
-																 D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(0,0,0,0) | D3DCOLOR_ARGB(0,222,0,0),&cainfo,NULL,&catxtbx);
-	if(catxtbx)
-	{
-	TX_CATxtBox = catxtbx;
-	}
-
-
-	D3DXVECTOR2 Pos;
+	
+	sf::Vector2f Pos;
 	Pos.x = 380;
 	Pos.y = 313;
 
-	D3DXVECTOR2 Size;
+	sf::Vector2f Size;
 	Size.x = 140;
 	Size.y = 30;
 
 	int FontSize = 14;
-	D3DXCreateFont(Device,-11, 0, FW_THIN, 0, FALSE, DEFAULT_CHARSET, OUT_SCREEN_OUTLINE_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_ROMAN, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox a = Textbox(Pos, Size, D3DCOLOR_ARGB(255,0,0,0), this->LoginFont, game->PLogin, 0);
+	Textbox a = Textbox(this->m_game, Pos, Size, sf::Color::Color(0,0,0), this->LoginFont, this->m_game->PLogin, 0);
 	a.MaxLen = 16;
 	this->TB_AccNme = world->RegisterTextBox(a);
 	this->TB_AccNme->focused = true;
@@ -137,16 +120,14 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 187;
 	Size.x = 140;
 	Size.y = 30;
-	D3DXCreateFont(Device,-11, 0, FW_THIN, 0, FALSE, DEFAULT_CHARSET, OUT_SCREEN_OUTLINE_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_ROMAN, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox h = Textbox(Pos, Size,  D3DCOLOR_ARGB(185, 240, 240, 199), this->LoginFont, game->PCharacterChoose, 2);
+	Textbox h = Textbox(this->m_game, Pos, Size,  sf::Color::Color(220, 200, 180, 255), this->LoginFont, this->m_game->PCharacterChoose, 2);
 	h.MaxLen = 16;
 	this->TB_MyAccNme = world->RegisterTextBox(h);
 	Pos.x = 360;
 	Pos.y = 217;
 	Size.x = 140;
 	Size.y = 30;
-	D3DXCreateFont(Device,-11, 0, FW_THIN, 0, FALSE, DEFAULT_CHARSET, OUT_SCREEN_OUTLINE_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_ROMAN, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox f = Textbox(Pos, Size,  D3DCOLOR_ARGB(185, 240, 240, 199), this->LoginFont, game->PCharacterChoose, 2);
+	Textbox f = Textbox(this->m_game, Pos, Size,  sf::Color::Color(220, 200, 180, 255), this->LoginFont, this->m_game->PCharacterChoose, 2);
 	f.hashkey = '*';
 	f.MaxLen = 12;
 	this->TB_MyPass = world->RegisterTextBox(f);
@@ -154,8 +135,7 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 247;
 	Size.x = 140;
 	Size.y = 30;
-	D3DXCreateFont(Device,-11, 0, FW_THIN, 0, FALSE, DEFAULT_CHARSET, OUT_SCREEN_OUTLINE_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_ROMAN, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox r = Textbox(Pos, Size,  D3DCOLOR_ARGB(185, 240, 240, 199), this->LoginFont, game->PCharacterChoose, 2);
+	Textbox r = Textbox(this->m_game, Pos, Size,  sf::Color::Color(220, 200, 180, 255), this->LoginFont, this->m_game->PCharacterChoose, 2);
 	r.hashkey = '*';
 	r.MaxLen = 12;
 	this->TB_MyNewPass1 = world->RegisterTextBox(r);
@@ -163,8 +143,7 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 277;
 	Size.x = 140;
 	Size.y = 30;
-	D3DXCreateFont(Device,-11, 0, FW_THIN, 0, FALSE, DEFAULT_CHARSET, OUT_SCREEN_OUTLINE_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_ROMAN, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox w = Textbox(Pos, Size,  D3DCOLOR_ARGB(185, 240, 240, 199), this->LoginFont, game->PCharacterChoose, 2);
+	Textbox w = Textbox(this->m_game, Pos, Size,  sf::Color::Color(220, 200, 180, 255), this->LoginFont, this->m_game->PCharacterChoose, 2);
 	w.hashkey = '*';
 	w.MaxLen = 12;
 	this->TB_MyNewPass2 = world->RegisterTextBox(w);
@@ -172,18 +151,16 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 184;
 	Size.x = 140;
 	Size.y = 30;
-	D3DXCreateFont(Device,-11, 0, FW_THIN, 0, FALSE, DEFAULT_CHARSET, OUT_SCREEN_OUTLINE_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_ROMAN, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox d = Textbox(Pos, Size,  D3DCOLOR_ARGB(185, 240, 240, 199), this->LoginFont, game->PCharacterChoose, 1);
+	Textbox d = Textbox(this->m_game, Pos, Size,  sf::Color::Color(220, 200, 180, 255), this->LoginFont, this->m_game->PCharacterChoose, 1);
 	d.MaxLen = 11;
-	d.SetKeyMask(Textbox::KeyType::Letter);
+	d.SetKeyMask(Textbox::KeyType::None);
 	this->TB_CreateChar = world->RegisterTextBox(d);
 
 	Pos.x = 380;
 	Pos.y = 348;
 	Size.x = 140;
 	Size.y = 30;
-	D3DXCreateFont(Device,18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox p = Textbox(Pos, Size, D3DCOLOR_ARGB(255,0,0,0), this->LoginFont, game->PLogin, 0);
+	Textbox p = Textbox(this->m_game, Pos, Size, sf::Color::Color(0,0,0), this->LoginFont, this->m_game->PLogin, 0);
 	p.hashkey = '*';
 	p.MaxLen = 12;
 	this->TB_PassWrd = world->RegisterTextBox(p);
@@ -192,8 +169,7 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 80;
 	Size.x = 240;
 	Size.y = 30;
-	D3DXCreateFont(Device,18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox CATBAN = Textbox(Pos, Size, D3DCOLOR_ARGB(255,0,0,0), this->LoginFont, game->PCreateAccount, 0);
+	Textbox CATBAN = Textbox(this->m_game, Pos, Size, sf::Color::Color(0,0,0), this->LoginFont, this->m_game->PCreateAccount, 0);
 	CATBAN.MaxLen = 16;
 	this->TB_CAAccNme = world->RegisterTextBox(CATBAN);
 
@@ -201,8 +177,7 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 130;
 	Size.x = 240;
 	Size.y = 30;
-	D3DXCreateFont(Device,18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox CAPass1 = Textbox(Pos, Size, D3DCOLOR_ARGB(255,0,0,0), this->LoginFont, game->PCreateAccount, 0);
+	Textbox CAPass1 = Textbox(this->m_game, Pos, Size, sf::Color::Color(0,0,0), this->LoginFont, this->m_game->PCreateAccount, 0);
 	CAPass1.MaxLen = 12;
 	CAPass1.hashkey = '*';
 	this->TB_CAPassWrdOne = world->RegisterTextBox(CAPass1);
@@ -211,8 +186,7 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 180;
 	Size.x = 240;
 	Size.y = 30;
-	D3DXCreateFont(Device,18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox CAPass2 = Textbox(Pos, Size, D3DCOLOR_ARGB(255,0,0,0), this->LoginFont, game->PCreateAccount, 0);
+	Textbox CAPass2 = Textbox(this->m_game, Pos, Size, sf::Color::Color(0,0,0), this->LoginFont, this->m_game->PCreateAccount, 0);
 	CAPass2.MaxLen = 12;
 	CAPass2.hashkey = '*';
 	this->TB_CAPassWrdTwo = world->RegisterTextBox(CAPass2);
@@ -221,8 +195,7 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 270;
 	Size.x = 240;
 	Size.y = 30;
-	D3DXCreateFont(Device,18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox CAName = Textbox(Pos, Size, D3DCOLOR_ARGB(255,0,0,0), this->LoginFont, game->PCreateAccount, 0);
+	Textbox CAName = Textbox(this->m_game, Pos, Size, sf::Color::Color(0,0,0), this->LoginFont, this->m_game->PCreateAccount, 0);
 	CAName.MaxLen = 64;
 	CAName.SetKeyMask(Textbox::KeyType::None);
 	this->TB_CAName = world->RegisterTextBox(CAName);
@@ -231,8 +204,7 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 320;
 	Size.x = 240;
 	Size.y = 30;
-	D3DXCreateFont(Device,18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox CACountry = Textbox(Pos, Size, D3DCOLOR_ARGB(255,0,0,0), this->LoginFont, game->PCreateAccount, 0);
+	Textbox CACountry = Textbox(this->m_game, Pos, Size, sf::Color::Color(0,0,0), this->LoginFont, this->m_game->PCreateAccount, 0);
 	CACountry.MaxLen = 64;
 	CACountry.SetKeyMask(Textbox::KeyType::None);
 	this->TB_CACountry = world->RegisterTextBox(CACountry);
@@ -241,81 +213,85 @@ void Menu::Initialize(World* _world, IDirect3DDevice9Ptr m_Device, LPVOID* m_gam
 	Pos.y = 370;
 	Size.x = 240;
 	Size.y = 30;
-	D3DXCreateFont(Device,18, 0, FW_DONTCARE, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Sans Serif"), &LoginFont );
-	Textbox CAEmail = Textbox(Pos, Size, D3DCOLOR_ARGB(255,0,0,0), this->LoginFont, game->PCreateAccount, 0);
+	Textbox CAEmail = Textbox(this->m_game, Pos, Size, sf::Color::Color(0,0,0), this->LoginFont, this->m_game->PCreateAccount, 0);
 	CAEmail.MaxLen = 64;
 	CAEmail.SetKeyMask(Textbox::KeyType::None);
 	this->TB_CAEmail = world->RegisterTextBox(CAEmail);
 
-
+	
 	world->SetFocusedTextbox(this->TB_AccNme);
 	this->LastDeleteRequest	= -1;
-	this->BT_CreateAccount = new Button(game,30,280,0,0,180,40,false, MenuButtonTexture);
-	this->BT_PlayGame = new Button(game, 30,320,0,40,180,40,false, MenuButtonTexture);
-	this->BT_ViewCredits = new Button(game, 30,360,0,80,180,40,false, MenuButtonTexture);
-	this->BT_ExitGame = new Button(game, 30,400,0,120,180,40,false, MenuButtonTexture);
+	this->BT_CreateAccount = new Button(this->m_game,30,280,0,0,180,40,false, this->m_game->ResourceManager->GetResource(1, 13, true));
+	this->BT_PlayGame = new Button(this->m_game, 30,320,0,40,180,40,false, this->m_game->ResourceManager->GetResource(1, 13, true));
+	this->BT_ViewCredits = new Button(this->m_game, 30,360,0,80,180,40,false, this->m_game->ResourceManager->GetResource(1, 13, true));
+	this->BT_ExitGame = new Button(this->m_game, 30,400,0,120,180,40,false, this->m_game->ResourceManager->GetResource(1, 13, true));
 
-	this->BT_LGPlayGame = new Button(game, 344,385,0,0,91,29,false, LoginButtonTexture);
-	this->BT_LGCancel = new Button(game, 437,385,0,29,91,29,false, LoginButtonTexture);
+	this->BT_LGPlayGame = new Button(this->m_game, 344,385,0,0,91,29,false, this->m_game->ResourceManager->GetResource(1, 15, true));
+	this->BT_LGCancel = new Button(this->m_game, 437,385,0,29,91,29,false, this->m_game->ResourceManager->GetResource(1, 15, true));
 	
-	this->BT_LGCreateChar = new Button(game, 344,415,0,0,120,39,false, LoginModificationTexture);
-	this->BT_LGChangePass = new Button(game, 344 + 122,415,0,120,120,39,false, LoginModificationTexture);
+	this->BT_LGCreateChar = new Button(this->m_game, 344,415,0,0,120,39,false, this->m_game->ResourceManager->GetResource(1, 14, true));
+	this->BT_LGChangePass = new Button(this->m_game, 344 + 122,415,0,120,120,39,false, this->m_game->ResourceManager->GetResource(1, 14, true));
 
-	this->BT_CreateCharOK = new Button(game, 314,323,0,116,91,28,false, LoginButtonTexture);
-	this->BT_CreateCharCancel = new Button(game, 407,323,0,29,91,28,false, LoginButtonTexture);
+	this->BT_CreateCharOK = new Button(this->m_game, 315,324,0,116,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
+	this->BT_CreateCharCancel = new Button(this->m_game, 408,324,0,29,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
 
-	this->BT_ChangePassOK = new Button(game, 314,323,0,116,91,28,false, LoginButtonTexture);
-	this->BT_ChangePassCancel = new Button(game, 407,323,0,29,91,28,false, LoginButtonTexture);
+	this->BT_ChangePassOK = new Button(this->m_game, 315,324,0,116,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
+	this->BT_ChangePassCancel = new Button(this->m_game, 408,324,0,29,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
 
 		
-	this->BT_CC_Login1 = new Button(game, 497,94,0,58,91,28,false, LoginButtonTexture);
-	this->BT_CC_Delete1 = new Button(game, 497,124,0,87,91,28,false, LoginButtonTexture);
+	this->BT_CC_Login1 = new Button(this->m_game, 497,94,0,58,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
+	this->BT_CC_Delete1 = new Button(this->m_game, 497,124,0,87,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
 
-	this->BT_CC_Login2 = new Button(game, 497,219,0,58,91,28,false, LoginButtonTexture);
-	this->BT_CC_Delete2 = new Button(game, 497,249,0,87,91,28,false, LoginButtonTexture);
+	this->BT_CC_Login2 = new Button(this->m_game, 497,219,0,58,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
+	this->BT_CC_Delete2 = new Button(this->m_game, 497,249,0,87,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
 
-	this->BT_CC_Login3 = new Button(game, 497,344,0,58,91,28,false, LoginButtonTexture);
-	this->BT_CC_Delete3 = new Button(game, 497,374,0,87,91,28,false, LoginButtonTexture);
+	this->BT_CC_Login3 = new Button(this->m_game, 497,344,0,58,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
+	this->BT_CC_Delete3 = new Button(this->m_game, 497,374,0,87,91,28,false, this->m_game->ResourceManager->GetResource(1, 15, true));
 
-	this->BT_CC_Gender = new Button(game, 352,213,184,38,21,18,false, CharacterModificationTexture);
-	this->BT_CC_HairCol = new Button(game, 352,267,184,38,21,18,false, CharacterModificationTexture);
+	this->BT_CC_Gender = new Button(this->m_game, 352,213,184,38,21,18,false, this->m_game->ResourceManager->GetResource(1, 22, false));
+	this->BT_CC_HairCol = new Button(this->m_game, 352,267,184,38,21,18,false, this->m_game->ResourceManager->GetResource(1, 22, false));
 
-	this->BT_CS_Adminone = new Button(game, 367,50,233,39,18,17,false, CharacterModificationTexture);
-	this->BT_CS_Admintwo = new Button(game, 367,175,233,39,18,17,false, CharacterModificationTexture);
-	this->BT_CS_Adminthree = new Button(game, 367,300,233,39,18,17,false, CharacterModificationTexture);
+	this->BT_CS_Adminone = new Button(this->m_game, 367,50,233,39,18,17,false, this->m_game->ResourceManager->GetResource(1, 22, false));
+	this->BT_CS_Admintwo = new Button(this->m_game, 367,175,233,39,18,17,false, this->m_game->ResourceManager->GetResource(1, 22, false));
+	this->BT_CS_Adminthree = new Button(this->m_game, 367,300,233,39,18,17,false, this->m_game->ResourceManager->GetResource(1, 22, false));
 
-	this->BT_CC_HairMod = new Button(game, 352,240,184,38,21,18,false, CharacterModificationTexture);
-	this->BT_CC_SkinCol = new Button(game, 352,294,184,38,21,18,false, CharacterModificationTexture);
+	this->BT_CC_HairMod = new Button(this->m_game, 352,240,184,38,21,18,false, this->m_game->ResourceManager->GetResource(1, 22, false));
+	this->BT_CC_SkinCol = new Button(this->m_game, 352,294,184,38,21,18,false, this->m_game->ResourceManager->GetResource(1, 22, false));
 	
-	this->BT_CCP_Gender = new Button(game, 327,212,0,38,23,19,false, CharacterModificationTexture);
-	this->BT_CCP_HairCol = new Button(game, 327,266,0,0,23,19,false, CharacterModificationTexture);
-	this->BT_CCP_HairMod = new Button(game, 327,239,0,19,23,19,false, CharacterModificationTexture);
-	this->BT_CCP_SkinCol = new Button(game, 327,293,46,38,23,19,false, CharacterModificationTexture);
+	this->BT_CCP_Gender = new Button(this->m_game, 327,212,0,38,23,19,false, this->m_game->ResourceManager->GetResource(1, 22, false));
+	this->BT_CCP_HairCol = new Button(this->m_game, 327,266,0,0,23,19,false, this->m_game->ResourceManager->GetResource(1, 22, false));
+	this->BT_CCP_HairMod = new Button(this->m_game, 327,239,0,19,23,19,false, this->m_game->ResourceManager->GetResource(1, 22, false));
+	this->BT_CCP_SkinCol = new Button(this->m_game, 327,293,46,38,23,19,false, this->m_game->ResourceManager->GetResource(1, 22, false));
 
-	this->BT_CAAccNme = new Button(game, this->TB_CAAccNme->position.x, this->TB_CAAccNme->position.y - 16, 0, 0, 149, 14,false, AccountCreateTexture);
-	this->BT_CAPassWrdOne = new Button(game, this->TB_CAPassWrdOne->position.x, this->TB_CAPassWrdOne->position.y - 16, 0, 14, 149, 14,false, AccountCreateTexture);
-	this->BT_CAPassWrdTwo = new Button(game, this->TB_CAPassWrdTwo->position.x, this->TB_CAPassWrdTwo->position.y - 18, 0, 28, 149, 16,false, AccountCreateTexture);
-	this->BT_CAName = new Button(game, this->TB_CAName->position.x, this->TB_CAName->position.y - 15, 0, 44, 149, 13,false, AccountCreateTexture);
-	this->BT_CACountry = new Button(game, this->TB_CACountry->position.x, this->TB_CACountry->position.y - 18, 0, 59, 149, 16,false, AccountCreateTexture);
-	this->BT_CAEmail = new Button(game, this->TB_CAEmail->position.x, this->TB_CAEmail->position.y - 16, 0, 76, 149, 14,false, AccountCreateTexture);
-	this->BT_CACreate = new Button(game, 340, 421, 0, 0, 120, 39,false, LoginModificationTexture);
-	this->BT_CACancel = new Button(game, 340 + 119 + 5, 421, 0, 40, 120, 39,false, LoginModificationTexture);
+	this->BT_CAAccNme = new Button(this->m_game, this->TB_CAAccNme->position.x, this->TB_CAAccNme->position.y - 16, 0,0, 149, 14,false, this->m_game->ResourceManager->GetResource(1, 12, true));
+	this->BT_CAPassWrdOne = new Button(this->m_game, this->TB_CAPassWrdOne->position.x, this->TB_CAPassWrdOne->position.y - 16, 0, 14, 149, 14,false, this->m_game->ResourceManager->GetResource(1, 12, true));
+	this->BT_CAPassWrdTwo = new Button(this->m_game, this->TB_CAPassWrdTwo->position.x, this->TB_CAPassWrdTwo->position.y - 18, 0, 28, 149, 16,false, this->m_game->ResourceManager->GetResource(1, 12, true));
+	this->BT_CAName = new Button(this->m_game, this->TB_CAName->position.x, this->TB_CAName->position.y - 15, 0, 44, 149, 13,false, this->m_game->ResourceManager->GetResource(1, 12, true));
+	this->BT_CACountry = new Button(this->m_game, this->TB_CACountry->position.x, this->TB_CACountry->position.y - 18, 0, 59, 149, 16,false, this->m_game->ResourceManager->GetResource(1, 12, true));
+	this->BT_CAEmail = new Button(this->m_game, this->TB_CAEmail->position.x, this->TB_CAEmail->position.y - 16, 0, 76, 149, 14,false, this->m_game->ResourceManager->GetResource(1, 12, true));
+	this->BT_CACreate = new Button(this->m_game, 341, 422, 0, 0, 120, 39,false, this->m_game->ResourceManager->GetResource(1, 14, true));
+	this->BT_CACancel = new Button(this->m_game, 341 + 119 + 6, 421, 0, 40, 120, 39,false, this->m_game->ResourceManager->GetResource(1, 14, true));
 
 	this->CCModel = new CharacterModel();
-	this->CCModel->Initialize((LPVOID*)game);
+	this->CCModel->InitializeModel(this->m_game);
 	for(int i = 0; i < 3; i++)
 	{
-		this->CSModels[i] = CharacterModel();
-		this->CSModels[i].Initialize((LPVOID*)game);
+		
+		this->CSModels[i].InitializeModel(this->m_game);
 	}
 	this->deletetrue = false;
 	this->LastDeleteRequest = -1;
 	
+
+	//this->DebugModel[i] = new CharacterModel();
+	//this->DebugModel.InitializeModel(this->m_game);
+
+	//randomizeppdoll();
 };
 
 void Menu::TabPressed()
 {
-	if(game->Stage == Game::PLogin)
+	if(this->m_game->Stage == Game::PLogin)
 	{
 		if(this->TB_AccNme->focused)
 		{
@@ -330,7 +306,7 @@ void Menu::TabPressed()
 			this->TB_PassWrd->focused = false;
 		}
 	}
-	else if(game->Stage == Game::PCharacterChoose && game->SubStage == 2)
+	else if(this->m_game->Stage == Game::PCharacterChoose && this->m_game->SubStage == 2)
 	{
 		if(this->TB_MyAccNme->focused)
 		{
@@ -357,7 +333,7 @@ void Menu::TabPressed()
 			this->TB_MyAccNme->focused = true;
 		}
 	} 
-	else if(game->Stage == Game::PCreateAccount)
+	else if(this->m_game->Stage == Game::PCreateAccount)
 	{
 		if(this->TB_CAAccNme->focused)
 		{
@@ -424,19 +400,20 @@ void Menu::TabPressed()
 
 void Menu::Update()
 {
-	if(LastDeleteRequest > -1 && game->MsgID == 1)
+	
+	if(LastDeleteRequest > -1 && this->m_game->MsgID == 1)
 	{
-		SCharacter::DeletePlayer(game->world->connection->ClientStream,LastDeleteRequest,(LPVOID*)this);
+		SCharacter::DeletePlayer(this->m_game->world->connection->ClientStream,LastDeleteRequest,(LPVOID*)this);
 		LastDeleteRequest = -1;
-		game->MsgID = 0;
+		this->m_game->MsgID = 0;
 	}
 
-	if(game->Stage == 0 || game->Stage == 1||game->Stage == 3)
+	if(this->m_game->Stage == 0 || this->m_game->Stage == 1|| this->m_game->Stage == 3)
 	{
-			this->BT_CreateAccount->Update(game->MouseX, game->MouseY, game->MousePressed);
-			this->BT_PlayGame->Update(game->MouseX, game->MouseY, game->MousePressed);
-			this->BT_ViewCredits->Update(game->MouseX, game->MouseY, game->MousePressed);
-			this->BT_ExitGame->Update(game->MouseX, game->MouseY, game->MousePressed);
+			this->BT_CreateAccount->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+			this->BT_PlayGame->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+			this->BT_ViewCredits->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+			this->BT_ExitGame->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
 
 			if(this->BT_CreateAccount->MouseClickedOnElement())
 			{
@@ -450,13 +427,13 @@ void Menu::Update()
 				if(!World::Connected)
 				{
 					this->SelectID = 2;
-					game->world->RawPacketCount = 0;
+					this->m_game->world->RawPacketCount = 0;
 					this->world->CreateConnection();
 				}
 				else
 				{
 					this->SelectID = 0;
-					game->Stage = game->PCreateAccount;
+					this->m_game->Stage = this->m_game->PCreateAccount;
 				}
 				this->BT_CreateAccount->Deactivate();
 			}
@@ -475,53 +452,53 @@ void Menu::Update()
 			else
 			{
 				this->SelectID = 0;
-				game->Stage = game->PLogin;
+				this->m_game->Stage = this->m_game->PLogin;
 			}
 			this->BT_PlayGame->Deactivate();
 			}
 			else if(this->BT_ViewCredits->MouseClickedOnElement())
 			{
-				game->Stage = game->PViewCredits;
+				this->m_game->Stage = this->m_game->PViewCredits;
 				this->BT_ViewCredits->Deactivate();
 			}
 			else if(this->BT_ExitGame->MouseClickedOnElement())
 			{
-				PostQuitMessage(0);
+				this->m_game->Close();
 			}
 	}
 
-	switch(game->Stage)
+	switch(this->m_game->Stage)
 	{
 	
-	case(game->PMenu):
+	case(this->m_game->PMenu):
 		{
-			game->SubStage = 0;
+		this->m_game->SubStage = 0;
 			break;
 		};
-	case(game->PLogin):
+	case(this->m_game->PLogin):
 		{
 			if(world->GetFocusedTextbox() != this->TB_AccNme && world->GetFocusedTextbox() != this->TB_PassWrd)
 			{
 				world->SetFocusedTextbox(this->TB_AccNme);
 			}
-			this->BT_LGPlayGame->Update(game->MouseX, game->MouseY, game->MousePressed);
-			if(BT_LGPlayGame->MouseClickedOnElement() && game->MousePressed)
+			this->BT_LGPlayGame->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+			if(BT_LGPlayGame->MouseClickedOnElement() && this->m_game->MousePressed)
 			{
 				Login();
 			}
-			this->BT_LGCancel->Update(game->MouseX, game->MouseY, game->MousePressed);
-			if(this->TB_AccNme->CheckCollision(game->MouseX,game->MouseY))
+			this->BT_LGCancel->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+			if(this->TB_AccNme->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 			{
-				if(game->MousePressed)
+				if(this->m_game->MousePressed)
 				{
 					world->SetFocusedTextbox(this->TB_AccNme);
 					this->TB_AccNme->focused = true;
 					this->TB_PassWrd->focused = false;
 				}
 			}
-			else if(this->TB_PassWrd->CheckCollision(game->MouseX,game->MouseY))
+			else if(this->TB_PassWrd->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 			{
-				if(game->MousePressed)
+				if(this->m_game->MousePressed)
 				{
 				    world->SetFocusedTextbox(this->TB_PassWrd);
 					this->TB_AccNme->focused = false;
@@ -535,16 +512,16 @@ void Menu::Update()
 			}
 			break;
 		};
-		case(game->PViewCredits):
+		case(this->m_game->PViewCredits):
 		{
 			break;
 		};
-		case(game->PCreateAccount):
+		case(this->m_game->PCreateAccount):
 		{
-			if(world->GetFocusedTextbox()->Phase != game->PCreateAccount)
+			if(world->GetFocusedTextbox()->Phase != this->m_game->PCreateAccount)
 			{ world->SetFocusedTextbox(this->TB_CAAccNme); }
-			this->BT_CACreate->Update(game->MouseX,game->MouseY,game->MousePressed);
-			this->BT_CACancel->Update(game->MouseX,game->MouseY,game->MousePressed);
+			this->BT_CACreate->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+			this->BT_CACancel->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
 			if(BT_CACancel->MouseClickedOnElement())
 			{
 				world->DropConnection();
@@ -555,9 +532,9 @@ void Menu::Update()
 				CreateAccount();
 				BT_CACreate->Deactivate();
 			}
-			if(this->TB_CAAccNme->CheckCollision(game->MouseX,game->MouseY))
+			if(this->TB_CAAccNme->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 			{
-				if(game->MousePressed)
+				if(this->m_game->MousePressed)
 				{
 					world->SetFocusedTextbox(this->TB_CAAccNme);
 					this->TB_CAAccNme->focused = true;
@@ -568,9 +545,9 @@ void Menu::Update()
 					this->TB_CAEmail->focused = false;
 				}
 			}
-			else if(this->TB_CAPassWrdOne->CheckCollision(game->MouseX,game->MouseY))
+			else if(this->TB_CAPassWrdOne->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 			{
-				if(game->MousePressed)
+				if(this->m_game->MousePressed)
 				{
 					world->SetFocusedTextbox(this->TB_CAPassWrdOne);
 					this->TB_CAAccNme->focused = false;
@@ -581,9 +558,9 @@ void Menu::Update()
 					this->TB_CAEmail->focused = false;
 				}
 			}
-			else if(this->TB_CAPassWrdTwo->CheckCollision(game->MouseX,game->MouseY))
+			else if(this->TB_CAPassWrdTwo->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 			{
-				if(game->MousePressed)
+				if(this->m_game->MousePressed)
 				{
 					world->SetFocusedTextbox(this->TB_CAPassWrdTwo);
 					this->TB_CAAccNme->focused = false;
@@ -594,9 +571,9 @@ void Menu::Update()
 					this->TB_CAEmail->focused = false;
 				}
 			}
-			else if(this->TB_CAName->CheckCollision(game->MouseX,game->MouseY))
+			else if(this->TB_CAName->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 			{
-				if(game->MousePressed)
+				if(this->m_game->MousePressed)
 				{
 					world->SetFocusedTextbox(this->TB_CAName);
 					this->TB_CAAccNme->focused = false;
@@ -607,9 +584,9 @@ void Menu::Update()
 					this->TB_CAEmail->focused = false;
 				}
 			}
-			else if(this->TB_CACountry->CheckCollision(game->MouseX,game->MouseY))
+			else if(this->TB_CACountry->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 			{
-				if(game->MousePressed)
+				if(this->m_game->MousePressed)
 				{
 					world->SetFocusedTextbox(this->TB_CACountry);
 					this->TB_CAAccNme->focused = false;
@@ -620,9 +597,9 @@ void Menu::Update()
 					this->TB_CAEmail->focused = false;
 				}
 			}
-			else if(this->TB_CAEmail->CheckCollision(game->MouseX,game->MouseY))
+			else if(this->TB_CAEmail->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 			{
-				if(game->MousePressed)
+				if(this->m_game->MousePressed)
 				{
 					world->SetFocusedTextbox(this->TB_CAEmail);
 					this->TB_CAAccNme->focused = false;
@@ -635,21 +612,20 @@ void Menu::Update()
 			}
 			break;
 		};
-		case(game->PCharacterChoose):
+		case(this->m_game->PCharacterChoose):
 		{
-			switch(game->SubStage)
+			switch(this->m_game->SubStage)
 			{
 			case(0):
 				{
-					this->BT_LGChangePass->Update(game->MouseX, game->MouseY, game->MousePressed);
-					this->BT_LGCreateChar->Update(game->MouseX, game->MouseY, game->MousePressed);
-					BT_CC_Login1->Update(game->MouseX, game->MouseY, game->MousePressed);
-					BT_CC_Delete1->Update(game->MouseX, game->MouseY, game->MousePressed);
+					this->BT_LGChangePass->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					this->BT_LGCreateChar->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					BT_CC_Login1->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					BT_CC_Delete1->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
 					if (BT_CC_Login1->MouseClickedOnElement() && CSModels[0].name != "")
 					{
-						//game->SetStage(Game::GameStage::PInGame);
 						World::WorldCharacterID = CSModels[0].Game_ID;
-						SWelcome::LoginCharacter(world->connection->ClientStream, CSModels[0].Game_ID, (VOID*)game);
+						SWelcome::LoginCharacter(world->connection->ClientStream, CSModels[0].Game_ID, this->m_game);
 						BT_CC_Login1->Deactivate();
 					}
 					else if(BT_CC_Delete1->MouseClickedOnElement())
@@ -664,18 +640,17 @@ void Menu::Update()
 						}
 						else
 						{
-							SCharacter::RequestDeletePlayer(world->connection->ClientStream,0,(LPVOID*)game);
+							SCharacter::RequestDeletePlayer(world->connection->ClientStream,0, this->m_game);
 							World::ThrowMessage("Delete character","Character '" + CSModels[0].name + "' is going to be \ndeleted. Are you sure?", true);
 						}
 						BT_CC_Delete1->Deactivate();
 					}
-					BT_CC_Login2->Update(game->MouseX, game->MouseY, game->MousePressed);
-					BT_CC_Delete2->Update(game->MouseX, game->MouseY, game->MousePressed);
+					BT_CC_Login2->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					BT_CC_Delete2->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
 					if (BT_CC_Login2->MouseClickedOnElement() && CSModels[1].name != "")
 					{
-						//game->SetStage(Game::GameStage::PInGame);
 						World::WorldCharacterID = CSModels[1].Game_ID;
-						SWelcome::LoginCharacter(world->connection->ClientStream, CSModels[1].Game_ID, (VOID*)game);
+						SWelcome::LoginCharacter(world->connection->ClientStream, CSModels[1].Game_ID, this->m_game);
 						BT_CC_Login2->Deactivate();
 					}
 					else if(BT_CC_Delete2->MouseClickedOnElement())
@@ -690,18 +665,17 @@ void Menu::Update()
 						}
 						else
 						{
-							SCharacter::RequestDeletePlayer(world->connection->ClientStream,1,(LPVOID*)game);
+							SCharacter::RequestDeletePlayer(world->connection->ClientStream,1, this->m_game);
 							World::ThrowMessage("Delete character","Character '" + CSModels[1].name + "' is going to be \ndeleted. Are you sure?", true);
 						}
 						BT_CC_Delete2->Deactivate();
 					}
-					BT_CC_Login3->Update(game->MouseX, game->MouseY, game->MousePressed);
-					BT_CC_Delete3->Update(game->MouseX, game->MouseY, game->MousePressed);
+					BT_CC_Login3->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					BT_CC_Delete3->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
 					if (BT_CC_Login3->MouseClickedOnElement() && CSModels[2].name != "")
 					{
-						//game->SetStage(Game::GameStage::PInGame);
 						World::WorldCharacterID = CSModels[2].Game_ID;
-						SWelcome::LoginCharacter(world->connection->ClientStream, CSModels[2].Game_ID, (VOID*)game);
+						SWelcome::LoginCharacter(world->connection->ClientStream, CSModels[2].Game_ID, this->m_game);
 						BT_CC_Login3->Deactivate();
 					}
 					else if(BT_CC_Delete3->MouseClickedOnElement())
@@ -716,7 +690,7 @@ void Menu::Update()
 						}
 						else
 						{
-							SCharacter::RequestDeletePlayer(world->connection->ClientStream,2,(LPVOID*)game);
+							SCharacter::RequestDeletePlayer(world->connection->ClientStream,2, this->m_game);
 							World::ThrowMessage("Delete character","Character '" + CSModels[2].name + "' is going to be \ndeleted. Are you sure?", true);
 						}
 						BT_CC_Delete3->Deactivate();
@@ -726,9 +700,8 @@ void Menu::Update()
 					this->TB_CreateChar->focused = true;
 					if(this->BT_LGCreateChar->MouseClickedOnElement())
 					{
-						SCharacter::RequestCreatePlayer(this->world->connection->ClientStream, (LPVOID*) game);
-						if(game->AccountCharacterSize < 3)
-						{
+						SCharacter::RequestCreatePlayer(this->world->connection->ClientStream, this->m_game);
+
 							world->MassTextBoxReset();
 							this->CCModel->SetCharacter(0,0,0,0,0);
 							this->BT_CCP_Gender->SetFrameID(0);
@@ -738,12 +711,8 @@ void Menu::Update()
 							world->SetFocusedTextbox(this->TB_CreateChar);
 
 							this->BT_LGCreateChar->Deactivate();
-							this->BT_LGCreateChar->Update(0, 0, game->MousePressed);
-						}
-						else
-						{
-							//World::ThrowMessage("Request denied","You can only have 3 characters. Please \ndelete a character and try again");
-						}
+							this->BT_LGCreateChar->Update(0, 0, this->m_game->MousePressed);
+
 						this->BT_LGCreateChar->Deactivate();
 					}
 					if(this->BT_LGChangePass->MouseClickedOnElement())
@@ -752,35 +721,33 @@ void Menu::Update()
 						world->SetFocusedTextbox(this->TB_MyAccNme);
 
 
-						game->SubStage = 2;
+						this->m_game->SubStage = 2;
 						this->BT_LGChangePass->Deactivate();
 						this->BT_LGChangePass->SetFrameID(0);  
-						//this->BT_LGChangePass->Update(0, 0, game->MousePressed);
+						//this->BT_LGChangePass->Update(0, 0, this->m_game->MousePressed);
 					}
 					break;
 				}
 			case(1):
 				{
 					world->SetFocusedTextbox(this->TB_CreateChar);
-					this->BT_CreateCharCancel->Update(game->MouseX, game->MouseY, game->MousePressed);
-					this->BT_CreateCharOK->Update(game->MouseX, game->MouseY, game->MousePressed);
-					this->BT_CC_Gender->Update(game->MouseX, game->MouseY, game->MousePressed);
-					this->BT_CC_HairCol->Update(game->MouseX, game->MouseY, game->MousePressed);
-					this->BT_CC_HairMod->Update(game->MouseX, game->MouseY, game->MousePressed);
-					this->BT_CC_SkinCol->Update(game->MouseX, game->MouseY, game->MousePressed);
+					CCModel->UpdateAppearence();
+					this->BT_CreateCharCancel->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					this->BT_CreateCharOK->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					this->BT_CC_Gender->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					this->BT_CC_HairCol->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					this->BT_CC_HairMod->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					this->BT_CC_SkinCol->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
 					if(this->BT_CreateCharCancel->MouseClickedOnElement())
 					{
-						game->SubStage = 0;
+						this->m_game->SubStage = 0;
 						this->BT_CreateCharCancel->Deactivate();
 					}
 					if(this->BT_CreateCharOK->MouseClickedOnElement())
 					{
-						char ch[260];
-						char DefChar = ' ';
-						WideCharToMultiByte(CP_ACP,0, this->TB_CreateChar->text.c_str(),-1, ch,260,&DefChar, NULL);
-						std::string Accname(ch);
-						CCModel->name = ch;
-						SCharacter::CreatePlayer(this->world->connection->ClientStream, (LPVOID*) game);
+						std::string Accname(this->TB_CreateChar->text);
+						CCModel->name = Accname;
+						SCharacter::CreatePlayer(this->world->connection->ClientStream, this->m_game);
 						this->BT_CreateCharOK->Deactivate();
 					}
 
@@ -845,11 +812,11 @@ void Menu::Update()
 				}
 				case(2):
 				{
-					this->BT_ChangePassCancel->Update(game->MouseX, game->MouseY, game->MousePressed);
-					this->BT_ChangePassOK->Update(game->MouseX, game->MouseY, game->MousePressed);
+					this->BT_ChangePassCancel->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
+					this->BT_ChangePassOK->Update(this->m_game->MouseX, this->m_game->MouseY, this->m_game->MousePressed);
 					if(this->BT_ChangePassCancel->MouseClickedOnElement())
 					{
-						game->SubStage = 0;
+						this->m_game->SubStage = 0;
 						this->BT_ChangePassCancel->Deactivate();
 					}
 					if(this->BT_ChangePassOK->MouseClickedOnElement())
@@ -857,9 +824,9 @@ void Menu::Update()
 						this->ChangePass();
 						this->BT_ChangePassOK->Deactivate();
 					}
-					if(this->TB_MyAccNme->CheckCollision(game->MouseX,game->MouseY))
+					if(this->TB_MyAccNme->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 					{
-						if(game->MousePressed)
+						if(this->m_game->MousePressed)
 						{
 							world->SetFocusedTextbox(this->TB_MyAccNme);
 							this->TB_MyAccNme->focused = true;
@@ -868,9 +835,9 @@ void Menu::Update()
 							this->TB_MyNewPass2->focused = false;
 						}
 					}
-					else if(this->TB_MyPass->CheckCollision(game->MouseX,game->MouseY))
+					else if(this->TB_MyPass->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 					{
-						if(game->MousePressed)
+						if(this->m_game->MousePressed)
 						{
 							world->SetFocusedTextbox(this->TB_MyPass);
 							this->TB_MyAccNme->focused = false;
@@ -879,9 +846,9 @@ void Menu::Update()
 							this->TB_MyNewPass2->focused = false;
 						}
 					}
-					else if(this->TB_MyNewPass1->CheckCollision(game->MouseX,game->MouseY))
+					else if(this->TB_MyNewPass1->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 					{
-						if(game->MousePressed)
+						if(this->m_game->MousePressed)
 						{
 							world->SetFocusedTextbox(this->TB_MyNewPass1);
 							this->TB_MyAccNme->focused = false;
@@ -890,9 +857,9 @@ void Menu::Update()
 							this->TB_MyNewPass2->focused = false;
 						}
 					}
-					else if(this->TB_MyNewPass2->CheckCollision(game->MouseX,game->MouseY))
+					else if(this->TB_MyNewPass2->CheckCollision(this->m_game->MouseX, this->m_game->MouseY))
 					{
-						if(game->MousePressed)
+						if(this->m_game->MousePressed)
 						{
 							world->SetFocusedTextbox(this->TB_MyNewPass2);
 							this->TB_MyAccNme->focused = false;
@@ -911,124 +878,153 @@ void Menu::Update()
 	};
 };
 
+void Menu::randomizeppdoll()
+{
+	int SkinCol = rand() % 6;
+	int HatID = rand() % 60;
+	int HairID = rand() % 20;
+	int HairCol = rand() % 20;
+	int ArmorID = rand() % 60;
+	int ShoeID = rand() % 40;
+	int WeaponID = rand() % 70;
+	int ShieldID = rand() % 20;
+	int Gender = 0;
+
+		//this->DebugModel[i] = new CharacterModel();
+		this->DebugModel.SetCharacter(Gender, HairID, HairCol, SkinCol, 0, ArmorID, WeaponID, ShoeID,ShieldID);
+		this->DebugModel.UpdateAppearence();
+
+}
 void Menu::Render()
 {
-	    this->Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_DEPTH_FRONTTOBACK);
-		game->Draw(this->Sprite,this->BgTex.Texture,1,1,D3DCOLOR_ARGB(255,255,255,255) );
+	this->m_game->Draw(1, BgID, false, 0, 0);
+	//this->m_game->Draw(this->m_game->Map_UserInterface->map_ChatBubbleHandler->ChatBoxBG, 0, 0, sf::Color::Black, 0, 0, 640, 480, sf::Vector2f(1, 1), 0.00f);
 
-		switch(game->Stage)
+	//int direction = 0;
+
+	//if (m_game->MousePressed)
+	//{
+		//randomizeppdoll();
+	//}
+	//for (int i = 0; i < 44; i++)
+	//{
+		/*int tileposx = 24 + (64 * (i % 9));
+		int tileposy = 90 + (80 * (i / 9));
+		this->m_game->Draw(this->m_game->ResourceManager->GetResource(3, 296, true), tileposx, tileposy, sf::Color::White, 0, 0, 64, 32, sf::Vector2f(1.0, 1.0), 0);
+		this->DebugModel.direction = i / 11;
+		int playerx = 50 + (64 * (i % 9));
+		int playery = 50 + (80 * (i / 9));
+		this->DebugModel.Render(i % 11, playerx, playery, 0, sf::Color::White);*/
+	//}
+
+
+		switch(this->m_game->Stage)
 		{
-			case(game->PMenu):
+			case(this->m_game->PMenu):
 				{
-					game->Draw(this->Sprite,this->FgTex.Texture,230, 480 - game->ResourceManager->GetImageInfo(1,FgID, true).Height - 10,D3DCOLOR_ARGB(255,255,255,255) );
-									
-					this->BT_CreateAccount->Draw(this->Sprite);
-					this->BT_PlayGame->Draw(this->Sprite);
-					this->BT_ViewCredits->Draw(this->Sprite);
-					this->BT_ExitGame->Draw(this->Sprite);
+				this->m_game->Draw(1, FgID, true, 230, 470 - this->m_game->ResourceManager->GetResource(1, FgID, true)->_height);
+				
+					this->BT_CreateAccount->Draw();
+					this->BT_PlayGame->Draw();
+					this->BT_ViewCredits->Draw();
+					this->BT_ExitGame->Draw();
 					break;
 				}
-			case(game->PLogin):
+			case(this->m_game->PLogin):
 				{
-					game->Draw(this->Sprite,this->FgTex.Texture,230, 480 - game->ResourceManager->GetImageInfo(1,FgID, true).Height - 10,D3DCOLOR_ARGB(255,255,255,255) );		
-					game->Draw(this->Sprite,this->LoginBoxTex.Texture,240, 280,D3DCOLOR_ARGB(255,255,255,255) );
-					game->Draw(this->Sprite,TX_TxtBox,this->TB_AccNme->position.x - 5,this->TB_AccNme->position.y + 1,D3DCOLOR_ARGB(255,255,255,255));
-					game->Draw(this->Sprite,TX_TxtBox,this->TB_PassWrd->position.x - 5,this->TB_PassWrd->position.y,D3DCOLOR_ARGB(255,255,255,255));
-					this->BT_CreateAccount->Draw(this->Sprite);
-					this->BT_PlayGame->Draw(this->Sprite);
-					this->BT_ViewCredits->Draw(this->Sprite);
-					this->BT_ExitGame->Draw(this->Sprite);
-
-					this->BT_LGPlayGame->Draw(this->Sprite);
-					this->BT_LGCancel->Draw(this->Sprite);
-
-					break;
-				}
-			case(game->PViewCredits):
-				{
-					this->BT_CreateAccount->Draw(this->Sprite);
-					this->BT_PlayGame->Draw(this->Sprite);
-					this->BT_ViewCredits->Draw(this->Sprite);
-					this->BT_ExitGame->Draw(this->Sprite);
-					break;
-				}
-			case(game->PCreateAccount):
-				{
-					game->Draw(this->Sprite,this->LoginFgTex.Texture,30, 480 - game->ResourceManager->GetImageInfo(1,LoginFgID, true).Height - 10,D3DCOLOR_ARGB(255,255,255,255) );
-					game->Draw(this->Sprite,TX_CATxtBox,this->TB_CAAccNme->position.x - 5,this->TB_CAAccNme->position.y + 1,D3DCOLOR_ARGB(255,255,255,255));
-					game->Draw(this->Sprite,TX_CATxtBox,this->TB_CAPassWrdOne->position.x - 5,this->TB_CAPassWrdOne->position.y + 1,D3DCOLOR_ARGB(255,255,255,255));
-					game->Draw(this->Sprite,TX_CATxtBox,this->TB_CAPassWrdTwo->position.x - 5,this->TB_CAPassWrdTwo->position.y + 1,D3DCOLOR_ARGB(255,255,255,255));
-					game->Draw(this->Sprite,TX_CATxtBox,this->TB_CAName->position.x - 5,this->TB_CAName->position.y + 1,D3DCOLOR_ARGB(255,255,255,255));
-					game->Draw(this->Sprite,TX_CATxtBox,this->TB_CACountry->position.x - 5,this->TB_CACountry->position.y + 1,D3DCOLOR_ARGB(255,255,255,255));
-					game->Draw(this->Sprite,TX_CATxtBox,this->TB_CAEmail->position.x - 5,this->TB_CAEmail->position.y + 1,D3DCOLOR_ARGB(255,255,255,255));
-					this->BT_CAAccNme->Draw(Sprite);
-					this->BT_CAPassWrdOne->Draw(Sprite);
-					this->BT_CAPassWrdTwo->Draw(Sprite);
-					this->BT_CAName->Draw(Sprite);
-					this->BT_CACountry->Draw(Sprite);
-					this->BT_CAEmail->Draw(Sprite);
-					this->BT_CACreate->Draw(Sprite);
-					this->BT_CACancel->Draw(Sprite);
-
-					this->TB_CAAccNme->Render(Sprite);
-					this->TB_CAPassWrdOne->Render(Sprite);
-					this->TB_CAPassWrdTwo->Render(Sprite);
-					this->TB_CAName->Render(Sprite);
-					this->TB_CACountry->Render(Sprite);
-					this->TB_CAEmail->Render(Sprite);
-
-					break;
-				}
-			case(game->PCharacterChoose):
-				{
-					game->Draw(this->Sprite,this->LoginFgTex.Texture,30, 480 - game->ResourceManager->GetImageInfo(1,LoginFgID, true).Height - 10,D3DCOLOR_ARGB(255,255,255,255) );
-					game->Draw(this->Sprite,this->CharacterBox.Texture, 338, 40, D3DCOLOR_ARGB(255,255,255,255) );
-					game->Draw(this->Sprite,this->CharacterBox.Texture, 338, 165, D3DCOLOR_ARGB(255,255,255,255) );
-					game->Draw(this->Sprite,this->CharacterBox.Texture, 338, 289, D3DCOLOR_ARGB(255,255,255,255) );
+				this->m_game->Draw(1, 2, false, 240, 280);
+				this->m_game->Draw(Txbox_Texture, this->TB_AccNme->position.x - 5, this->TB_AccNme->position.y + 1);
+				this->m_game->Draw(Txbox_Texture, this->TB_PassWrd->position.x - 5, this->TB_PassWrd->position.y);
 					
-					BT_CC_Login1->Draw(this->Sprite);
-					BT_CC_Delete1->Draw(this->Sprite);
-					BT_CC_Login2->Draw(this->Sprite);
-					BT_CC_Delete2->Draw(this->Sprite);
-					BT_CC_Login3->Draw(this->Sprite);
-					BT_CC_Delete3->Draw(this->Sprite);
-					for(int i =0; i < game->AccountCharacterSize;i++)
+					this->BT_CreateAccount->Draw();
+					this->BT_PlayGame->Draw();
+					this->BT_ViewCredits->Draw();
+					this->BT_ExitGame->Draw();
+
+					this->BT_LGPlayGame->Draw();
+					this->BT_LGCancel->Draw();
+
+					break;
+				}
+			case(this->m_game->PViewCredits):
+				{
+					this->BT_CreateAccount->Draw();
+					this->BT_PlayGame->Draw();
+					this->BT_ViewCredits->Draw();
+					this->BT_ExitGame->Draw();
+					break;
+				}
+			case(this->m_game->PCreateAccount):
+				{
+				this->m_game->Draw(1, LoginFgID, true, 30, 470 - this->m_game->ResourceManager->GetResource(1, LoginFgID, true)->_height);
+				this->m_game->Draw(Txbox_Texture, this->TB_CAAccNme->position.x - 5, this->TB_CAAccNme->position.y + 1, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(2, 1));
+				this->m_game->Draw(Txbox_Texture, this->TB_CAPassWrdOne->position.x - 5, this->TB_CAPassWrdOne->position.y + 1, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(2, 1));
+					this->m_game->Draw(Txbox_Texture, this->TB_CAPassWrdTwo->position.x - 5, this->TB_CAPassWrdTwo->position.y + 1, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(2, 1));
+					this->m_game->Draw(Txbox_Texture, this->TB_CAName->position.x - 5, this->TB_CAName->position.y + 1, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(2, 1));
+					this->m_game->Draw(Txbox_Texture, this->TB_CACountry->position.x - 5, this->TB_CACountry->position.y + 1, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(2, 1));
+					this->m_game->Draw(Txbox_Texture, this->TB_CAEmail->position.x - 5, this->TB_CAEmail->position.y + 1, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(2, 1));
+
+					this->BT_CAAccNme->Draw();
+					this->BT_CAPassWrdOne->Draw();
+					this->BT_CAPassWrdTwo->Draw();
+					this->BT_CAName->Draw();
+					this->BT_CACountry->Draw();
+					this->BT_CAEmail->Draw();
+					this->BT_CACreate->Draw();
+					this->BT_CACancel->Draw();
+					break;
+				}
+			case(this->m_game->PCharacterChoose):
+				{
+				this->m_game->Draw(1, LoginFgID, true, 30, 470 - this->m_game->ResourceManager->GetResource(1, LoginFgID, true)->_height);
+				this->m_game->Draw(1, 11, false, 338, 40);
+				this->m_game->Draw(1, 11, false, 338, 165);
+				this->m_game->Draw(1, 11, false, 338, 289);
+					
+					BT_CC_Login1->Draw(0.05f);
+					BT_CC_Delete1->Draw(0.05f);
+					BT_CC_Login2->Draw(0.05f);
+					BT_CC_Delete2->Draw(0.05f);
+					BT_CC_Login3->Draw(0.05f);
+					BT_CC_Delete3->Draw(0.05f);
+					for(int i =0; i < this->m_game->AccountCharacterSize;i++)
 					{
-						this->CSModels[i].Render(Sprite,400,80+(i*125), 0.1f);
+						this->CSModels[i].Render(400,80+(i*125), 0.1f);
 					}			
 					if(this->CSModels[0].admin >0)
 					{
-						BT_CS_Adminone->Draw(this->Sprite);
+						BT_CS_Adminone->Draw(0.05f);
 					}
 					if(this->CSModels[1].admin >0)
 					{
-						BT_CS_Admintwo->Draw(this->Sprite);
+						BT_CS_Admintwo->Draw(0.05f);
 					}
 					if(this->CSModels[2].admin >0)
 					{
-						BT_CS_Adminthree->Draw(this->Sprite);
+						BT_CS_Adminthree->Draw(0.05f);
 					}
-					for(int i = 0; i < game->AccountCharacterSize;i++)
+					for(int i = 0; i < this->m_game->AccountCharacterSize;i++)
 					{
 						RECT rct;
-						rct.left= 445;
+						rct.left= 547;
 						rct.right= rct.left + 200;
-						rct.top= 67 + (i*125);
+						rct.top= 68 + (i*125);
 						rct.bottom= rct.top + 30;
-						LoginFont->DrawTextA(this->Sprite,CSModels[i].name.c_str(),-1,&rct, DT_CENTER, D3DCOLOR_ARGB(185, 240, 240, 199));
 
-						rct.left= 320;
+						this->m_game->DrawTextW(CSModels[i].name.c_str(), rct.left, rct.top, sf::Color::Color(240, 240, 240, 185), 13, true);
+						
+						rct.left= 368;
 						rct.right= rct.left + 108;
-						rct.top= 135 + (i*125);
+						rct.top= 137 + (i*125);
 						rct.bottom= rct.top + 30;
 						std::basic_string<char> str = "";
 						char* st = new char[8];
 						_itoa((BYTE)CSModels[i].level, st, 10);
 						str += st;
-						LoginFont->DrawTextA(this->Sprite,str.c_str(),-1,&rct, DT_CENTER,  D3DCOLOR_ARGB(185, 240, 240, 199));
+						this->m_game->DrawTextW(str.c_str(), rct.left, rct.top, sf::Color::Color(240, 240, 240, 185),13,false);
 					}
 					
-					switch(game->SubStage)
+					switch(this->m_game->SubStage)
 					{
 					case(0):
 						 {
@@ -1036,61 +1032,53 @@ void Menu::Render()
 						 }
 					case(1):
 						 {
-							game->Draw(this->Sprite,this->CreateCharTex.Texture, 158, 129, 0.05f, D3DCOLOR_ARGB(255,255,255,255) );
-							this->BT_CreateCharCancel->Draw(this->Sprite);
-							this->BT_CreateCharOK->Draw(this->Sprite);
-							this->BT_CC_Gender->Draw(this->Sprite);
-							this->BT_CC_HairCol->Draw(this->Sprite);
-							this->BT_CC_HairMod->Draw(this->Sprite);
-							this->BT_CC_SkinCol->Draw(this->Sprite);
+							this->m_game->Draw(1, 20, false, 158, 129, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(1, 1), 0.04f);
+							this->BT_CreateCharCancel->Draw();
+							this->BT_CreateCharOK->Draw();
+							this->BT_CC_Gender->Draw();
+							this->BT_CC_HairCol->Draw();
+							this->BT_CC_HairMod->Draw();
+							this->BT_CC_SkinCol->Draw();
 
-							this->BT_CCP_Gender->Draw(this->Sprite);
-							this->BT_CCP_HairCol->Draw(this->Sprite);
-							this->BT_CCP_HairMod->Draw(this->Sprite);
-							this->BT_CCP_SkinCol->Draw(this->Sprite);
+							this->BT_CCP_Gender->Draw();
+							this->BT_CCP_HairCol->Draw();
+							this->BT_CCP_HairMod->Draw();
+							this->BT_CCP_SkinCol->Draw();
 
-							this->CCModel->Render(Sprite,430,225,0.03f);
+							this->CCModel->Render(430,225,0.03f);
 							break;
 						 }
 					case(2):
 						{
-							game->Draw(this->Sprite,this->ChangePassTex.Texture, 158, 129, D3DCOLOR_ARGB(255,255,255,255) );
-							this->BT_ChangePassCancel->Draw(this->Sprite);
-							this->BT_ChangePassOK->Draw(this->Sprite);
+							this->m_game->Draw(1, 21, false, 158, 129, sf::Color::White, 0, 0, -1, -1, sf::Vector2f(1, 1), 0.04f);
+							this->BT_ChangePassCancel->Draw();
+							this->BT_ChangePassOK->Draw();
 						}
 					}
 
 
-					this->BT_LGCreateChar->Draw(this->Sprite);
-					this->BT_LGChangePass->Draw(this->Sprite);
+					this->BT_LGCreateChar->Draw();
+					this->BT_LGChangePass->Draw();
 					break;
 				}
 		}
 	
-		this->world->RenderTextBoxes(this->Sprite,game->Stage, game->SubStage);
-		this->Sprite->End();
+		this->world->RenderTextBoxes(this->m_game->Stage, this->m_game->SubStage);
+		//this->Sprite->End();
 };
 
 void Menu::Release()
 {
-	this->BgTex.Texture.reset();
+	this->BgTex._Texture.reset();
 }
 
 void Menu::Login()
 {
-	if (this->TB_AccNme->text == L"" || this->TB_PassWrd->text == L"")
+	if (this->TB_AccNme->text == "" || this->TB_PassWrd->text == "")
        { }
        else
 		{
-			char ch[260];
-			char DefChar = ' ';
-			WideCharToMultiByte(CP_ACP,0, this->TB_AccNme->text.c_str(),-1, ch,260,&DefChar, NULL);
-			std::string Accname(ch);
-			ch[260];
-			DefChar = ' ';
-			WideCharToMultiByte(CP_ACP,0, this->TB_PassWrd->text.c_str(),-1, ch,260,&DefChar, NULL);
-			std::string Pssword(ch);
-			SLogin::SendLoginRequest(game,world->connection->ClientStream, Accname, Pssword);
+			SLogin::SendLoginRequest(this->m_game,world->connection->ClientStream, this->TB_AccNme->text, this->TB_PassWrd->text);
 			this->BT_LGPlayGame->Deactivate();
 		}
 }
@@ -1133,8 +1121,8 @@ void Menu::CreateAccount()
 		//World::ThrowMessage("Wrong input", "Enter a valid email address.");
 		//return;
 	}
-	SAccount::RequestAccountCreate(world->connection->ClientStream,WCharToCharStr(this->TB_CAAccNme->text),game);
-	//SAccount::RequestAccountCreate(world->connection->ClientStream,WCharToCharStr(this->TB_CAAccNme->text),WCharToCharStr(this->TB_CAPassWrdOne->text),WCharToCharStr(this->TB_CAPassWrdTwo->text),WCharToCharStr(this->TB_CAName->text),WCharToCharStr(this->TB_CACountry->text),WCharToCharStr(this->TB_CAEmail->text),game);
+	SAccount::RequestAccountCreate(world->connection->ClientStream,(this->TB_CAAccNme->text), this->m_game);
+	//SAccount::RequestAccountCreate(world->connection->ClientStream,WCharToCharStr(this->TB_CAAccNme->text),WCharToCharStr(this->TB_CAPassWrdOne->text),WCharToCharStr(this->TB_CAPassWrdTwo->text),WCharToCharStr(this->TB_CAName->text),WCharToCharStr(this->TB_CACountry->text),WCharToCharStr(this->TB_CAEmail->text),this->m_game);
 
 }
 
@@ -1149,7 +1137,7 @@ void Menu::ChangePass()
 	}
 	else
 	{
-		char ch[260];
+		/*char ch[260];
 		char DefChar = ' ';
 		WideCharToMultiByte(CP_ACP,0, this->TB_MyAccNme->text.c_str(),-1, ch,260,&DefChar, NULL);
 		std::string Accname(ch);
@@ -1160,16 +1148,7 @@ void Menu::ChangePass()
 		ch[260];
 	    DefChar = ' ';
 		WideCharToMultiByte(CP_ACP,0, this->TB_MyNewPass1->text.c_str(),-1, ch,260,&DefChar, NULL);
-		std::string NewPass(ch);
-	    SAccount::ChangePass(world->connection->ClientStream, Accname, OldPass, NewPass, game);
+		std::string NewPass(ch);*/
+	    SAccount::ChangePass(world->connection->ClientStream, this->TB_MyAccNme->text, this->TB_MyPass->text, this->TB_MyNewPass1->text, this->m_game);
 	}
-}
-
-std::string WCharToCharStr(std::basic_string<wchar_t> str)
-{
-		char ch[260];
-		char DefChar = ' ';
-		WideCharToMultiByte(CP_ACP,0, str.c_str(),-1, ch,260,&DefChar, NULL);
-		std::string ret(ch);
-		return ret;
 }

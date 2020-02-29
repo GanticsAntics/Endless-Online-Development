@@ -271,7 +271,7 @@ std::string PacketProcessor::DickWinderE(const std::string &str)
 {
 	return PacketProcessor::DickWinder(str, this->emulti_e);
 }
-void PacketBuilder::InsertByte(int ID, unsigned char byte)
+void PacketBuilder::Insertbyte(int ID, unsigned char byte)
 {
 	std::string str = "";
 	str += byte;
@@ -411,7 +411,7 @@ unsigned int PacketReader::GetNumber(std::size_t length)
 	return PacketProcessor::Number(bytes[0], bytes[1], bytes[2], bytes[3]);
 }
 
-unsigned char PacketReader::GetByte()
+unsigned char PacketReader::Getbyte()
 {
 	if (this->Remaining() < 1)
 		return 0;
@@ -532,7 +532,7 @@ static void debug_packetbuilder_overflow_(PacketBuilder *builder, std::size_t ca
 
 #endif
 
-PacketBuilder &PacketBuilder::AddByte(unsigned char byte)
+PacketBuilder &PacketBuilder::Addbyte(unsigned char byte)
 {
 #ifdef DEBUG
 	std::size_t capacity_before = this->Capacity();

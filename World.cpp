@@ -1,8 +1,8 @@
 #include "stdafx.h"
+#include "Connection.h"
 #include "World.h"
 
 using namespace std;
-Game* Wgame;
 bool World::Connected = false;
 bool World::Connecting = false;
 
@@ -15,6 +15,8 @@ bool World::UIBox_Hidden = true;
 unsigned int World::PacketCount = 0;
 unsigned char World::RawPacketCount = 0;
 int World::WorldCharacterID = -1;
+int World::ChestX = -1;
+int World::ChestY = -1;
 ENF* World::ENF_File;
 EIF* World::EIF_File;
 ESF* World::ESF_File;
@@ -22,7 +24,7 @@ ECF* World::ECF_File;
 std::vector<World::OnlinePlayerContainer> World::OnlinePlayers;
 World::World(Game* _Game)
 {
-	Wgame = _Game;
+	this->m_game = _Game;
 	//File_ENF = new ENF("\\pub\\dtn001.enf");
 	ENF_File = new ENF("\pub\\dtn001.enf");
 	EIF_File = new EIF("\pub\\dat001.eif");
@@ -31,7 +33,7 @@ World::World(Game* _Game)
 	
 };
 pt::thread* ListenThread;
-void World::HandleTextInput(WPARAM Param, byte phase, byte subphase)
+void World::HandleTextInput(WPARAM Param, int  phase, int  subphase)
 {
 	TextType::iterator i;
 	for(i = this->TextBoxLst.begin(); i != this->TextBoxLst.end();i++)
@@ -43,11 +45,11 @@ void World::HandleTextInput(WPARAM Param, byte phase, byte subphase)
 		}
 	}
 };
-void World::HandleKeyInput(WPARAM Param, byte phase, byte subphase)
+void World::HandleKeyInput(WPARAM Param, int  phase,int subphase)
 {
-	if (Wgame->Stage == Game::PInGame)
+	if (this->m_game->Stage == Game::PInGame)
 	{
-		Wgame->map->OnKeyPress(Param);
+		this->m_game->map->OnKeyPress(Param);
 	}
 };
 Textbox* World::RegisterTextBox(Textbox textbox)
@@ -101,7 +103,7 @@ void World::CreateConnection()
 			return;
 		}
 		this->connection = new Connection();
-		this->connection->V_Game = (LPVOID)Wgame;
+		this->connection->V_Game = this->m_game;
 		Connecting = true;
 		if(this->connection->Initialize(IniConfiguration::Host.c_str(), IniConfiguration::Port))
 		{
@@ -131,11 +133,11 @@ void World::MassTextBoxReset()
 
 int BlinkCount = 0;
 bool ShowBlinker = false;
-void World::RenderTextBoxes(ID3DXSprite* m_Sprite, byte phase, byte subphase)
+void World::RenderTextBoxes(int  phase,int  subphase)
 {
 
 	BlinkCount++;
-	if (BlinkCount > Wgame->FPS / 2)
+	if (BlinkCount > this->m_game->FPS / 2)
 	{
 		Textbox* box = this->GetFocusedTextbox();
 
@@ -157,7 +159,7 @@ void World::RenderTextBoxes(ID3DXSprite* m_Sprite, byte phase, byte subphase)
 	{
 		if(i->Phase == phase && i->SubPhase == subphase && i->Phase < Game::GameStage::PInGame)
 		{
-			i->Render(m_Sprite);
+			i->Render();
 		}
 	}
 
@@ -192,29 +194,28 @@ Textbox* World::GetFocusedTextbox()
 	return NULL;
 }
 
-void World::Send(LPVOID game, pt::ipstream* stream, PacketBuilder builder)
+void World::Send(Game* t_game, pt::ipstream* stream, PacketBuilder builder)
 {	
-	Game* gme = (Game*)game;
 	try
 	{
-		gme->world->RawPacketCount = (gme->world->RawPacketCount + 1) % 10;
+		t_game->world->RawPacketCount = (t_game->world->RawPacketCount + 1) % 10;
 
 		std::string str = builder.Get();
 
-		if ((gme->world->RawPacketCount + gme->world->PacketCount) >= 253)
+		if ((t_game->world->RawPacketCount + t_game->world->PacketCount) >= 253)
 		{
-			int seqval = ((gme->world->RawPacketCount + gme->world->PacketCount));
+			int seqval = ((t_game->world->RawPacketCount + t_game->world->PacketCount));
 			unsigned char* seqdat = new unsigned char[2];
-			seqdat = gme->world->PProcessor.ENumber(seqval).data();
-			builder.InsertByte(0, seqdat[1]);
-			builder.InsertByte(0, seqdat[0]);
+			seqdat = t_game->world->PProcessor.ENumber(seqval).data();
+			builder.Insertbyte(0, seqdat[1]);
+			builder.Insertbyte(0, seqdat[0]);
 		}
 		else
 		{
-			unsigned char seqval = gme->world->PProcessor.Number((gme->world->RawPacketCount + gme->world->PacketCount + 2));
-			builder.InsertByte(0, seqval);
+			unsigned char seqval = t_game->world->PProcessor.Number((t_game->world->RawPacketCount + t_game->world->PacketCount + 2));
+			builder.Insertbyte(0, seqval);
 		}
-		str = gme->world->PProcessor.Encode(builder.Get());
+		str = t_game->world->PProcessor.Encode(builder.Get());
 		std::string reportstr = "Sending : ";
 
 		for (int i = 0; i < str.length(); i++)
@@ -248,9 +249,8 @@ void World::Send(LPVOID game, pt::ipstream* stream, PacketBuilder builder)
 		World::Connected = false;
 	}
 }
-std::string World::Receive(LPVOID game, std::string builder)
+std::string World::Receive(Game* t_game, std::string builder)
 {
-	Game* gme = (Game*)game;
-	std::string str = gme->world->PProcessor.Decode(builder);
+	std::string str = t_game->world->PProcessor.Decode(builder);
 	return str;
 }

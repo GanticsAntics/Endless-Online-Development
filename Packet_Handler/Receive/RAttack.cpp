@@ -26,9 +26,10 @@ CLIENT_F_FUNC(Attack)
 						{
 							procDirection = 2;
 						}
-
+						//game->map->ThreadLock.lock();
 						game->map->m_Players[findid]->direction = procDirection;
 						game->map->m_Players[findid]->SetStance(CharacterModel::PlayerStance::BluntAttacking);
+						//game->map->ThreadLock.unlock();
 					}
 					
 					break;

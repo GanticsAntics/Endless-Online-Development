@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SAccount.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SAccount::ChangePass(pt::ipstream* ClientStream, std::string AccountName, std::string OldPassword,  std::string NewPassword, LPVOID game)
 {
@@ -52,7 +52,7 @@ void SAccount::CreateAccount(pt::ipstream* ClientStream, std::string AccountName
 	Sleep(4000);
 	PacketBuilder builder = PacketBuilder(PACKET_ACCOUNT, PACKET_CREATE);
 	builder.AddShort(gme->menu->SrvrCreateID);
-	builder.AddByte(255);
+	builder.Addbyte(255);
 	builder.AddBreakString(AccountName);
 	builder.AddBreakString(Password);
 	builder.AddBreakString(fullname);

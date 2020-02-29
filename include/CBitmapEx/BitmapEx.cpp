@@ -95,7 +95,7 @@ void CBitmapEx::Create(long width, long height)
 	m_iPaletteEntries = 0;
 	m_iPitch = m_bih.biWidth * m_iBpp;
 	m_dwSize = m_iPitch * m_bih.biHeight;
-	m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(BYTE));
+	m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(byte));
 
 	// Format BITMAPFILEHEADER info
 	memset(&m_bfh, 0, sizeof(BITMAPFILEHEADER));
@@ -122,8 +122,8 @@ void CBitmapEx::Create(CBitmapEx& bitmapEx)
 		memcpy(&m_bfh, bitmapEx.GetFileInfo(), sizeof(BITMAPFILEHEADER));
 		memcpy(&m_bih, bitmapEx.GetInfo(), sizeof(BITMAPINFOHEADER));
 		m_dwSize = bitmapEx.GetSize();
-		m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(BYTE));
-		memcpy(m_lpData, bitmapEx.GetData(), m_dwSize*sizeof(BYTE));
+		m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(byte));
+		memcpy(m_lpData, bitmapEx.GetData(), m_dwSize*sizeof(byte));
 		m_iPaletteEntries = bitmapEx.GetPaletteEntries();
 		memcpy(m_lpPalette, bitmapEx.GetPalette(), m_iPaletteEntries*sizeof(RGBQUAD));
 		m_ResampleMode = bitmapEx.GetResampleMode();
@@ -148,8 +148,8 @@ void CBitmapEx::Create(CBitmapEx* pBitmapEx)
 		memcpy(&m_bfh, pBitmapEx->GetFileInfo(), sizeof(BITMAPFILEHEADER));
 		memcpy(&m_bih, pBitmapEx->GetInfo(), sizeof(BITMAPINFOHEADER));
 		m_dwSize = pBitmapEx->GetSize();
-		m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(BYTE));
-		memcpy(m_lpData, pBitmapEx->GetData(), m_dwSize*sizeof(BYTE));
+		m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(byte));
+		memcpy(m_lpData, pBitmapEx->GetData(), m_dwSize*sizeof(byte));
 		m_iPaletteEntries = pBitmapEx->GetPaletteEntries();
 		memcpy(m_lpPalette, pBitmapEx->GetPalette(), m_iPaletteEntries*sizeof(RGBQUAD));
 		m_ResampleMode = pBitmapEx->GetResampleMode();
@@ -200,8 +200,8 @@ void CBitmapEx::Load(LPTSTR lpszBitmapFile)
 
 				// Read image data
 				m_dwSize = m_iPitch * m_bih.biHeight;
-				m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(BYTE));
-				fread(m_lpData, m_dwSize, sizeof(BYTE), file);
+				m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(byte));
+				fread(m_lpData, m_dwSize, sizeof(byte), file);
 
 				// Convert to 32bpp bitmap
 				_ConvertTo32Bpp();
@@ -253,8 +253,8 @@ void CBitmapEx::Load(LPBYTE lpBitmapData)
 
 			// Read image data
 			m_dwSize = m_iPitch * m_bih.biHeight;
-			m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(BYTE));
-			memcpy(m_lpData, lpBitmapData+sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+m_iPaletteEntries*sizeof(RGBQUAD), m_dwSize*sizeof(BYTE));
+			m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(byte));
+			memcpy(m_lpData, lpBitmapData+sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+m_iPaletteEntries*sizeof(RGBQUAD), m_dwSize*sizeof(byte));
 
 			// Convert to 32bpp bitmap
 			_ConvertTo32Bpp();
@@ -285,8 +285,8 @@ void CBitmapEx::Load(HBITMAP hBitmap)
 			m_iBpp = bmp.bmBitsPixel >> 3;
 			m_iPitch = bmp.bmWidthBytes;
 			m_dwSize = bmp.bmHeight * m_iPitch;
-			m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(BYTE));
-			GetBitmapBits(hBitmap, m_dwSize*sizeof(BYTE), m_lpData);
+			m_lpData = (LPBYTE)malloc(m_dwSize*sizeof(byte));
+			GetBitmapBits(hBitmap, m_dwSize*sizeof(byte), m_lpData);
 
 			// Format BITMAPFILEHEADER info
 			memset(&m_bfh, 0, sizeof(BITMAPFILEHEADER));
@@ -335,7 +335,7 @@ void CBitmapEx::Save(LPTSTR lpszBitmapFile)
 			}
 
 			// Write image data
-			fwrite(m_lpData, m_dwSize, sizeof(BYTE), file);
+			fwrite(m_lpData, m_dwSize, sizeof(byte), file);
 
 			// Close .BMP file
 			fclose(file);
@@ -368,7 +368,7 @@ void CBitmapEx::Save(LPBYTE lpBitmapData)
 		}
 
 		// Write image data
-		memcpy(lpBitmapData+sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+m_iPaletteEntries*sizeof(RGBQUAD), m_lpData, m_dwSize*sizeof(BYTE));
+		memcpy(lpBitmapData+sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+m_iPaletteEntries*sizeof(RGBQUAD), m_lpData, m_dwSize*sizeof(byte));
 
 		// Convert to 32bpp bitmap
 		_ConvertTo32Bpp();
@@ -431,7 +431,7 @@ void CBitmapEx::_ConvertTo32Bpp()
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Convert bitmap
 		DWORD dwDstHorizontalOffset;
@@ -458,9 +458,9 @@ void CBitmapEx::_ConvertTo32Bpp()
 				{
 					case 8:
 						{
-							BYTE red = m_lpPalette[m_lpData[dwSrcTotalOffset]].rgbRed;
-							BYTE green = m_lpPalette[m_lpData[dwSrcTotalOffset]].rgbGreen;
-							BYTE blue = m_lpPalette[m_lpData[dwSrcTotalOffset]].rgbBlue;
+							unsigned char red = m_lpPalette[m_lpData[dwSrcTotalOffset]].rgbRed;
+							unsigned char green = m_lpPalette[m_lpData[dwSrcTotalOffset]].rgbGreen;
+							unsigned char blue = m_lpPalette[m_lpData[dwSrcTotalOffset]].rgbBlue;
 							lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 						}
 						break;
@@ -468,9 +468,9 @@ void CBitmapEx::_ConvertTo32Bpp()
 					case 16:
 						{
 							LPWORD lpSrcData = (LPWORD)m_lpData;
-							BYTE red = (lpSrcData[dwSrcTotalOffset>>1] & 0x7C00) >> 10;
-							BYTE green = (lpSrcData[dwSrcTotalOffset>>1] & 0x03E0) >> 5;
-							BYTE blue = lpSrcData[dwSrcTotalOffset>>1] & 0x001F;
+							unsigned char red = (lpSrcData[dwSrcTotalOffset>>1] & 0x7C00) >> 10;
+							unsigned char green = (lpSrcData[dwSrcTotalOffset>>1] & 0x03E0) >> 5;
+							unsigned char blue = lpSrcData[dwSrcTotalOffset>>1] & 0x001F;
 							lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 						}
 						break;
@@ -528,7 +528,7 @@ void CBitmapEx::_ConvertTo24Bpp()
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Convert bitmap
 		DWORD dwDstHorizontalOffset;
@@ -601,7 +601,7 @@ void CBitmapEx::_ScaleNearestNeighbour(long horizontalPercent, long verticalPerc
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Scale bitmap
 		DWORD dwDstHorizontalOffset;
@@ -667,7 +667,7 @@ void CBitmapEx::_ScaleBilinear(long horizontalPercent, long verticalPercent)
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Scale bitmap
 		DWORD dwDstHorizontalOffset;
@@ -724,9 +724,9 @@ void CBitmapEx::_ScaleBilinear(long horizontalPercent, long verticalPercent)
 				bmfixed f_b2 = itofx(_GetBValue(pixel2));
 				bmfixed f_b3 = itofx(_GetBValue(pixel3));
 				bmfixed f_b4 = itofx(_GetBValue(pixel4));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+				unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+				unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -772,7 +772,7 @@ void CBitmapEx::_ScaleBicubic(long horizontalPercent, long verticalPercent)
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Scale bitmap
 		DWORD dwDstHorizontalOffset;
@@ -895,9 +895,9 @@ void CBitmapEx::_ScaleBicubic(long horizontalPercent, long verticalPercent)
 						f_blue += Mulfx(f_bs,f_R);
 					}
 				}
-				BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-				BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-				BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+				unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+				unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+				unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -964,7 +964,7 @@ void CBitmapEx::_ScaleNearestNeighbour2(long width, long height)
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Scale bitmap
 		DWORD dwDstHorizontalOffset;
@@ -1028,7 +1028,7 @@ void CBitmapEx::_ScaleBilinear2(long width, long height)
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Scale bitmap
 		DWORD dwDstHorizontalOffset;
@@ -1085,9 +1085,9 @@ void CBitmapEx::_ScaleBilinear2(long width, long height)
 				bmfixed f_b2 = itofx(_GetBValue(pixel2));
 				bmfixed f_b3 = itofx(_GetBValue(pixel3));
 				bmfixed f_b4 = itofx(_GetBValue(pixel4));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+				unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+				unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -1131,7 +1131,7 @@ void CBitmapEx::_ScaleBicubic2(long width, long height)
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Scale bitmap
 		DWORD dwDstHorizontalOffset;
@@ -1254,9 +1254,9 @@ void CBitmapEx::_ScaleBicubic2(long width, long height)
 						f_blue += Mulfx(f_bs,f_R);
 					}
 				}
-				BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-				BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-				BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+				unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+				unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+				unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -1325,7 +1325,7 @@ void CBitmapEx::_RotateNearestNeighbour(long degrees, _PIXEL bgColor)
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Rotate bitmap
 		DWORD dwDstHorizontalOffset;
@@ -1396,7 +1396,7 @@ void CBitmapEx::_RotateBilinear(long degrees, _PIXEL bgColor)
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Rotate bitmap
 		DWORD dwDstHorizontalOffset;
@@ -1458,9 +1458,9 @@ void CBitmapEx::_RotateBilinear(long degrees, _PIXEL bgColor)
 					bmfixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
 					bmfixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
 					bmfixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
-					BYTE red = (BYTE)max(0, min(255, fxtoi(f_red)));
-					BYTE green = (BYTE)max(0, min(255, fxtoi(f_green)));
-					BYTE blue = (BYTE)max(0, min(255, fxtoi(f_blue)));
+					unsigned char red = (byte)max(0, min(255, fxtoi(f_red)));
+					unsigned char green = (byte)max(0, min(255, fxtoi(f_green)));
+					unsigned char blue = (byte)max(0, min(255, fxtoi(f_blue)));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 				else
@@ -1509,7 +1509,7 @@ void CBitmapEx::_RotateBicubic(long degrees, _PIXEL bgColor)
 
 		// Create temporary bitmap
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Rotate bitmap
 		DWORD dwDstHorizontalOffset;
@@ -1634,9 +1634,9 @@ void CBitmapEx::_RotateBicubic(long degrees, _PIXEL bgColor)
 							f_blue += Mulfx(f_bs,f_R);
 						}
 					}
-					BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-					BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-					BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+					unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+					unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+					unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 				else
@@ -1710,7 +1710,7 @@ void CBitmapEx::Crop(long x, long y, long width, long height)
 		while ((iPitch & 3) != 0)
 			iPitch++;
 		DWORD dwSize = iPitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Crop bitmap
 		DWORD dwDstHorizontalOffset;
@@ -1796,7 +1796,7 @@ void CBitmapEx::_ShearVerticalNearestNeighbour(long degrees, _PIXEL bgColor)
 		while ((_pitch & 3) != 0)
 			_pitch++;
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Shear bitmap verticaly
 		DWORD dwDstHorizontalOffset;
@@ -1869,7 +1869,7 @@ void CBitmapEx::_ShearVerticalBilinear(long degrees, _PIXEL bgColor)
 		while ((_pitch & 3) != 0)
 			_pitch++;
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Shear bitmap verticaly
 		DWORD dwDstHorizontalOffset;
@@ -1935,9 +1935,9 @@ void CBitmapEx::_ShearVerticalBilinear(long degrees, _PIXEL bgColor)
 					bmfixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
 					bmfixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
 					bmfixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
-					BYTE red = (BYTE)max(0, min(255, fxtoi(f_red)));
-					BYTE green = (BYTE)max(0, min(255, fxtoi(f_green)));
-					BYTE blue = (BYTE)max(0, min(255, fxtoi(f_blue)));
+					unsigned char red = (byte)max(0, min(255, fxtoi(f_red)));
+					unsigned char green = (byte)max(0, min(255, fxtoi(f_green)));
+					unsigned char blue = (byte)max(0, min(255, fxtoi(f_blue)));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 				else
@@ -1984,7 +1984,7 @@ void CBitmapEx::_ShearVerticalBicubic(long degrees, _PIXEL bgColor)
 		while ((_pitch & 3) != 0)
 			_pitch++;
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Shear bitmap verticaly
 		DWORD dwDstHorizontalOffset;
@@ -2113,9 +2113,9 @@ void CBitmapEx::_ShearVerticalBicubic(long degrees, _PIXEL bgColor)
 							f_blue += Mulfx(f_bs,f_R);
 						}
 					}
-					BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-					BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-					BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+					unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+					unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+					unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 				else
@@ -2185,7 +2185,7 @@ void CBitmapEx::_ShearHorizontalNearestNeighbour(long degrees, _PIXEL bgColor)
 		while ((_pitch & 3) != 0)
 			_pitch++;
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Shear bitmap
 		DWORD dwDstHorizontalOffset;
@@ -2258,7 +2258,7 @@ void CBitmapEx::_ShearHorizontalBilinear(long degrees, _PIXEL bgColor)
 		while ((_pitch & 3) != 0)
 			_pitch++;
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Shear bitmap
 		DWORD dwDstHorizontalOffset;
@@ -2324,9 +2324,9 @@ void CBitmapEx::_ShearHorizontalBilinear(long degrees, _PIXEL bgColor)
 					bmfixed f_red = Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4);
 					bmfixed f_green = Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4);
 					bmfixed f_blue = Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4);
-					BYTE red = (BYTE)max(0, min(255, fxtoi(f_red)));
-					BYTE green = (BYTE)max(0, min(255, fxtoi(f_green)));
-					BYTE blue = (BYTE)max(0, min(255, fxtoi(f_blue)));
+					unsigned char red = (byte)max(0, min(255, fxtoi(f_red)));
+					unsigned char green = (byte)max(0, min(255, fxtoi(f_green)));
+					unsigned char blue = (byte)max(0, min(255, fxtoi(f_blue)));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 				else
@@ -2373,7 +2373,7 @@ void CBitmapEx::_ShearHorizontalBicubic(long degrees, _PIXEL bgColor)
 		while ((_pitch & 3) != 0)
 			_pitch++;
 		DWORD dwSize = _pitch * _height;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Shear bitmap
 		DWORD dwDstHorizontalOffset;
@@ -2502,9 +2502,9 @@ void CBitmapEx::_ShearHorizontalBicubic(long degrees, _PIXEL bgColor)
 							f_blue += Mulfx(f_bs,f_R);
 						}
 					}
-					BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-					BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-					BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+					unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+					unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+					unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 				else
@@ -2621,13 +2621,13 @@ void CBitmapEx::FlipVertical()
 		LPDWORD lpDstData = (LPDWORD)m_lpData;
 		DWORD dwSrcTotalOffset = (m_bih.biHeight-1) * m_iPitch;
 		LPDWORD lpSrcData = (LPDWORD)m_lpData;
-		LPDWORD lpTmpData = (LPDWORD)malloc(m_iPitch*sizeof(BYTE));
+		LPDWORD lpTmpData = (LPDWORD)malloc(m_iPitch*sizeof(byte));
 		for (long i=0; i<_height; i++)
 		{
 			// Update bitmap
-			memcpy(lpTmpData, lpDstData+(dwDstTotalOffset>>2), m_iPitch*sizeof(BYTE));
-			memcpy(lpDstData+(dwDstTotalOffset>>2), lpSrcData+(dwSrcTotalOffset>>2), m_iPitch*sizeof(BYTE));
-			memcpy(lpSrcData+(dwSrcTotalOffset>>2), lpTmpData, m_iPitch*sizeof(BYTE));
+			memcpy(lpTmpData, lpDstData+(dwDstTotalOffset>>2), m_iPitch*sizeof(byte));
+			memcpy(lpDstData+(dwDstTotalOffset>>2), lpSrcData+(dwSrcTotalOffset>>2), m_iPitch*sizeof(byte));
+			memcpy(lpSrcData+(dwSrcTotalOffset>>2), lpTmpData, m_iPitch*sizeof(byte));
 
 			// Update destination total offset
 			dwDstTotalOffset += m_iPitch;
@@ -2755,7 +2755,7 @@ void CBitmapEx::MirrorTop()
 		for (long i=0; i<_height; i++)
 		{
 			// Update bitmap
-			memcpy(lpDstData+(dwDstTotalOffset>>2), lpSrcData+(dwSrcTotalOffset>>2), m_iPitch*sizeof(BYTE));
+			memcpy(lpDstData+(dwDstTotalOffset>>2), lpSrcData+(dwSrcTotalOffset>>2), m_iPitch*sizeof(byte));
 
 			// Update destination total offset
 			dwDstTotalOffset += m_iPitch;
@@ -2782,7 +2782,7 @@ void CBitmapEx::MirrorBottom()
 		for (long i=0; i<_height; i++)
 		{
 			// Update bitmap
-			memcpy(lpDstData+(dwDstTotalOffset>>2), lpSrcData+(dwSrcTotalOffset>>2), m_iPitch*sizeof(BYTE));
+			memcpy(lpDstData+(dwDstTotalOffset>>2), lpSrcData+(dwSrcTotalOffset>>2), m_iPitch*sizeof(byte));
 
 			// Update destination total offset
 			dwDstTotalOffset -= m_iPitch;
@@ -3001,13 +3001,13 @@ void CBitmapEx::Sepia(long depth)
 				bmfixed f_green = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
 				bmfixed f_blue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
 				bmfixed f_value = Mulfx(f_w1,f_red) + Mulfx(f_w2,f_green) + Mulfx(f_w3,f_blue);
-				BYTE red = (BYTE)fxtoi(f_value+f_depth2);
+				unsigned char red = (byte)fxtoi(f_value+f_depth2);
 				if (red < ((_depth<<1)-1))
 					red = 255;
-				BYTE green = (BYTE)fxtoi(f_value+f_depth);
+				unsigned char green = (byte)fxtoi(f_value+f_depth);
 				if (green < (_depth-1))
 					green = 255;
-				BYTE blue = (BYTE)fxtoi(f_value);
+				unsigned char blue = (byte)fxtoi(f_value);
 				lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal offset
@@ -3100,7 +3100,7 @@ void CBitmapEx::Emboss()
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Emboss bitmap
 		DWORD dwHorizontalOffset;
@@ -3192,7 +3192,7 @@ void CBitmapEx::Engrave()
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Engrave bitmap
 		DWORD dwHorizontalOffset;
@@ -3277,7 +3277,7 @@ void CBitmapEx::Pixelize(long size)
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Pixelize bitmap
 		DWORD dwHorizontalOffset;
@@ -3367,12 +3367,12 @@ void CBitmapEx::Brightness(long brightness)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				BYTE red = _GetRValue(lpDstData[dwTotalOffset>>2]);
-				BYTE green = _GetGValue(lpDstData[dwTotalOffset>>2]);
-				BYTE blue = _GetBValue(lpDstData[dwTotalOffset>>2]);
-				red = (BYTE)max(0, min(red+_brightness, 255));
-				green = (BYTE)max(0, min(green+_brightness, 255));
-				blue = (BYTE)max(0, min(blue+_brightness, 255));
+				unsigned char red = _GetRValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char green = _GetGValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char blue = _GetBValue(lpDstData[dwTotalOffset>>2]);
+				red = (byte)max(0, min(red+_brightness, 255));
+				green = (byte)max(0, min(green+_brightness, 255));
+				blue = (byte)max(0, min(blue+_brightness, 255));
 				lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal offset
@@ -3415,9 +3415,9 @@ void CBitmapEx::Contrast(long contrast)
 				f_red = Mulfx(f_red-f_128, f_contrast) + f_128;
 				f_green = Mulfx(f_green-f_128, f_contrast) + f_128;
 				f_blue = Mulfx(f_blue-f_128, f_contrast) + f_128;
-				BYTE red = (BYTE)max(0, min(fxtoi(f_red), 255));
-				BYTE green = (BYTE)max(0, min(fxtoi(f_green), 255));
-				BYTE blue = (BYTE)max(0, min(fxtoi(f_blue), 255));
+				unsigned char red = (byte)max(0, min(fxtoi(f_red), 255));
+				unsigned char green = (byte)max(0, min(fxtoi(f_green), 255));
+				unsigned char blue = (byte)max(0, min(fxtoi(f_blue), 255));
 				lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal offset
@@ -3440,7 +3440,7 @@ void CBitmapEx::Blur()
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Blur bitmap
 		DWORD dwHorizontalOffset;
@@ -3479,9 +3479,9 @@ void CBitmapEx::Blur()
 						f_blue += itofx(_GetBValue(lpSrcData[dwSrcOffset>>2]));
 					}
 				}
-				BYTE red = (BYTE)max(0, min(fxtoi(Divfx(f_red,f_9)), 255));
-				BYTE green = (BYTE)max(0, min(fxtoi(Divfx(f_green,f_9)), 255));
-				BYTE blue = (BYTE)max(0, min(fxtoi(Divfx(f_blue,f_9)), 255));
+				unsigned char red = (byte)max(0, min(fxtoi(Divfx(f_red,f_9)), 255));
+				unsigned char green = (byte)max(0, min(fxtoi(Divfx(f_green,f_9)), 255));
+				unsigned char blue = (byte)max(0, min(fxtoi(Divfx(f_blue,f_9)), 255));
 				lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal offset
@@ -3510,7 +3510,7 @@ void CBitmapEx::GaussianBlur()
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Gaussian blur bitmap
 		DWORD dwHorizontalOffset;
@@ -3564,9 +3564,9 @@ void CBitmapEx::GaussianBlur()
 						}
 					}
 				}
-				BYTE red = (BYTE)max(0, min(fxtoi(Divfx(f_red,f_16)), 255));
-				BYTE green = (BYTE)max(0, min(fxtoi(Divfx(f_green,f_16)), 255));
-				BYTE blue = (BYTE)max(0, min(fxtoi(Divfx(f_blue,f_16)), 255));
+				unsigned char red = (byte)max(0, min(fxtoi(Divfx(f_red,f_16)), 255));
+				unsigned char green = (byte)max(0, min(fxtoi(Divfx(f_green,f_16)), 255));
+				unsigned char blue = (byte)max(0, min(fxtoi(Divfx(f_blue,f_16)), 255));
 				lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal offset
@@ -3594,7 +3594,7 @@ void CBitmapEx::Sharp()
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Sharp bitmap
 		DWORD dwHorizontalOffset;
@@ -3642,9 +3642,9 @@ void CBitmapEx::Sharp()
 						}
 					}
 				}
-				BYTE red = (BYTE)max(0, min(fxtoi(Mulfx(f_red,f_1_2)), 255));
-				BYTE green = (BYTE)max(0, min(fxtoi(Mulfx(f_green,f_1_2)), 255));
-				BYTE blue = (BYTE)max(0, min(fxtoi(Mulfx(f_blue,f_1_2)), 255));
+				unsigned char red = (byte)max(0, min(fxtoi(Mulfx(f_red,f_1_2)), 255));
+				unsigned char green = (byte)max(0, min(fxtoi(Mulfx(f_green,f_1_2)), 255));
+				unsigned char blue = (byte)max(0, min(fxtoi(Mulfx(f_blue,f_1_2)), 255));
 				lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal offset
@@ -3715,7 +3715,7 @@ void CBitmapEx::Rank(BOOL bMinimum)
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Rank bitmap
 		DWORD dwHorizontalOffset;
@@ -3800,7 +3800,7 @@ void CBitmapEx::Spread(long distanceX, long distanceY)
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Rank bitmap
 		DWORD dwHorizontalOffset;
@@ -3857,7 +3857,7 @@ void CBitmapEx::Offset(long offsetX, long offsetY)
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Rank bitmap
 		DWORD dwHorizontalOffset;
@@ -3948,7 +3948,7 @@ void CBitmapEx::EdgeDetect()
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Edge detect bitmap
 		DWORD dwHorizontalOffset;
@@ -3996,9 +3996,9 @@ void CBitmapEx::EdgeDetect()
 						}
 					}
 				}
-				BYTE red = (BYTE)max(0, min(fxtoi(f_red), 255));
-				BYTE green = (BYTE)max(0, min(fxtoi(f_green), 255));
-				BYTE blue = (BYTE)max(0, min(fxtoi(f_blue), 255));
+				unsigned char red = (byte)max(0, min(fxtoi(f_red), 255));
+				unsigned char green = (byte)max(0, min(fxtoi(f_green), 255));
+				unsigned char blue = (byte)max(0, min(fxtoi(f_blue), 255));
 				lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal offset
@@ -4104,9 +4104,9 @@ void CBitmapEx::EqualizeHistogram(long levels)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update channel histograms
-				BYTE red = _GetRValue(lpSrcData[dwTotalOffset>>2]);
-				BYTE green = _GetGValue(lpSrcData[dwTotalOffset>>2]);
-				BYTE blue = _GetBValue(lpSrcData[dwTotalOffset>>2]);
+				unsigned char red = _GetRValue(lpSrcData[dwTotalOffset>>2]);
+				unsigned char green = _GetGValue(lpSrcData[dwTotalOffset>>2]);
+				unsigned char blue = _GetBValue(lpSrcData[dwTotalOffset>>2]);
 				lpRedHistogram[red]++;
 				lpGreenHistogram[green]++;
 				lpBlueHistogram[blue]++;
@@ -4149,10 +4149,10 @@ void CBitmapEx::EqualizeHistogram(long levels)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				BYTE hue = _GetRValue(lpDstData[dwTotalOffset>>2]);
-				BYTE saturation = _GetGValue(lpDstData[dwTotalOffset>>2]);
-				BYTE value = _GetBValue(lpDstData[dwTotalOffset>>2]);
-				value = (BYTE)((float)lpBlueCumulativeFrequency[value] * _histoCoef);
+				unsigned char hue = _GetRValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char saturation = _GetGValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char value = _GetBValue(lpDstData[dwTotalOffset>>2]);
+				value = (byte)((float)lpBlueCumulativeFrequency[value] * _histoCoef);
 				lpDstData[dwTotalOffset>>2] = _RGB(hue, saturation, value);
 
 				// Update horizontal offset
@@ -4178,7 +4178,7 @@ void CBitmapEx::Median()
 
 		// Create temporary bitmap
 		DWORD dwSize = m_iPitch * m_bih.biHeight;
-		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(BYTE));
+		LPBYTE lpData = (LPBYTE)malloc(dwSize*sizeof(byte));
 
 		// Median filter bitmap
 		DWORD dwHorizontalOffset;
@@ -4186,7 +4186,7 @@ void CBitmapEx::Median()
 		DWORD dwTotalOffset;
 		LPDWORD lpSrcData = (LPDWORD)m_lpData;
 		LPDWORD lpDstData = (LPDWORD)lpData;
-		BYTE lpRed[9], lpGreen[9], lpBlue[9];
+		unsigned char lpRed[9], lpGreen[9], lpBlue[9];
 		for (long i=0; i<m_bih.biHeight; i++)
 		{
 			dwHorizontalOffset = 0;
@@ -4228,19 +4228,19 @@ void CBitmapEx::Median()
 					{
 						if (lpRed[p] > lpRed[q])
 						{
-							BYTE tmp = lpRed[p];
+							unsigned char tmp = lpRed[p];
 							lpRed[p] = lpRed[q];
 							lpRed[q] = tmp;
 						}
 						if (lpGreen[p] > lpGreen[q])
 						{
-							BYTE tmp = lpGreen[p];
+							unsigned char tmp = lpGreen[p];
 							lpGreen[p] = lpGreen[q];
 							lpGreen[q] = tmp;
 						}
 						if (lpBlue[p] > lpBlue[q])
 						{
-							BYTE tmp = lpBlue[p];
+							unsigned char tmp = lpBlue[p];
 							lpBlue[p] = lpBlue[q];
 							lpBlue[q] = tmp;
 						}
@@ -4270,12 +4270,12 @@ void CBitmapEx::Posterize(long levels)
 		// Calculate posterize params
 		long _levels = max(2, min(16, levels));
 		long _offset = 256 / _levels;
-		BYTE lpRedPalette[16], lpGreenPalette[16], lpBluePalette[16];
+		unsigned char lpRedPalette[16], lpGreenPalette[16], lpBluePalette[16];
 		for (long k=0; k<_levels; k++)
 		{
-			lpRedPalette[k] = (BYTE)(k * _offset);
-			lpGreenPalette[k] = (BYTE)(k * _offset);
-			lpBluePalette[k] = (BYTE)(k * _offset);
+			lpRedPalette[k] = (byte)(k * _offset);
+			lpGreenPalette[k] = (byte)(k * _offset);
+			lpBluePalette[k] = (byte)(k * _offset);
 		}
 
 		// Posterize bitmap
@@ -4292,12 +4292,12 @@ void CBitmapEx::Posterize(long levels)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				BYTE red = _GetRValue(lpDstData[dwTotalOffset>>2]);
-				BYTE green = _GetGValue(lpDstData[dwTotalOffset>>2]);
-				BYTE blue = _GetBValue(lpDstData[dwTotalOffset>>2]);
-				red = (BYTE)(red / _offset);
-				green = (BYTE)(green / _offset);
-				blue = (BYTE)(blue /_offset);
+				unsigned char red = _GetRValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char green = _GetGValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char blue = _GetBValue(lpDstData[dwTotalOffset>>2]);
+				red = (byte)(red / _offset);
+				green = (byte)(green / _offset);
+				blue = (byte)(blue /_offset);
 				lpDstData[dwTotalOffset>>2] = _RGB(lpRedPalette[red], lpGreenPalette[green], lpBluePalette[blue]);
 
 				// Update horizontal offset
@@ -4334,9 +4334,9 @@ void CBitmapEx::Solarize(long threshold)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update bitmap
-				BYTE red = _GetRValue(lpDstData[dwTotalOffset>>2]);
-				BYTE green = _GetGValue(lpDstData[dwTotalOffset>>2]);
-				BYTE blue = _GetBValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char red = _GetRValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char green = _GetGValue(lpDstData[dwTotalOffset>>2]);
+				unsigned char blue = _GetBValue(lpDstData[dwTotalOffset>>2]);
 				bmfixed f_red = itofx(red);
 				bmfixed f_green = itofx(green);
 				bmfixed f_blue = itofx(blue);
@@ -4346,9 +4346,9 @@ void CBitmapEx::Solarize(long threshold)
 					f_green = Mulfx(Divfx(f_treshold-f_green,f_green),f_255);
 				if (f_blue > 0)
 					f_blue = Mulfx(Divfx(f_treshold-f_blue,f_blue),f_255);
-				red = (BYTE)max(0, min(255, fxtoi(f_red)));
-				green = (BYTE)max(0, min(255, fxtoi(f_green)));
-				blue = (BYTE)max(0, min(255, fxtoi(f_blue)));
+				red = (byte)max(0, min(255, fxtoi(f_red)));
+				green = (byte)max(0, min(255, fxtoi(f_green)));
+				blue = (byte)max(0, min(255, fxtoi(f_blue)));
 				lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal offset
@@ -4566,9 +4566,9 @@ void CBitmapEx::Draw(long dstX, long dstY, long width, long height, CBitmapEx& b
 				bmfixed f_dred = itofx(_GetRValue(pixel2));
 				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 				bmfixed f_dblue = itofx(_GetBValue(pixel2));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+				unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+				unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -4821,9 +4821,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx)
 									bmfixed f_b2 = itofx(_GetBValue(pixel2));
 									bmfixed f_b3 = itofx(_GetBValue(pixel3));
 									bmfixed f_b4 = itofx(_GetBValue(pixel4));
-									BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-									BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-									BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+									unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+									unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+									unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -4952,9 +4952,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx)
 											f_blue += Mulfx(f_bs,f_R);
 										}
 									}
-									BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-									BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-									BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+									unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+									unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+									unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -5056,9 +5056,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 									bmfixed f_dred = itofx(_GetRValue(pixel2));
 									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 									bmfixed f_dblue = itofx(_GetBValue(pixel2));
-									BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-									BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-									BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+									unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+									unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+									unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -5121,9 +5121,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 									bmfixed f_b2 = itofx(_GetBValue(pixel2));
 									bmfixed f_b3 = itofx(_GetBValue(pixel3));
 									bmfixed f_b4 = itofx(_GetBValue(pixel4));
-									BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-									BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-									BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+									unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+									unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+									unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 									pixel1 =  _RGB(red, green, blue);
 									pixel2 =  GetPixel(j, i);
 									bmfixed f_sred = itofx(_GetRValue(pixel1));
@@ -5132,9 +5132,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 									bmfixed f_dred = itofx(_GetRValue(pixel2));
 									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 									bmfixed f_dblue = itofx(_GetBValue(pixel2));
-									red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-									green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-									blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+									red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+									green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+									blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -5263,9 +5263,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 											f_blue += Mulfx(f_bs,f_R);
 										}
 									}
-									BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-									BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-									BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+									unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+									unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+									unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 									_PIXEL pixel1 =  _RGB(red, green, blue);
 									_PIXEL pixel2 =  GetPixel(j, i);
 									bmfixed f_sred = itofx(_GetRValue(pixel1));
@@ -5274,9 +5274,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha)
 									bmfixed f_dred = itofx(_GetRValue(pixel2));
 									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 									bmfixed f_dblue = itofx(_GetBValue(pixel2));
-									red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-									green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-									blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+									red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+									green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+									blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -5436,9 +5436,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									bmfixed f_b2 = itofx(_GetBValue(pixel2));
 									bmfixed f_b3 = itofx(_GetBValue(pixel3));
 									bmfixed f_b4 = itofx(_GetBValue(pixel4));
-									BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-									BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-									BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+									unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+									unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+									unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -5567,9 +5567,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 											f_blue += Mulfx(f_bs,f_R);
 										}
 									}
-									BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-									BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-									BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+									unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+									unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+									unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -5679,9 +5679,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									bmfixed f_dred = itofx(_GetRValue(pixel2));
 									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 									bmfixed f_dblue = itofx(_GetBValue(pixel2));
-									BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-									BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-									BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+									unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+									unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+									unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -5744,9 +5744,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									bmfixed f_b2 = itofx(_GetBValue(pixel2));
 									bmfixed f_b3 = itofx(_GetBValue(pixel3));
 									bmfixed f_b4 = itofx(_GetBValue(pixel4));
-									BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-									BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-									BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+									unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+									unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+									unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 									pixel1 =  _RGB(red, green, blue);
 									pixel2 =  GetPixel(j, i);
 									bmfixed f_sred = itofx(_GetRValue(pixel1));
@@ -5755,9 +5755,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									bmfixed f_dred = itofx(_GetRValue(pixel2));
 									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 									bmfixed f_dblue = itofx(_GetBValue(pixel2));
-									red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-									green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-									blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+									red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+									green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+									blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -5886,9 +5886,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 											f_blue += Mulfx(f_bs,f_R);
 										}
 									}
-									BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-									BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-									BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+									unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+									unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+									unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 									_PIXEL pixel1 =  _RGB(red, green, blue);
 									_PIXEL pixel2 =  GetPixel(j, i);
 									bmfixed f_sred = itofx(_GetRValue(pixel1));
@@ -5897,9 +5897,9 @@ void CBitmapEx::Draw(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, long srcY, l
 									bmfixed f_dred = itofx(_GetRValue(pixel2));
 									bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 									bmfixed f_dblue = itofx(_GetBValue(pixel2));
-									red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-									green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-									blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+									red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+									green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+									blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 									SetPixel(j, i, _RGB(red, green, blue));
 								}
 							}
@@ -6152,9 +6152,9 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 				bmfixed f_b2 = itofx(_GetBValue(pixel2));
 				bmfixed f_b3 = itofx(_GetBValue(pixel3));
 				bmfixed f_b4 = itofx(_GetBValue(pixel4));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+				unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+				unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -6572,9 +6572,9 @@ void CBitmapEx::_DrawBicubic(long dstX, long dstY, long dstWidth, long dstHeight
 						f_blue += Mulfx(f_bs,f_R);
 					}
 				}
-				BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-				BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-				BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+				unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+				unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+				unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -6696,9 +6696,9 @@ void CBitmapEx::_DrawNearestNeighbour(long dstX, long dstY, long dstWidth, long 
 				bmfixed f_dred = itofx(_GetRValue(pixel2));
 				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 				bmfixed f_dblue = itofx(_GetBValue(pixel2));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+				unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+				unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -6931,9 +6931,9 @@ void CBitmapEx::_DrawBilinear(long dstX, long dstY, long dstWidth, long dstHeigh
 				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
 				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
 				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+				unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+				unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -7412,9 +7412,9 @@ void CBitmapEx::_DrawBicubic(long dstX, long dstY, long dstWidth, long dstHeight
 				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
 				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
 				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+				unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+				unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -7720,9 +7720,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, _PIXEL trans
 										bmfixed f_b2 = itofx(_GetBValue(pixel2));
 										bmfixed f_b3 = itofx(_GetBValue(pixel3));
 										bmfixed f_b4 = itofx(_GetBValue(pixel4));
-										BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-										BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-										BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+										unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+										unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+										unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -7855,9 +7855,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, _PIXEL trans
 												f_blue += Mulfx(f_bs,f_R);
 											}
 										}
-										BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-										BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-										BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+										unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+										unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+										unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -7942,9 +7942,9 @@ void CBitmapEx::DrawTransparent(long dstX, long dstY, long width, long height, C
 					bmfixed f_dred = itofx(_GetRValue(pixel2));
 					bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 					bmfixed f_dblue = itofx(_GetBValue(pixel2));
-					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+					unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+					unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+					unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 
@@ -8153,9 +8153,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 										bmfixed f_dred = itofx(_GetRValue(pixel2));
 										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 										bmfixed f_dblue = itofx(_GetBValue(pixel2));
-										BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-										BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-										BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+										unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+										unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+										unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -8222,9 +8222,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 										bmfixed f_b2 = itofx(_GetBValue(pixel2));
 										bmfixed f_b3 = itofx(_GetBValue(pixel3));
 										bmfixed f_b4 = itofx(_GetBValue(pixel4));
-										BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-										BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-										BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+										unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+										unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+										unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 										pixel1 =  _RGB(red, green, blue);
 										pixel2 =  GetPixel(j, i);
 										bmfixed f_sred = itofx(_GetRValue(pixel1));
@@ -8233,9 +8233,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 										bmfixed f_dred = itofx(_GetRValue(pixel2));
 										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 										bmfixed f_dblue = itofx(_GetBValue(pixel2));
-										red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-										green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-										blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+										red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+										green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+										blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -8368,9 +8368,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 												f_blue += Mulfx(f_bs,f_R);
 											}
 										}
-										BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-										BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-										BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+										unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+										unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+										unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 										_PIXEL pixel1 =  _RGB(red, green, blue);
 										_PIXEL pixel2 =  GetPixel(j, i);
 										bmfixed f_sred = itofx(_GetRValue(pixel1));
@@ -8379,9 +8379,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long alpha, 
 										bmfixed f_dred = itofx(_GetRValue(pixel2));
 										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 										bmfixed f_dblue = itofx(_GetBValue(pixel2));
-										red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-										green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-										blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+										red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+										green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+										blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -8643,9 +8643,9 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 					bmfixed f_b2 = itofx(_GetBValue(pixel2));
 					bmfixed f_b3 = itofx(_GetBValue(pixel3));
 					bmfixed f_b4 = itofx(_GetBValue(pixel4));
-					BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-					BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-					BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+					unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+					unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+					unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 
@@ -9073,9 +9073,9 @@ void CBitmapEx::_DrawTransparentBicubic(long dstX, long dstY, long dstWidth, lon
 							f_blue += Mulfx(f_bs,f_R);
 						}
 					}
-					BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-					BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-					BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+					unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+					unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+					unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 
@@ -9270,9 +9270,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										bmfixed f_b2 = itofx(_GetBValue(pixel2));
 										bmfixed f_b3 = itofx(_GetBValue(pixel3));
 										bmfixed f_b4 = itofx(_GetBValue(pixel4));
-										BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-										BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-										BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+										unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+										unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+										unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -9405,9 +9405,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 												f_blue += Mulfx(f_bs,f_R);
 											}
 										}
-										BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-										BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-										BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+										unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+										unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+										unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -9503,9 +9503,9 @@ void CBitmapEx::_DrawTransparentNearestNeighbour(long dstX, long dstY, long dstW
 					bmfixed f_dred = itofx(_GetRValue(pixel2));
 					bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 					bmfixed f_dblue = itofx(_GetBValue(pixel2));
-					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+					unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+					unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+					unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 
@@ -9745,9 +9745,9 @@ void CBitmapEx::_DrawTransparentBilinear(long dstX, long dstY, long dstWidth, lo
 					bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
 					bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
 					bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
-					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+					unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+					unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+					unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 
@@ -10236,9 +10236,9 @@ void CBitmapEx::_DrawTransparentBicubic(long dstX, long dstY, long dstWidth, lon
 					bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
 					bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
 					bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
-					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+					unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+					unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+					unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 					lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 				}
 
@@ -10380,9 +10380,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										bmfixed f_dred = itofx(_GetRValue(pixel2));
 										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 										bmfixed f_dblue = itofx(_GetBValue(pixel2));
-										BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-										BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-										BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+										unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+										unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+										unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -10449,9 +10449,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										bmfixed f_b2 = itofx(_GetBValue(pixel2));
 										bmfixed f_b3 = itofx(_GetBValue(pixel3));
 										bmfixed f_b4 = itofx(_GetBValue(pixel4));
-										BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-										BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-										BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+										unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+										unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+										unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 										pixel1 =  _RGB(red, green, blue);
 										pixel2 =  GetPixel(j, i);
 										bmfixed f_sred = itofx(_GetRValue(pixel1));
@@ -10460,9 +10460,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										bmfixed f_dred = itofx(_GetRValue(pixel2));
 										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 										bmfixed f_dblue = itofx(_GetBValue(pixel2));
-										red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-										green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-										blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+										red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+										green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+										blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -10595,9 +10595,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 												f_blue += Mulfx(f_bs,f_R);
 											}
 										}
-										BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-										BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-										BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+										unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+										unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+										unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 										_PIXEL pixel1 =  _RGB(red, green, blue);
 										_PIXEL pixel2 =  GetPixel(j, i);
 										bmfixed f_sred = itofx(_GetRValue(pixel1));
@@ -10606,9 +10606,9 @@ void CBitmapEx::DrawTransparent(_QUAD dstQuad, CBitmapEx& bitmapEx, long srcX, l
 										bmfixed f_dred = itofx(_GetRValue(pixel2));
 										bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 										bmfixed f_dblue = itofx(_GetBValue(pixel2));
-										red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-										green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-										blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+										red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+										green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+										blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 										SetPixel(j, i, _RGB(red, green, blue));
 									}
 								}
@@ -10738,9 +10738,9 @@ void CBitmapEx::DrawBlended(long dstX, long dstY, long width, long height, CBitm
 				bmfixed f_dred = itofx(_GetRValue(pixel2));
 				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 				bmfixed f_dblue = itofx(_GetBValue(pixel2));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+				unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+				unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal alpha
@@ -10893,9 +10893,9 @@ void CBitmapEx::_DrawBlendedNearestNeighbour(long dstX, long dstY, long dstWidth
 				bmfixed f_dred = itofx(_GetRValue(pixel2));
 				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 				bmfixed f_dblue = itofx(_GetBValue(pixel2));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+				unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+				unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal alpha
@@ -11073,9 +11073,9 @@ void CBitmapEx::_DrawBlendedBilinear(long dstX, long dstY, long dstWidth, long d
 				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
 				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
 				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+				unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+				unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal alpha
@@ -11323,9 +11323,9 @@ void CBitmapEx::_DrawBlendedBicubic(long dstX, long dstY, long dstWidth, long ds
 				bmfixed f_dred = itofx(_GetRValue(lpDstData[dwDstTotalOffset>>2]));
 				bmfixed f_dgreen = itofx(_GetGValue(lpDstData[dwDstTotalOffset>>2]));
 				bmfixed f_dblue = itofx(_GetBValue(lpDstData[dwDstTotalOffset>>2]));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
+				unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_alpha) + Mulfx(f_dred, f_1-f_alpha));
+				unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_alpha) + Mulfx(f_dgreen, f_1-f_alpha));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_alpha) + Mulfx(f_dblue, f_1-f_alpha));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update horizontal alpha
@@ -11523,9 +11523,9 @@ void CBitmapEx::DrawAlpha(long dstX, long dstY, long width, long height, CBitmap
 				bmfixed f_dred = itofx(_GetRValue(pixel2));
 				bmfixed f_dgreen = itofx(_GetGValue(pixel2));
 				bmfixed f_dblue = itofx(_GetBValue(pixel2));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_dred, f_alphaDst) + Mulfx(f_sred, f_1-f_alphaDst));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_dgreen, f_alphaDst) + Mulfx(f_sgreen, f_1-f_alphaDst));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_dblue, f_alphaDst) + Mulfx(f_sblue, f_1-f_alphaDst));
+				unsigned char red = (byte)fxtoi(Mulfx(f_dred, f_alphaDst) + Mulfx(f_sred, f_1-f_alphaDst));
+				unsigned char green = (byte)fxtoi(Mulfx(f_dgreen, f_alphaDst) + Mulfx(f_sgreen, f_1-f_alphaDst));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_dblue, f_alphaDst) + Mulfx(f_sblue, f_1-f_alphaDst));
 				lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 
 				// Update destination horizontal offset
@@ -11856,9 +11856,9 @@ void CBitmapEx::_DrawCombinedBilinear(long dstX, long dstY, long dstWidth, long 
 				bmfixed f_b2 = itofx(_GetBValue(pixel2));
 				bmfixed f_b3 = itofx(_GetBValue(pixel3));
 				bmfixed f_b4 = itofx(_GetBValue(pixel4));
-				BYTE red = (BYTE)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
-				BYTE green = (BYTE)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
-				BYTE blue = (BYTE)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
+				unsigned char red = (byte)fxtoi(Mulfx(f_w1, f_r1) + Mulfx(f_w2, f_r2) + Mulfx(f_w3, f_r3) + Mulfx(f_w4, f_r4));
+				unsigned char green = (byte)fxtoi(Mulfx(f_w1, f_g1) + Mulfx(f_w2, f_g2) + Mulfx(f_w3, f_g3) + Mulfx(f_w4, f_g4));
+				unsigned char blue = (byte)fxtoi(Mulfx(f_w1, f_b1) + Mulfx(f_w2, f_b2) + Mulfx(f_w3, f_b3) + Mulfx(f_w4, f_b4));
 				_PIXEL pixelSrc = _RGB(red, green, blue);
 				_PIXEL pixelDst = lpDstData[dwDstTotalOffset>>2];
 				_PIXEL pixel;
@@ -12070,9 +12070,9 @@ void CBitmapEx::_DrawCombinedBicubic(long dstX, long dstY, long dstWidth, long d
 						f_blue += Mulfx(f_bs,f_R);
 					}
 				}
-				BYTE red = (BYTE)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
-				BYTE green = (BYTE)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
-				BYTE blue = (BYTE)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
+				unsigned char red = (byte)max(0, min(255, fxtoi(Mulfx(f_red,f_gama))));
+				unsigned char green = (byte)max(0, min(255, fxtoi(Mulfx(f_green,f_gama))));
+				unsigned char blue = (byte)max(0, min(255, fxtoi(Mulfx(f_blue,f_gama))));
 				_PIXEL pixelSrc = _RGB(red, green, blue);
 				_PIXEL pixelDst = lpDstData[dwDstTotalOffset>>2];
 				_PIXEL pixel;
@@ -12177,7 +12177,7 @@ void CBitmapEx::DrawTextA(long dstX, long dstY, LPSTR lpszText, _PIXEL textColor
 				if (lpszText[k] != ' ')
 				{
 					// Allocate font letter buffer
-					LPBYTE lpFontBitmap = (LPBYTE)malloc(iSize*sizeof(BYTE));
+					LPBYTE lpFontBitmap = (LPBYTE)malloc(iSize*sizeof(byte));
 
 					// Get font letter data
 					::GetGlyphOutlineA(hDC, lpszText[k], GGO_GRAY8_BITMAP, &gm, iSize, lpFontBitmap, &m2);
@@ -12209,9 +12209,9 @@ void CBitmapEx::DrawTextA(long dstX, long dstY, LPSTR lpszText, _PIXEL textColor
 							bmfixed f_dred = itofx(_GetRValue(pixel));
 							bmfixed f_dgreen = itofx(_GetGValue(pixel));
 							bmfixed f_dblue = itofx(_GetBValue(pixel));
-							BYTE red = (BYTE)fxtoi(Mulfx(f_alpha,f_sred) + Mulfx(f_1malpha,f_dred));
-							BYTE green = (BYTE)fxtoi(Mulfx(f_alpha,f_sgreen) + Mulfx(f_1malpha,f_dgreen));
-							BYTE blue = (BYTE)fxtoi(Mulfx(f_alpha,f_sblue) + Mulfx(f_1malpha,f_dblue));
+							unsigned char red = (byte)fxtoi(Mulfx(f_alpha,f_sred) + Mulfx(f_1malpha,f_dred));
+							unsigned char green = (byte)fxtoi(Mulfx(f_alpha,f_sgreen) + Mulfx(f_1malpha,f_dgreen));
+							unsigned char blue = (byte)fxtoi(Mulfx(f_alpha,f_sblue) + Mulfx(f_1malpha,f_dblue));
 							SetPixel(dstX+j+iLetterOffset+iHorizontalSkip, dstY+i+iVerticalSkip+iLineOffset, _RGB(red, green, blue));
 
 							// Increment horizontal offset
@@ -12273,7 +12273,7 @@ void CBitmapEx::DrawTextW(long dstX, long dstY, LPWSTR lpszText, _PIXEL textColo
 				if (lpszText[k] != ' ')
 				{
 					// Allocate font letter buffer
-					LPBYTE lpFontBitmap = (LPBYTE)malloc(iSize*sizeof(BYTE));
+					LPBYTE lpFontBitmap = (LPBYTE)malloc(iSize*sizeof(byte));
 
 					// Get font letter data
 					::GetGlyphOutlineW(hDC, lpszText[k], GGO_GRAY8_BITMAP, &gm, iSize, lpFontBitmap, &m2);
@@ -12305,9 +12305,9 @@ void CBitmapEx::DrawTextW(long dstX, long dstY, LPWSTR lpszText, _PIXEL textColo
 							bmfixed f_dred = itofx(_GetRValue(pixel));
 							bmfixed f_dgreen = itofx(_GetGValue(pixel));
 							bmfixed f_dblue = itofx(_GetBValue(pixel));
-							BYTE red = (BYTE)fxtoi(Mulfx(f_alpha,f_sred) + Mulfx(f_1malpha,f_dred));
-							BYTE green = (BYTE)fxtoi(Mulfx(f_alpha,f_sgreen) + Mulfx(f_1malpha,f_dgreen));
-							BYTE blue = (BYTE)fxtoi(Mulfx(f_alpha,f_sblue) + Mulfx(f_1malpha,f_dblue));
+							unsigned char red = (byte)fxtoi(Mulfx(f_alpha,f_sred) + Mulfx(f_1malpha,f_dred));
+							unsigned char green = (byte)fxtoi(Mulfx(f_alpha,f_sgreen) + Mulfx(f_1malpha,f_dgreen));
+							unsigned char blue = (byte)fxtoi(Mulfx(f_alpha,f_sblue) + Mulfx(f_1malpha,f_dblue));
 							SetPixel(dstX+j+iLetterOffset+iHorizontalSkip, dstY+i+iVerticalSkip+iLineOffset, _RGB(red, green, blue));
 
 							// Increment horizontal offset
@@ -12369,10 +12369,10 @@ _PIXEL CBitmapEx::_RGB2HSV(_PIXEL rgbPixel)
 	_PIXEL hsvPixel = 0;
 
 	// Convert RGB value to HSV value
-	BYTE red = _GetRValue(rgbPixel);
-	BYTE green = _GetGValue(rgbPixel);
-	BYTE blue = _GetBValue(rgbPixel);
-	BYTE temp = (red + green + blue) / 3;
+	unsigned char red = _GetRValue(rgbPixel);
+	unsigned char green = _GetGValue(rgbPixel);
+	unsigned char blue = _GetBValue(rgbPixel);
+	unsigned char temp = (red + green + blue) / 3;
 	float xa = (green - red) / sqrt(2.0f);
 	float ya = (2*blue - red - green) / sqrt(6.0f);
 	float _hue = _ARGE(xa, ya) * (180.0f / _PI) + 150.0f;
@@ -12384,9 +12384,9 @@ _PIXEL CBitmapEx::_RGB2HSV(_PIXEL rgbPixel)
 		_hue = _hue + 360.0f;
 	if (_hue >= 360.0f)
 		_hue = _hue - 360.0f;
-	BYTE hue = (BYTE)((_hue / 360.0f) * 255.0f);
-	BYTE saturation = (BYTE)((_saturation / 100.0f) * 255.0f);
-	BYTE value = (BYTE)((_value / 100.0f) * 255.0f);
+	unsigned char hue = (byte)((_hue / 360.0f) * 255.0f);
+	unsigned char saturation = (byte)((_saturation / 100.0f) * 255.0f);
+	unsigned char value = (byte)((_value / 100.0f) * 255.0f);
 	hsvPixel = _RGB(hue, saturation, value);
 
 	return hsvPixel;
@@ -12397,9 +12397,9 @@ _PIXEL CBitmapEx::_HSV2RGB(_PIXEL hsvPixel)
 	_PIXEL rgbPixel = 0;
 
 	// Convert HSV value to RGB value
-	BYTE hue = _GetRValue(hsvPixel);
-	BYTE saturation = _GetGValue(hsvPixel);
-	BYTE value = _GetBValue(hsvPixel);
+	unsigned char hue = _GetRValue(hsvPixel);
+	unsigned char saturation = _GetGValue(hsvPixel);
+	unsigned char value = _GetBValue(hsvPixel);
 	float _hue = ((float)hue / 255.0f) * 360.0f;
 	float _saturation = ((float)saturation / 255.0f) * 100.0f;
 	float _value = ((float)value / 255.0f) * 100.0f;
@@ -12454,9 +12454,9 @@ _PIXEL CBitmapEx::_HSV2RGB(_PIXEL hsvPixel)
 		_green = _ur + (_vr - _wr) * _rdim;
 		_blue = 255.0f;
 	}
-	BYTE red = (BYTE)_red;
-	BYTE green = (BYTE)_green;
-	BYTE blue = (BYTE)_blue;
+	unsigned char red = (byte)_red;
+	unsigned char green = (byte)_green;
+	unsigned char blue = (byte)_blue;
 	rgbPixel = _RGB(red, green, blue);
 
 	return rgbPixel;
@@ -12531,13 +12531,13 @@ void CBitmapEx::ConvertToRGB()
 }
 void CBitmapEx::ReplaceColor(_PIXEL oldColor, _PIXEL newColor)
 {		
-		BYTE reffRed = _GetRValue(oldColor);
-		BYTE reffGreen = _GetGValue(oldColor);
-		BYTE reffBlue = _GetBValue(oldColor);
+		unsigned char reffRed = _GetRValue(oldColor);
+		unsigned char reffGreen = _GetGValue(oldColor);
+		unsigned char reffBlue = _GetBValue(oldColor);
 				
-		BYTE nwRed = _GetRValue(newColor);
-		BYTE nwGreen = _GetGValue(newColor);
-		BYTE nwBlue = _GetBValue(newColor);
+		unsigned char nwRed = _GetRValue(newColor);
+		unsigned char nwGreen = _GetGValue(newColor);
+		unsigned char nwBlue = _GetBValue(newColor);
 		float _alpha = 1;
 		bmfixed f_1 = itofx(1);
 		bmfixed f_alpha = ftofx(_alpha);
@@ -12561,16 +12561,16 @@ void CBitmapEx::ReplaceColor(_PIXEL oldColor, _PIXEL newColor)
 
 					// Update bitmap
 					//_PIXEL currPixel = _RGB2HSV(lpDstData[dwTotalOffset>>2]);
-					BYTE currRed = _GetRValue(lpDstData[dwTotalOffset>>2]);
-					BYTE currGreen = _GetGValue(lpDstData[dwTotalOffset>>2]);
-					BYTE currBlue = _GetBValue(lpDstData[dwTotalOffset>>2]);
+					unsigned char currRed = _GetRValue(lpDstData[dwTotalOffset>>2]);
+					unsigned char currGreen = _GetGValue(lpDstData[dwTotalOffset>>2]);
+					unsigned char currBlue = _GetBValue(lpDstData[dwTotalOffset>>2]);
 
 					
 					if (currRed == reffRed && currGreen == reffGreen && currBlue == reffBlue)
 					{
-						BYTE red = nwRed;
-						BYTE green = nwGreen ;
-						BYTE blue = nwBlue;
+						unsigned char red = nwRed;
+						unsigned char green = nwGreen ;
+						unsigned char blue = nwBlue;
 						lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 					}
 
@@ -12585,9 +12585,9 @@ void CBitmapEx::ReplaceColor(_PIXEL oldColor, _PIXEL newColor)
 void CBitmapEx::MakeTransparent(_PIXEL Color)
 {		
 				
-		BYTE nwRed = _GetRValue(Color);
-		BYTE nwGreen = _GetGValue(Color);
-		BYTE nwBlue = _GetBValue(Color);
+		unsigned char nwRed = _GetRValue(Color);
+		unsigned char nwGreen = _GetGValue(Color);
+		unsigned char nwBlue = _GetBValue(Color);
 		float _alpha = 1;
 		float _error = 1;
 		_error = _error * _error;
@@ -12606,16 +12606,16 @@ void CBitmapEx::MakeTransparent(_PIXEL Color)
 
 					// Update bitmap
 					//_PIXEL currPixel = _RGB2HSV(lpDstData[dwTotalOffset>>2]);
-					BYTE currRed = _GetRValue(lpDstData[dwTotalOffset>>2]);
-					BYTE currGreen = _GetGValue(lpDstData[dwTotalOffset>>2]);
-					BYTE currBlue = _GetBValue(lpDstData[dwTotalOffset>>2]);
+					unsigned char currRed = _GetRValue(lpDstData[dwTotalOffset>>2]);
+					unsigned char currGreen = _GetGValue(lpDstData[dwTotalOffset>>2]);
+					unsigned char currBlue = _GetBValue(lpDstData[dwTotalOffset>>2]);
 
 					
 					if (currRed == nwRed && currGreen == nwGreen && currBlue == nwBlue)
 					{
-						BYTE red = 0;
-						BYTE green = 0 ;
-						BYTE blue = 0;
+						unsigned char red = 0;
+						unsigned char green = 0 ;
+						unsigned char blue = 0;
 						lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 					}
 
@@ -12635,9 +12635,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 	{
 		// Calculate color replacement params
 		_PIXEL reffPixel = _RGB2HSV(GetPixel(x, y));
-		BYTE reffRed = _GetRValue(reffPixel);
-		BYTE reffGreen = _GetGValue(reffPixel);
-		BYTE reffBlue = _GetBValue(reffPixel);
+		unsigned char reffRed = _GetRValue(reffPixel);
+		unsigned char reffGreen = _GetGValue(reffPixel);
+		unsigned char reffBlue = _GetBValue(reffPixel);
 		float _alpha = max(0, min(alpha, 100)) / 100.0f;
 		bmfixed f_1 = itofx(1);
 		bmfixed f_alpha = ftofx(_alpha);
@@ -12665,9 +12665,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 
 					// Update bitmap
 					_PIXEL currPixel = _RGB2HSV(lpDstData[dwTotalOffset>>2]);
-					BYTE currRed = _GetRValue(currPixel);
-					BYTE currGreen = _GetGValue(currPixel);
-					BYTE currBlue = _GetBValue(currPixel);
+					unsigned char currRed = _GetRValue(currPixel);
+					unsigned char currGreen = _GetGValue(currPixel);
+					unsigned char currBlue = _GetBValue(currPixel);
 					float _hueDiff = (float)((currRed-reffRed)*(currRed-reffRed));
 					float _satDiff = (float)((currGreen-reffGreen)*(currGreen-reffGreen));
 					float _valDiff = (float)((currBlue-reffBlue)*(currBlue-reffBlue));
@@ -12677,9 +12677,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 						bmfixed f_sred = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
 						bmfixed f_sgreen = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
 						bmfixed f_sblue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
-						BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_1-f_alpha) + Mulfx(f_dred, f_alpha));
-						BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_1-f_alpha) + Mulfx(f_dgreen, f_alpha));
-						BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_1-f_alpha) + Mulfx(f_dblue, f_alpha));
+						unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_1-f_alpha) + Mulfx(f_dred, f_alpha));
+						unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_1-f_alpha) + Mulfx(f_dgreen, f_alpha));
+						unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_1-f_alpha) + Mulfx(f_dblue, f_alpha));
 						lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 					}
 
@@ -12717,9 +12717,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 				_y = pPixels[count].y;
 				DWORD dwTotalOffset = _y*m_iPitch + _x*m_iBpp;
 				_PIXEL currPixel = _RGB2HSV(lpDstData[dwTotalOffset>>2]);
-				BYTE currRed = _GetRValue(currPixel);
-				BYTE currGreen = _GetGValue(currPixel);
-				BYTE currBlue = _GetBValue(currPixel);
+				unsigned char currRed = _GetRValue(currPixel);
+				unsigned char currGreen = _GetGValue(currPixel);
+				unsigned char currBlue = _GetBValue(currPixel);
 				float _hueDiff = (float)((currRed-reffRed)*(currRed-reffRed));
 				float _satDiff = (float)((currGreen-reffGreen)*(currGreen-reffGreen));
 				float _valDiff = (float)((currBlue-reffBlue)*(currBlue-reffBlue));
@@ -12729,9 +12729,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 					bmfixed f_sred = itofx(_GetRValue(lpDstData[dwTotalOffset>>2]));
 					bmfixed f_sgreen = itofx(_GetGValue(lpDstData[dwTotalOffset>>2]));
 					bmfixed f_sblue = itofx(_GetBValue(lpDstData[dwTotalOffset>>2]));
-					BYTE red = (BYTE)fxtoi(Mulfx(f_sred, f_1-f_alpha) + Mulfx(f_dred, f_alpha));
-					BYTE green = (BYTE)fxtoi(Mulfx(f_sgreen, f_1-f_alpha) + Mulfx(f_dgreen, f_alpha));
-					BYTE blue = (BYTE)fxtoi(Mulfx(f_sblue, f_1-f_alpha) + Mulfx(f_dblue, f_alpha));
+					unsigned char red = (byte)fxtoi(Mulfx(f_sred, f_1-f_alpha) + Mulfx(f_dred, f_alpha));
+					unsigned char green = (byte)fxtoi(Mulfx(f_sgreen, f_1-f_alpha) + Mulfx(f_dgreen, f_alpha));
+					unsigned char blue = (byte)fxtoi(Mulfx(f_sblue, f_1-f_alpha) + Mulfx(f_dblue, f_alpha));
 					lpDstData[dwTotalOffset>>2] = _RGB(red, green, blue);
 				}
 
@@ -12740,9 +12740,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 				{
 					DWORD dwLeftOffset = dwTotalOffset - m_iBpp;
 					_PIXEL currPixel = _RGB2HSV(lpDstData[dwLeftOffset>>2]);
-					BYTE currRed = _GetRValue(currPixel);
-					BYTE currGreen = _GetGValue(currPixel);
-					BYTE currBlue = _GetBValue(currPixel);
+					unsigned char currRed = _GetRValue(currPixel);
+					unsigned char currGreen = _GetGValue(currPixel);
+					unsigned char currBlue = _GetBValue(currPixel);
 					float _hueDiff = (float)((currRed-reffRed)*(currRed-reffRed));
 					float _satDiff = (float)((currGreen-reffGreen)*(currGreen-reffGreen));
 					float _valDiff = (float)((currBlue-reffBlue)*(currBlue-reffBlue));
@@ -12759,9 +12759,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 				{
 					DWORD dwTopOffset = dwTotalOffset - m_iPitch;
 					_PIXEL currPixel = _RGB2HSV(lpDstData[dwTopOffset>>2]);
-					BYTE currRed = _GetRValue(currPixel);
-					BYTE currGreen = _GetGValue(currPixel);
-					BYTE currBlue = _GetBValue(currPixel);
+					unsigned char currRed = _GetRValue(currPixel);
+					unsigned char currGreen = _GetGValue(currPixel);
+					unsigned char currBlue = _GetBValue(currPixel);
 					float _hueDiff = (float)((currRed-reffRed)*(currRed-reffRed));
 					float _satDiff = (float)((currGreen-reffGreen)*(currGreen-reffGreen));
 					float _valDiff = (float)((currBlue-reffBlue)*(currBlue-reffBlue));
@@ -12778,9 +12778,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 				{
 					DWORD dwRightOffset = dwTotalOffset + m_iBpp;
 					_PIXEL currPixel = _RGB2HSV(lpDstData[dwRightOffset>>2]);
-					BYTE currRed = _GetRValue(currPixel);
-					BYTE currGreen = _GetGValue(currPixel);
-					BYTE currBlue = _GetBValue(currPixel);
+					unsigned char currRed = _GetRValue(currPixel);
+					unsigned char currGreen = _GetGValue(currPixel);
+					unsigned char currBlue = _GetBValue(currPixel);
 					float _hueDiff = (float)((currRed-reffRed)*(currRed-reffRed));
 					float _satDiff = (float)((currGreen-reffGreen)*(currGreen-reffGreen));
 					float _valDiff = (float)((currBlue-reffBlue)*(currBlue-reffBlue));
@@ -12797,9 +12797,9 @@ void CBitmapEx::ReplaceColor(long x, long y, _PIXEL newColor, long alpha, long e
 				{
 					DWORD dwBottomOffset = dwTotalOffset + m_iPitch;
 					_PIXEL currPixel = _RGB2HSV(lpDstData[dwBottomOffset>>2]);
-					BYTE currRed = _GetRValue(currPixel);
-					BYTE currGreen = _GetGValue(currPixel);
-					BYTE currBlue = _GetBValue(currPixel);
+					unsigned char currRed = _GetRValue(currPixel);
+					unsigned char currGreen = _GetGValue(currPixel);
+					unsigned char currBlue = _GetBValue(currPixel);
 					float _hueDiff = (float)((currRed-reffRed)*(currRed-reffRed));
 					float _satDiff = (float)((currGreen-reffGreen)*(currGreen-reffGreen));
 					float _valDiff = (float)((currBlue-reffBlue)*(currBlue-reffBlue));
@@ -12830,8 +12830,8 @@ void CBitmapEx::CreateFireEffect()
 		// Create fire buffer
 		if (m_lpFire != NULL)
 			free(m_lpFire);
-		m_lpFire = (LPBYTE)malloc(m_bih.biHeight*m_bih.biWidth*sizeof(BYTE));
-		memset(m_lpFire, 0, m_bih.biHeight*m_bih.biWidth*sizeof(BYTE));
+		m_lpFire = (LPBYTE)malloc(m_bih.biHeight*m_bih.biWidth*sizeof(byte));
+		memset(m_lpFire, 0, m_bih.biHeight*m_bih.biWidth*sizeof(byte));
 		if (m_pFireBitmap != NULL)
 			delete m_pFireBitmap;
 		m_pFireBitmap = new CBitmapEx();
@@ -12895,7 +12895,7 @@ void CBitmapEx::UpdateFireEffect(BOOL bLarge, long iteration, long height)
 						DWORD dwOffset2 = (_y2 * m_bih.biWidth) + _x2;
 						DWORD dwOffset3 = (_y3 * m_bih.biWidth) + _x3;
 						DWORD dwOffset4 = (_y4 * m_bih.biWidth) + _x4;
-						m_lpFire[dwOffset] = (BYTE)(((m_lpFire[dwOffset1] + m_lpFire[dwOffset2] + m_lpFire[dwOffset3] + m_lpFire[dwOffset4]) * _height) / _heightSize);
+						m_lpFire[dwOffset] = (byte)(((m_lpFire[dwOffset1] + m_lpFire[dwOffset2] + m_lpFire[dwOffset3] + m_lpFire[dwOffset4]) * _height) / _heightSize);
 						dwOffset++;
 					}
 					else
@@ -12913,7 +12913,7 @@ void CBitmapEx::UpdateFireEffect(BOOL bLarge, long iteration, long height)
 						DWORD dwOffset2 = (_y2 * m_bih.biWidth) + _x2;
 						DWORD dwOffset3 = (_y3 * m_bih.biWidth) + _x3;
 						DWORD dwOffset4 = (_y4 * m_bih.biWidth) + _x4;
-						m_lpFire[dwOffset] = (BYTE)(((m_lpFire[dwOffset1] + m_lpFire[dwOffset2] + m_lpFire[dwOffset3] + m_lpFire[dwOffset4]) * _height) / _heightSize);
+						m_lpFire[dwOffset] = (byte)(((m_lpFire[dwOffset1] + m_lpFire[dwOffset2] + m_lpFire[dwOffset3] + m_lpFire[dwOffset4]) * _height) / _heightSize);
 						dwOffset++;
 					}
 				}
@@ -13080,12 +13080,12 @@ void CBitmapEx::UpdateWaterEffect(long iteration)
 					dwOffset = dwDstTotalOffset + (dy>>m_iLightModifier)*m_iPitch + (dx>>m_iLightModifier)*m_iBpp;
 					if (dwOffset < m_dwSize)
 					{
-						BYTE red = _GetRValue(lpSrcData[dwOffset>>2]);
-						BYTE green = _GetGValue(lpSrcData[dwOffset>>2]);
-						BYTE blue = _GetBValue(lpSrcData[dwOffset>>2]);
-						red = (BYTE)max(0, min(255, red-dx));
-						green = (BYTE)max(0, min(255, green-dx));
-						blue = (BYTE)max(0, min(255, blue-dx));
+						unsigned char red = _GetRValue(lpSrcData[dwOffset>>2]);
+						unsigned char green = _GetGValue(lpSrcData[dwOffset>>2]);
+						unsigned char blue = _GetBValue(lpSrcData[dwOffset>>2]);
+						red = (byte)max(0, min(255, red-dx));
+						green = (byte)max(0, min(255, green-dx));
+						blue = (byte)max(0, min(255, blue-dx));
 						lpDstData[dwDstTotalOffset>>2] = _RGB(red, green, blue);
 					}
 				}
@@ -13486,7 +13486,7 @@ void CBitmapEx::GetRedChannelHistogram(long lpBuffer[256], BOOL bPercent)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update red channel histogram
-				BYTE red = _GetRValue(lpSrcData[dwTotalOffset>>2]);
+				unsigned char red = _GetRValue(lpSrcData[dwTotalOffset>>2]);
 				lpBuffer[red]++;
 
 				// Update horizontal offset
@@ -13529,7 +13529,7 @@ void CBitmapEx::GetGreenChannelHistogram(long lpBuffer[256], BOOL bPercent)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update green channel histogram
-				BYTE green = _GetGValue(lpSrcData[dwTotalOffset>>2]);
+				unsigned char green = _GetGValue(lpSrcData[dwTotalOffset>>2]);
 				lpBuffer[green]++;
 
 				// Update horizontal offset
@@ -13572,7 +13572,7 @@ void CBitmapEx::GetBlueChannelHistogram(long lpBuffer[256], BOOL bPercent)
 				dwTotalOffset = dwVerticalOffset + dwHorizontalOffset;
 
 				// Update blue channel histogram
-				BYTE blue = _GetBValue(lpSrcData[dwTotalOffset>>2]);
+				unsigned char blue = _GetBValue(lpSrcData[dwTotalOffset>>2]);
 				lpBuffer[blue]++;
 
 				// Update horizontal offset

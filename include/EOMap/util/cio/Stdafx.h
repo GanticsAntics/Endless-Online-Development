@@ -33,4 +33,4 @@
 // global declarations
 //_COM_SMARTPTR_TYPEDEF(IDirect3D9, __uuidof(IDirect3D9));
 // Declare Smart Pointers for IFoo, IBar, and IGak interfaces
-//_COM_SMARTPTR_TYPEDEF(IDirect3DDevice9, __uuidof(IDirect3DDevice9));
+//_COM_SMARTPTR_TYPEDEF(sf::RenderWindow, __uuidof(sf::RenderWindow));

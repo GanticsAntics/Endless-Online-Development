@@ -26,7 +26,9 @@ CLIENT_F_FUNC(Face)
 						{
 							procDirection = 2;
 						}
+						game->map->ThreadLock.lock();
 						game->map->m_Players[findid]->direction = procDirection;
+						game->map->ThreadLock.unlock();
 					}
 					
 					break;

@@ -40,8 +40,12 @@
 #include <sys\utime.h>
 
 #include <GdiPlus.h>
-#include <d3d9.h>
-#include <d3dx9.h>
+#include <SFML/Window.hpp>
+#include <SFML/OpenGL.hpp>
+#include <SFML/Graphics.hpp>
+
+#include "Utilities/Resource_Manager.h"
+#include "game.h"
 
 #include "Utilities/UI_Element.h"
 #include "Utilities/Button.h"
@@ -49,7 +53,7 @@
 	
 #include "Utilities/Textbox.h"
 #include "Utilities/TextTools.h"
-//#include "Utilities/UI_InformationBox.h"
+#include "Utilities/UI_InformationBox.h"
 #include "Utilities/UI_ScrollBar.h"
 
 #include <Ptypes/pinet.h>
@@ -69,8 +73,4 @@
 #include <EOServ/eodata.hpp>
 #include <EOServ/packet.hpp>
 
-#include "Utilities/Resource_Manager.h"
-// global declarations
-_COM_SMARTPTR_TYPEDEF(IDirect3D9, __uuidof(IDirect3D9));
-// Declare Smart Pointers for IFoo, IBar, and IGak interfaces
-_COM_SMARTPTR_TYPEDEF(IDirect3DDevice9, __uuidof(IDirect3DDevice9));
+

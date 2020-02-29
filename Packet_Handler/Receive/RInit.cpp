@@ -3,7 +3,7 @@
 #include "..\Send\SConnection.h"
 CLIENT_F_FUNC(Init)
 {
-	int id = reader.GetByte();
+	int id = reader.Getbyte();
     char emulti_e;
     char emulti_d;
 	short PlayerID;
@@ -27,19 +27,19 @@ CLIENT_F_FUNC(Init)
 			{
 				game->Stage = Game::GameStage::PCreateAccount;
 			}
-            int EIFVAL1 = reader.GetByte();
-            int EIFVAL2 = reader.GetByte();
+            int EIFVAL1 = reader.Getbyte();
+            int EIFVAL2 = reader.Getbyte();
 
 			int PCVal = EIFVAL1 * 7 - 13 + EIFVAL2;
 			bool FindFlag = false;
 
 			game->world->PacketCount = PCVal;
 			game->world->RawPacketCount = 0;
-            emulti_d = reader.GetByte();
-            emulti_e = reader.GetByte();
+            emulti_d = reader.Getbyte();
+            emulti_e = reader.Getbyte();
 			PlayerID = reader.GetShort();
-			game->SendMulti = emulti_e;
-			game->RecvMulti = emulti_d;
+			game->SendMulti = (unsigned char)emulti_e;
+			game->RecvMulti = (unsigned char)emulti_d;
 			game->world->PProcessor.SetEMulti(emulti_e,emulti_d);
 			game->GameID = PlayerID;
 			int response = reader.GetThree();
@@ -51,8 +51,8 @@ CLIENT_F_FUNC(Init)
 		}
 		case (3):
         {
-            int bid = reader.GetByte();
-            int banlength = reader.GetByte();
+            int bid = reader.Getbyte();
+            int banlength = reader.Getbyte();
             if (bid == 0)
             {
 			 std::string message = "";

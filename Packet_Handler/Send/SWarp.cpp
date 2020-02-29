@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SWarp.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SWarp::AcceptWarp(pt::ipstream* ClientStream,int MapID, int x, int y ,LPVOID game)
 {

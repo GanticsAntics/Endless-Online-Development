@@ -24,7 +24,7 @@ CLIENT_F_FUNC(Warp)
 						std::array<eo2_byte, 4U> MapRID;
 						for (int i = 0; i < 4; i++)
 						{
-							MapRID[i] = reader.GetByte();
+							MapRID[i] = reader.Getbyte();
 						}
 						unsigned int MapFileSize = reader.GetThree();
 						game->map->LoadMap(MapID);
@@ -56,7 +56,7 @@ CLIENT_F_FUNC(Warp)
 				
 				int anim = reader.GetChar();
 				int CharacterSize = reader.GetChar();
-				reader.GetByte();
+				reader.Getbyte();
 				game->map->ThreadLock.lock();
 				Map_Player* MainPlayer = game->map->m_Players[World::WorldCharacterID];
 				int exp = MainPlayer->exp;	
@@ -68,6 +68,8 @@ CLIENT_F_FUNC(Warp)
 				for (int i = 0; i < CharacterSize; i++)
 				{
 					Map_Player* newplayer = new Map_Player();
+					newplayer->Initialize(game);
+					newplayer->InitializeModel(game);
 					newplayer->name = reader.GetBreakString();
 					newplayer->ID = reader.GetShort();
 					newplayer->mapid = reader.GetShort();
@@ -127,7 +129,7 @@ CLIENT_F_FUNC(Warp)
 						newplayer->SetStance(Map_Player::PlayerStance::Standing);
 					}
 					unsigned char is_hideinvisible = reader.GetChar();
-					reader.GetByte();
+					reader.Getbyte();
 
 					if (newplayer->ID == World::WorldCharacterID)
 					{
@@ -153,13 +155,15 @@ CLIENT_F_FUNC(Warp)
 						MainPlayer->ShieldID = newplayer->ShieldID;
 						MainPlayer->WeaponID = newplayer->WeaponID;
 						MainPlayer->SetStance(newplayer->Stance);
-						//game->map->CharacterID = MainPlayer->CharacterID;
-						game->map->AddPlayer(MainPlayer);
+						game->map->ThreadLock.lock();
+						MainPlayer->UpdateAppearence();
+						game->map->ThreadLock.unlock();
 					
 					}
 					else
 					{
 						game->map->AddPlayer(newplayer);
+						//newplayer->UpdateAppearence();
 					}
 				}
 				

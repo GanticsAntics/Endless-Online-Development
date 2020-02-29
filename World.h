@@ -1,4 +1,6 @@
-#include "Game.h"
+//#include "game.h"
+
+#pragma once
 #include "Utilities\UI_InformationBox.h"
 #include <list>
 #include "include\Ptypes\ptypes.h"
@@ -11,11 +13,11 @@
 #include "Utilities\ConfigFile.h"
 #include "include\EOServ\eodata.hpp"
 #include "Utilities\UI_InformationBox.h"
-#ifndef World_h
-#define World_h
-class Game;
+
 class World
 {
+protected:
+	Game* m_game;
 public:
 	World(Game* _Game);
 	typedef std::list<Textbox> TextType;
@@ -34,6 +36,8 @@ public:
 	static EIF* EIF_File;
 	static ESF* ESF_File;
 	static ECF* ECF_File;
+	static int ChestX;
+	static int ChestY;
 	struct OnlinePlayerContainer
 	{
 		std::string _Name;
@@ -43,12 +47,12 @@ public:
 		std::string _GuildTag;
 	};
 	static std::vector<OnlinePlayerContainer> OnlinePlayers;
-	void HandleTextInput(WPARAM Parameter, byte phase, byte subphase);
-	void HandleKeyInput(WPARAM Parameter, byte phase, byte subphase);
+	void HandleTextInput(WPARAM Parameter, int  phase, int  subphase);
+	void HandleKeyInput(WPARAM Parameter, int  phase,int subphase);
     Textbox* RegisterTextBox(Textbox TxtBox);
     void UnregisterTextBox(Textbox* TxtBox);
 	void MassTextBoxReset();
-	void RenderTextBoxes(ID3DXSprite* m_Sprite, byte phase, byte subphase);
+	void RenderTextBoxes(int  phase, int subphase);
 	void SetFocusedTextbox(Textbox* TxtBox);
 
 	
@@ -61,7 +65,6 @@ public:
 	void DropConnection();
 	static bool Connected;
 	static bool Connecting;
-	static void Send(LPVOID game, pt::ipstream* Stream, PacketBuilder Builder);
-	static std::string Receive(LPVOID game, std::string Builder);
+	static void Send(Game* t_game, pt::ipstream* Stream, PacketBuilder Builder);
+	static std::string Receive(Game* t_game, std::string Builder);
 };
-#endif //World_h

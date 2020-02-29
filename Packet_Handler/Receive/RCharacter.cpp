@@ -57,13 +57,12 @@ CLIENT_F_FUNC(Character)
 							}
 						}
 
-						BYTE CharacterSize = reader.GetChar();
-						reader.GetByte();
-						reader.GetByte();
+						unsigned char CharacterSize = reader.GetChar();
+						reader.Getbyte();
+						reader.Getbyte();
 						for(int i = 0; i < 3;i++)
 						{
-							game->menu->CSModels[i] = CharacterModel(); 
-							game->menu->CSModels[i].Initialize((LPVOID*)game); 
+							game->menu->CSModels[i].InitializeModel(game);
 						}
 
 						for (int i = 0; i < CharacterSize; i++)
@@ -91,8 +90,8 @@ CLIENT_F_FUNC(Character)
 							game->menu->CSModels[i].HatID = reader.GetShort() - 1;
 							game->menu->CSModels[i].ShieldID = reader.GetShort() - 1;
 							game->menu->CSModels[i].WeaponID = reader.GetShort() - 1;
-							game->menu->CSModels[i].AlignCharacter();
-							reader.GetByte();
+							game->menu->CSModels[i].AlignCharacter(game->menu->CSModels[i].Stance, game->menu->CSModels[i].frame_ID, game->menu->CSModels[i].direction);
+							reader.Getbyte();
 						}
 						game->AccountCharacterSize = CharacterSize;
 						

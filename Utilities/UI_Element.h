@@ -1,9 +1,7 @@
-#ifndef _UI_Element_
-#define _UI_Element_
+#pragma once
+class Game;
 class UI_Element
 {
-	std::shared_ptr<IDirect3DTexture9> p_Texture;
-	std::shared_ptr<IDirect3DTexture9> p_Texture_MouseOver;
 	std::pair<int, int> Position;
 	std::pair<int, int> Size;
 
@@ -14,7 +12,10 @@ class UI_Element
 	bool AnimDirectionTopDown;
 	bool HighlightOnMouseDown = false;
 	bool IsActive = true;
-	
+protected:
+	Game* m_game;
+	Resource_Manager::TextureData* p_Texture;
+	Resource_Manager::TextureData* p_Texture_MouseOver;
 public:
 	UI_Element();
 	bool GetIsActive() { return this->IsActive; }
@@ -35,16 +36,15 @@ public:
 	bool IsNewTextureForMouseOver() { return this->AnimNewTexture; }
 	void AssignNewTextureForMouseOver(bool yesno) { this->AnimNewTexture = yesno; }
 	void SetFrameID(int index) { this->AnimID = index; }
-	void AssignTexture(std::shared_ptr<IDirect3DTexture9> m_Texture) { this->p_Texture = m_Texture; }
-	std::shared_ptr<IDirect3DTexture9> GetTexture() { return this->p_Texture; }
-	std::shared_ptr<IDirect3DTexture9> GetMouseOverTexture() { return this->p_Texture_MouseOver; }
+	void AssignTexture(Resource_Manager::TextureData* m_Texture) { this->p_Texture = m_Texture; }
+	std::shared_ptr<sf::Texture> GetTexture() { return this->p_Texture->_Texture; }
+	std::shared_ptr<sf::Texture> GetMouseOverTexture() { return this->p_Texture_MouseOver->_Texture; }
 
-	void AssignMouseOverTexture(std::shared_ptr<IDirect3DTexture9> m_Texture) { this->p_Texture_MouseOver = m_Texture; }
+	void AssignMouseOverTexture(Resource_Manager::TextureData* m_Texture) { this->p_Texture_MouseOver = m_Texture; }
 
 	void MouseClickProccessed(){ MouseClicked = false; }
 
-	void Initialize(VOID* m_Game);
+	void Initialize(Game* m_Game);
 	void UpdateElement();
 	~UI_Element();
 };
-#endif

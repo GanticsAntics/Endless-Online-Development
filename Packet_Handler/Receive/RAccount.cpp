@@ -3,15 +3,6 @@
 #include "..\Send\SCharacter.h"
 #include "..\Send\SAccount.h"
 
-std::string WCharToCharString(std::basic_string<wchar_t> str)
-{
-		char ch[260];
-		char DefChar = ' ';
-		WideCharToMultiByte(CP_ACP,0, str.c_str(),-1, ch,260,&DefChar, NULL);
-		std::string ret(ch);
-		return ret;
-}
-
 CLIENT_F_FUNC(Account)
 {	
 	switch(action)
@@ -22,7 +13,7 @@ CLIENT_F_FUNC(Account)
 			int val;
 			if(reader.Length() > 6)
 			{
-				val = reader.GetByte();
+				val = reader.Getbyte();
 			}
 			std::string ret =  reader.GetEndString();
 			if(ret == "OK")
@@ -34,7 +25,6 @@ CLIENT_F_FUNC(Account)
 				}
 				else if(ID == ACCOUNT_CREATED)
 				{
-					game->SubStage = 0;
 					World::ThrowMessage("Welcome", "Use your new account name and \npassword to login to the game.");
 					game->SubStage=0;
 					game->Stage = game->PMenu;
@@ -42,7 +32,7 @@ CLIENT_F_FUNC(Account)
 				else
 				{
 					game->menu->SrvrCreateID = ID;
-					SAccount::CreateAccount(game->world->connection->ClientStream,WCharToCharString(game->menu->TB_CAAccNme->text),WCharToCharString(game->menu->TB_CAPassWrdOne->text),WCharToCharString(game->menu->TB_CAPassWrdTwo->text),WCharToCharString(game->menu->TB_CAName->text),WCharToCharString(game->menu->TB_CACountry->text),WCharToCharString(game->menu->TB_CAEmail->text),game);
+					SAccount::CreateAccount(game->world->connection->ClientStream,(game->menu->TB_CAAccNme->text),(game->menu->TB_CAPassWrdOne->text),(game->menu->TB_CAPassWrdTwo->text),(game->menu->TB_CAName->text),(game->menu->TB_CACountry->text),(game->menu->TB_CAEmail->text),game);
 				}
 			}
 			else if(ret == "NO")

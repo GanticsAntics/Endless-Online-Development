@@ -1,16 +1,24 @@
-#ifndef _Map_H
-#define _Map_H
+#pragma once
+#include "Map_Element\Map_NPC.h"
+#include "Map_Element\Map_Player.h"
+#include <EOMap/eo_data.hpp>
+#include <EOMap/util/cio/cio.hpp>
+#include <EOMap/eo_data.hpp>
+#include <EOMap/eo_stream.hpp>
 #include "..\World.h"
-#include "Map_Element/Map_Player.h"
-#include "Map_Element/Map_NPC.h"
 class Map
 {
+protected:
+	Game* m_game;
+	std::vector<int> ClearPlayerIDList;
+	std::vector<int> ClearNPCIDList;
 public:
+	void FinalizeMapState();
 	std::mutex ThreadLock;
 	Map();
 	World* world;
-	ID3DXSprite* Sprite;
-	ID3DXSprite* m_OverlaySprite;
+	sf::Sprite* Sprite;
+	sf::Sprite* m_OverlaySprite;
 	EMF_File* newemf;
 	
 	Full_EMF m_emf;
@@ -73,11 +81,11 @@ public:
 	void WalkPlayer(int ID, int direction , int FromX, int FromY);
 	void WalkGameCharacter(int ID, int direction, int _X, int _Y);
 	void WalkNPC(int ID, int direction, int FromX, int FromY);
-	void Initialize(World* _World, IDirect3DDevice9Ptr m_Device, LPVOID* m_game);
+	void Initialize(World* _World, sf::RenderWindow*m_Device, Game* m_game);
 	void LoadMap(int ID);
 	void Do_Open(const char* filename);
 	void Render();
 	void Update();
 	virtual ~Map();
 };
-#endif
+

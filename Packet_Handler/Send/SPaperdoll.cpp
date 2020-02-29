@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SPaperdoll.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void SPaperdoll::SendPaperdollRequest(pt::ipstream* ClientStream, int PlayerID,LPVOID game)
 {

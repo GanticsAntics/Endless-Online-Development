@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "SConnection.h"
-#include "..\Game.h"
+#include "..\game.h"
 void SConnection::SendPlayer(pt::ipstream* ClientStream, int response, LPVOID game)
 {
 	Game* gme = (Game*)game;
@@ -15,6 +15,6 @@ void SConnection::Ping(pt::ipstream* ClientStream, LPVOID game)
 {
 	Game* gme = (Game*)game;
 	PacketBuilder builder = PacketBuilder(PACKET_CONNECTION, PACKET_PING);
-	builder.AddByte(107);
+	builder.Addbyte(107);
 	World::Send(gme,ClientStream,builder);
 }

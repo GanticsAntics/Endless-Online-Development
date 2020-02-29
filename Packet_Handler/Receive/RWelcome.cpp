@@ -21,7 +21,7 @@ CLIENT_F_FUNC(Welcome)
 							std::array<eo2_byte, 4U> MapRID;
 							for (int i = 0; i < 4; i++)
 							{
-								MapRID[i] = reader.GetByte();
+								MapRID[i] = reader.Getbyte();
 							}
 							unsigned int MapFileSize = reader.GetThree();
 							if (game->map->m_emf.rid != MapRID || game->map->m_emf.MapFileSize != MapFileSize)
@@ -39,12 +39,12 @@ CLIENT_F_FUNC(Welcome)
 							std::array<eo2_byte, 4U> ItemRID;
 							for (int i = 0; i < 4; i++)
 							{
-								ItemRID[i] = reader.GetByte();
+								ItemRID[i] = reader.Getbyte();
 							}
 							std::array<eo2_byte, 2U> ItemFileLen;
 							for (int i = 0; i < 2; i++)
 							{
-								ItemFileLen[i] = reader.GetByte();
+								ItemFileLen[i] = reader.Getbyte();
 							}
 							if (game->EIF_File->rid != ItemRID || game->EIF_File->len != ItemFileLen)
 							{
@@ -59,12 +59,12 @@ CLIENT_F_FUNC(Welcome)
 							std::array<eo2_byte, 4U> NPCRID;
 							for (int i = 0; i < 4; i++)
 							{
-								NPCRID[i] = reader.GetByte();
+								NPCRID[i] = reader.Getbyte();
 							}
 							std::array<eo2_byte, 2U> NPCFileLen;
 							for (int i = 0; i < 2; i++)
 							{
-								NPCFileLen[i] = reader.GetByte();
+								NPCFileLen[i] = reader.Getbyte();
 							}
 							if (game->ENF_File->rid != NPCRID || game->ENF_File->len != NPCFileLen)
 							{
@@ -79,12 +79,12 @@ CLIENT_F_FUNC(Welcome)
 							std::array<eo2_byte, 4U> SpellRID;
 							for (int i = 0; i < 4; i++)
 							{
-								SpellRID[i] = reader.GetByte();
+								SpellRID[i] = reader.Getbyte();
 							}
 							std::array<eo2_byte, 2U> SpellFileLen;
 							for (int i = 0; i < 2; i++)
 							{
-								SpellFileLen[i] = reader.GetByte();
+								SpellFileLen[i] = reader.Getbyte();
 							}
 							if (game->ESF_File->rid != SpellRID || game->ESF_File->len != SpellFileLen)
 							{
@@ -99,12 +99,12 @@ CLIENT_F_FUNC(Welcome)
 							std::array<eo2_byte, 4U> ClassRID;
 							for (int i = 0; i < 4; i++)
 							{
-								ClassRID[i] = reader.GetByte();
+								ClassRID[i] = reader.Getbyte();
 							}
 							std::array<eo2_byte, 2U> ClassFileLen;
 							for (int i = 0; i < 2; i++)
 							{
-								ClassFileLen[i] = reader.GetByte();
+								ClassFileLen[i] = reader.Getbyte();
 							}
 							if (game->ECF_File->rid != ClassRID || game->ECF_File->len != ClassFileLen)
 							{
@@ -119,6 +119,7 @@ CLIENT_F_FUNC(Welcome)
 							game->map->ClearMap();
 		
 							Map_Player* MainPlayer = new Map_Player();
+							MainPlayer->Initialize(game);
 							MainPlayer->ID = World::WorldCharacterID;
 							MainPlayer->name = reader.GetBreakString();
 							MainPlayer->title = reader.GetBreakString();
@@ -195,7 +196,7 @@ CLIENT_F_FUNC(Welcome)
 							short Unknown4 = reader.GetShort();
 
 							short PlayerUsage = reader.GetShort();
-							reader.GetByte();
+							reader.Getbyte();
 							
 							game->map->AddPlayer(MainPlayer);
 							SWelcome::LoginWelcome(game->world->connection->ClientStream, MainPlayer->CharacterID, (LPVOID*)game);
@@ -204,7 +205,7 @@ CLIENT_F_FUNC(Welcome)
 						case (2):
 						{
 						
-							reader.GetByte(); //Unknown
+							reader.Getbyte(); //Unknown
 							std::string BuildString;
 							for (int i = 0; i < 9; i++)
 							{
@@ -220,10 +221,10 @@ CLIENT_F_FUNC(Welcome)
 							game->Map_UserInterface->map_inventory->AddItem(newitem);
 							while (true)
 							{
-								int index = reader.GetByte();
+								int index = reader.Getbyte();
 								if (index == 255) { break; }
 								Map_UI_Inventory::InventoryItem newitem;
-								int Index2 = reader.GetByte();
+								int Index2 = reader.Getbyte();
 								newitem.id = PacketProcessor::Number(index, Index2);
 								newitem.amount = reader.GetInt();
 								game->Map_UserInterface->map_inventory->AddItem(newitem);
@@ -237,10 +238,11 @@ CLIENT_F_FUNC(Welcome)
 								short level = PacketProcessor::Number(character_spells[pos + 2], character_spells[pos + 3]);
 							}
 							int numberofplayers = reader.GetChar();
-							reader.GetByte();
+							reader.Getbyte();
 							for (int i = 0; i < numberofplayers; i++)
 							{
 								Map_Player* newplayer = new Map_Player();
+								newplayer->Initialize(game);
 								newplayer->name = reader.GetBreakString();
 								newplayer->ID = reader.GetShort();
 								newplayer->mapid = reader.GetShort();
@@ -300,43 +302,46 @@ CLIENT_F_FUNC(Welcome)
 									newplayer->SetStance(Map_Player::PlayerStance::Standing);
 								}
 								unsigned char is_hideinvisible = reader.GetChar();
-								Map_Player* MainPlayer = game->map->m_Players[World::WorldCharacterID];
-								if (newplayer->name == MainPlayer->name)
+								std::map<int, Map_Player*>::iterator _Player = game->map->m_Players.find(World::WorldCharacterID);
+								if (newplayer->name == _Player->second->name)
 								{
 									game->Map_UserInterface->map_inventory->Weight = weight;
 									game->Map_UserInterface->map_inventory->MaxWeight = maxweight;
-									MainPlayer->guildtag = newplayer->guildtag;
+									_Player->second->guildtag = newplayer->guildtag;
 									
-									MainPlayer->weight = weight;
-									MainPlayer->maxweight = maxweight;
-									MainPlayer->CharacterID = newplayer->ID;
-									MainPlayer->mapid = newplayer->mapid;
-									MainPlayer->x = newplayer->x;
-									MainPlayer->y = newplayer->y;
-									MainPlayer->direction = newplayer->direction;
-									MainPlayer->level = newplayer->level;
-									MainPlayer->Gender = newplayer->Gender;
-									MainPlayer->HairStyle = newplayer->HairStyle;
-									MainPlayer->HairCol = newplayer->HairCol;
-									MainPlayer->SkinCol = newplayer->SkinCol;
-									MainPlayer->maxhp = newplayer->maxhp;
-									MainPlayer->hp = newplayer->hp;
-									MainPlayer->maxtp = newplayer->maxtp;
-									MainPlayer->tp = newplayer->tp;
-									MainPlayer->ShoeID = newplayer->ShoeID;
-									MainPlayer->ArmorID = newplayer->ArmorID;
-									MainPlayer->HatID = newplayer->HatID;
-									MainPlayer->ShieldID = newplayer->ShieldID;
-									MainPlayer->WeaponID = newplayer->WeaponID;
-									MainPlayer->SetStance(newplayer->Stance);
-									//game->map->m_Players.push_back(MainPlayer);
-									World::WorldCharacterID = MainPlayer->CharacterID;
+									_Player->second->weight = weight;
+									_Player->second->maxweight = maxweight;
+									_Player->second->CharacterID = newplayer->ID;
+									_Player->second->mapid = newplayer->mapid;
+									_Player->second->x = newplayer->x;
+									_Player->second->y = newplayer->y;
+									_Player->second->direction = newplayer->direction;
+									_Player->second->level = newplayer->level;
+									_Player->second->Gender = newplayer->Gender;
+									_Player->second->HairStyle = newplayer->HairStyle;
+									_Player->second->HairCol = newplayer->HairCol;
+									_Player->second->SkinCol = newplayer->SkinCol;
+									_Player->second->maxhp = newplayer->maxhp;
+									_Player->second->hp = newplayer->hp;
+									_Player->second->maxtp = newplayer->maxtp;
+									_Player->second->tp = newplayer->tp;
+									_Player->second->ShoeID = newplayer->ShoeID;
+									_Player->second->ArmorID = newplayer->ArmorID;
+									_Player->second->HatID = newplayer->HatID;
+									_Player->second->ShieldID = newplayer->ShieldID;
+									_Player->second->WeaponID = newplayer->WeaponID;
+									_Player->second->SetStance(newplayer->Stance);
+									//game->map->ThreadLock.lock();
+									_Player->second->UpdateAppearence();
+									//game->map->ThreadLock.unlock();
+									//World::WorldCharacterID = MainPlayer->CharacterID;
 								}
 								else
 								{
 									game->map->AddPlayer(newplayer);
+									//newplayer->UpdateAppearence();
 								}
-								reader.GetByte();
+								reader.Getbyte();
 							}
 
 							while (true)

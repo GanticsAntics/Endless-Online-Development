@@ -1,8 +1,7 @@
 #include "..\stdafx.h"
 
 static LPDIRECT3DTEXTURE9 Blinker = NULL;
-
-Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, int fontSize, D3DXCOLOR labelColor, IDirect3DDevice9* m_Dev, byte _Phase, byte _Subphase)
+Textbox::Textbox(Game* p_game, sf::Vector2f m_position, sf::Vector2f m_size, int fontSize, sf::Color labelColor, sf::RenderWindow* m_Dev,unsigned char  _Phase,unsigned char  _Subphase)
 {
 	this->MaxLen = 20;
 	this->TextBounds = RECT();
@@ -17,6 +16,7 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, int fontSize, D3DXC
 	this->hashkey = 0;
 	this->Phase = _Phase;
 	this->SubPhase = _Subphase;
+	this->m_game = p_game;
 	if(!Blinker)
 	{
 		CBitmapEx bmp;
@@ -30,14 +30,14 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, int fontSize, D3DXC
 		cabuffer = (LPBYTE) malloc(cadwBufferSize);
 		bmp.Save(cabuffer);
 		LPDIRECT3DTEXTURE9 catxtbx = NULL;
-		D3DXIMAGE_INFO cainfo = D3DXIMAGE_INFO();
-		HRESULT caHr = D3DXCreateTextureFromFileInMemoryEx(m_Dev,cabuffer,cadwBufferSize,D3DX_DEFAULT_NONPOW2 ,D3DX_DEFAULT_NONPOW2,1,D3DUSAGE_DYNAMIC ,D3DFMT_A8R8G8B8,
-																 D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(0,0,0,0),&cainfo,NULL,&Blinker);
+		//D3DXIMAGE_INFO cainfo = D3DXIMAGE_INFO();
+		//HRESULT caHr = D3DXCreateTextureFromFileInMemoryEx(m_Dev,cabuffer,cadwBufferSize,D3DX_DEFAULT_NONPOW2 ,D3DX_DEFAULT_NONPOW2,1,D3DUSAGE_DYNAMIC ,D3DFMT_A8R8G8B8,
+			//													 D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, sf::Color::Color0,0,0,0),&cainfo,NULL,&Blinker);
 	}
-	this->Font->AddRef();
+	//this->Font->AddRef();
 }
 
-Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColor, ID3DXFont* m_font, byte _Phase, byte _Subphase)
+Textbox::Textbox(Game* p_game, sf::Vector2f m_position, sf::Vector2f m_size, sf::Color labelColor,sf::Font* m_font,unsigned char  _Phase,unsigned char  _Subphase)
 {
 	this->MaxLen = 20;
 	this->TextBounds = RECT();
@@ -53,10 +53,11 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColo
 	this->hashkey = 0;
 	this->Phase = _Phase;
 	this->SubPhase = _Subphase;
+	this->m_game = p_game;
 	if(!Blinker)
 	{
 		LPDIRECT3DDEVICE9 Dev;
-		m_font->GetDevice(&Dev);
+		//m_font->GetDevice(&Dev);
 		CBitmapEx bmp;
 		bmp.Create(1,14);
 		for(int i = 0; i < bmp.GetHeight();i++)
@@ -68,11 +69,11 @@ Textbox::Textbox(D3DXVECTOR2 m_position, D3DXVECTOR2 m_size, D3DXCOLOR labelColo
 		cabuffer = (LPBYTE) malloc(cadwBufferSize);
 		bmp.Save(cabuffer);
 		LPDIRECT3DTEXTURE9 catxtbx = NULL;
-		D3DXIMAGE_INFO cainfo = D3DXIMAGE_INFO();
-		HRESULT caHr = D3DXCreateTextureFromFileInMemoryEx(Dev,cabuffer,cadwBufferSize,D3DX_DEFAULT_NONPOW2 ,D3DX_DEFAULT_NONPOW2,1,D3DUSAGE_DYNAMIC ,D3DFMT_A8R8G8B8,
-																 D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(0,0,0,0),&cainfo,NULL,&Blinker);
+	//	D3DXIMAGE_INFO cainfo = D3DXIMAGE_INFO();
+		//HRESULT caHr = D3DXCreateTextureFromFileInMemoryEx(Dev,cabuffer,cadwBufferSize,D3DX_DEFAULT_NONPOW2 ,D3DX_DEFAULT_NONPOW2,1,D3DUSAGE_DYNAMIC ,D3DFMT_A8R8G8B8,
+															//	 D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, sf::Color::Color0,0,0,0),&cainfo,NULL,&Blinker);
 	}
-	this->Font->AddRef();
+	//this->Font->AddRef();
 
 }
 
@@ -81,13 +82,15 @@ void Textbox::OnKeyDown(WPARAM args)
 }
 void Textbox::UpdateBlinkerOffset()
 {
-	this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+	//this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 }
 void Textbox::OnKeyPress(WPARAM args)
 {
+	//char* your_wchar_in_char = to_string(argsz).c_str();
 	switch(args)
 	{
-	case(VK_BACK):
+		
+	case(8)://Backspace
 		{
 			if(this->text.length() > 0)
 			{
@@ -95,8 +98,10 @@ void Textbox::OnKeyPress(WPARAM args)
 				int StrIndex = 0;
 				for (int i = 0; i < this->text.length() + 1; i++)
 				{
-					std::wstring Buildstr = this->text.substr(this->text.length() - i, i);
-					this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+					std::string Buildstr = this->text.substr(this->text.length() - i, i);
+					this->TextBounds.right = m_game->GetFontSize(Buildstr, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(Buildstr, 9).y;
+					//this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 					this->Rendertext = Buildstr;
 					if (this->TextBounds.right > this->size.x)
 					{
@@ -107,30 +112,36 @@ void Textbox::OnKeyPress(WPARAM args)
 				}
 				if(this->hashkey == 0)
 				{
-					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->TextBounds.right = m_game->GetFontSize(Rendertext, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(Rendertext, 9).y;
+					//this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 					break;
 				}
 				else
 				{
-					std::basic_string<wchar_t> str;
+					std::basic_string<char> str;
 					for(int i = 0; i < this->text.length();i++)
 					{
 						str += this->hashkey;
 					}
-					this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->TextBounds.right = m_game->GetFontSize(str, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(str, 9).y;
+					//this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 				}
 			}
 			break;
 		}
-	case(VK_ESCAPE):
+		case(27)://Escape
 		{
 			this->text.clear();
 			this->Rendertext.clear();
 			int StrIndex = 0;
 			for (int i = 0; i < this->text.length() + 1; i++)
 			{
-				std::wstring Buildstr = this->text.substr(this->text.length() - i, i);
-				this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+				std::string Buildstr = this->text.substr(this->text.length() - i, i);
+				this->TextBounds.right = m_game->GetFontSize(Buildstr, 9).x;
+				this->TextBounds.top = m_game->GetFontSize(Buildstr, 9).y;
+				//this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 				this->Rendertext = Buildstr;
 				if (this->TextBounds.right > this->size.x)
 				{
@@ -142,39 +153,45 @@ void Textbox::OnKeyPress(WPARAM args)
 		
 				if(this->hashkey == 0)
 				{
-					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->TextBounds.right = m_game->GetFontSize(Rendertext, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(Rendertext, 9).y;
+					//this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 					break;
 				}
 				else
 				{
-					std::basic_string<wchar_t> str;
+					std::basic_string<char> str;
 					for(int i = 0; i < this->text.length();i++)
 					{
 						str += this->hashkey;
 					}
-					this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->TextBounds.right = m_game->GetFontSize(str, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(str, 9).y;
+					//this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 				}
 			break;
 		}
-		case(VK_TAB):
+		case(9)://tab
 		{
 				if(this->hashkey == 0)
 				{
-					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					//this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 					break;
 				}
 				else
 				{
-					std::basic_string<wchar_t> str;
+					std::basic_string<char> str;
 					for(int i = 0; i < this->text.length();i++)
 					{
 						str += this->hashkey;
 					}
-					this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->TextBounds.right = m_game->GetFontSize(str, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(str, 9).y;
+					//this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 				}
 			break;
 		}
-		case(VK_SPACE):
+		case(32)://Space
 		{
 			if (!this->acceptspace  || (this->text.length() + 1 > this->MaxLen && this->MaxLen != 0))
 			{
@@ -182,17 +199,20 @@ void Textbox::OnKeyPress(WPARAM args)
 			}
 			if (this->hashkey == 0)
 			{
-				std::wstring temptext = this->text + L',';
-				this->text += (wchar_t)(args);
-				this->Font->DrawText(NULL, temptext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
-
+				std::string temptext = this->text + ',';
+				this->text += (char)(args);
+				//this->Font->DrawText(NULL, temptext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+				this->TextBounds.right = m_game->GetFontSize(temptext, 9).x;
+				this->TextBounds.top = m_game->GetFontSize(temptext, 9).y;
 				if (this->text.length() < this->MaxLen)
 				{
 					int StrIndex = 0;
 					for (int i = 0; i < this->text.length() + 1; i++)
 					{
-						std::wstring Buildstr = this->text.substr(this->text.length() - i, i);
-						this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+						std::string Buildstr = this->text.substr(this->text.length() - i, i);
+						this->TextBounds.right = m_game->GetFontSize(Buildstr, 9).x;
+						this->TextBounds.top = m_game->GetFontSize(Buildstr, 9).y;
+						//this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 						this->Rendertext = Buildstr;
 						if (this->TextBounds.right > this->size.x)
 						{
@@ -201,19 +221,23 @@ void Textbox::OnKeyPress(WPARAM args)
 
 						StrIndex = i;
 					}
-					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+					this->TextBounds.right = m_game->GetFontSize(Rendertext, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(Rendertext, 9).y;
+					//this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 				}
 				break;
 			}
 			else
 			{
-				this->text += (wchar_t)(args);
-				std::basic_string<wchar_t> str;
+				this->text += (args);
+				std::string str;
 				for (int i = 0; i < this->text.length(); i++)
 				{
 					str += this->hashkey;
 				}
-				this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+				this->TextBounds.right = m_game->GetFontSize(str, 9).x;
+				this->TextBounds.top = m_game->GetFontSize(str, 9).y;
+				//this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 			}
 			break;
 		}
@@ -251,26 +275,32 @@ void Textbox::OnKeyPress(WPARAM args)
 				}
 			default:break;
 			}
+		
 			if(this->text.length()+1 > this->MaxLen && this->MaxLen != 0)
 			{
 				return;
-			}
+			}	
+			
 			if(this->hashkey == 0)
 			{
-				this->Font->DrawText(NULL, this->text.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+				this->TextBounds.right = m_game->GetFontSize(this->text, 9).x;
+				this->TextBounds.top = m_game->GetFontSize(this->text, 9).y;
+				//this->Font->DrawText(NULL, this->text.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 				if (this->text.length() < this->MaxLen)
 				{
-					if ((wchar_t)(args) == '`')
+					if ((args) == '`')
 					{
 						(args) = '~';
 					}
-					this->text += (wchar_t)(args);
+					this->text += (args);
 
 					int StrIndex = 0;
 					for (int i = 0; i < this->text.length()+1; i++)
 					{
-						std::wstring Buildstr = this->text.substr(this->text.length() - i, i);
-						this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+						std::string Buildstr = this->text.substr(this->text.length() - i, i);
+						this->TextBounds.right = m_game->GetFontSize(Buildstr, 9).x;
+						this->TextBounds.top = m_game->GetFontSize(Buildstr, 9).y;
+						//this->Font->DrawText(NULL, Buildstr.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 						this->Rendertext = Buildstr;
 						if (this->TextBounds.right > this->size.x)
 						{
@@ -279,7 +309,9 @@ void Textbox::OnKeyPress(WPARAM args)
 					
 						StrIndex = i;
 					}
-					this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
+					this->TextBounds.right = m_game->GetFontSize(Rendertext, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(Rendertext, 9).y;
+					//this->Font->DrawText(NULL, this->Rendertext.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff);
 				}
 
 
@@ -287,18 +319,21 @@ void Textbox::OnKeyPress(WPARAM args)
 			}
 			else
 			{
-				std::basic_string<wchar_t> str;
+				std::string str;
 				for(int i = 0; i < this->text.length();i++)
 				{
 					str += this->hashkey;
 				}
-
-				this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+				this->TextBounds.right = m_game->GetFontSize(str, 9).x;
+				this->TextBounds.top = m_game->GetFontSize(str, 9).y;
+				//this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 
 				if(this->TextBounds.right < this->size.x)
 				{
 					this->text += (wchar_t)(args);
-					this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+					this->TextBounds.right = m_game->GetFontSize(str, 9).x;
+					this->TextBounds.top = m_game->GetFontSize(str, 9).y;
+					//this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 					if(this->TextBounds.right > this->size.x)
 					{	
 						this->text.erase(text.length()-1,1);
@@ -308,8 +343,9 @@ void Textbox::OnKeyPress(WPARAM args)
 				{
 					str += this->hashkey;
 				}
-
-				this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
+				this->TextBounds.right = m_game->GetFontSize(str, 9).x;
+				this->TextBounds.top = m_game->GetFontSize(str, 9).y;
+				//this->Font->DrawText(NULL, str.c_str(), -1, &this->TextBounds, DT_CALCRECT, 0xffffffff );
 				}
 			}
 		}
@@ -322,7 +358,7 @@ void Textbox::SetKeyMask(KeyType newKeyMask)
 {
 	this->keyMask = newKeyMask;
 }
-void Textbox::Render(ID3DXSprite* m_Sprite)
+void Textbox::Render(float _depth)
 {
 // Create a rectangle to indicate where on the screen it should be drawn
 RECT rct;
@@ -334,30 +370,34 @@ rct.bottom= this->position.y + this->size.y;
 if(this->hashkey > 0)
 {
 	rct.top= this->position.y ;
-	std::basic_string<wchar_t> str;
+	std::string str;
 	for(int i = 0; i < this->text.length();i++)
 	{
 		str += this->hashkey;
 	}
-	this->Font->DrawText(m_Sprite, str.c_str(), -1, &rct, 0, this->color );
+	this->m_game->DrawTextW(str.c_str(), rct.left, rct.top, this->color, 14, false, _depth);
+	
+	//this->Font->DrawText(m_Sprite, str.c_str(), -1, &rct, 0, this->color );
 }
 else
 {
-this->Font->DrawText(m_Sprite, this->Rendertext.c_str(), -1, &rct, 0, this->color );
+	//game->DrawTextW(this->Rendertext.c_str(), rct.left, rct.top, this->color, *game->DefaultFont);
+	this->m_game->DrawTextW(this->Rendertext.c_str(), rct.left, rct.top, this->color, 14, false, _depth);
+//this->Font->DrawText(m_Sprite, this->Rendertext.c_str(), -1, &rct, 0, this->color );
 }
 
 if(this->focused && !this->blinkhidden)
 {
-		D3DXMATRIX mat;
+		//D3DXMATRIX mat;
 		RECT SrcRect;
-		D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,NULL, NULL,NULL);
-		D3DXVECTOR3* Pos = new D3DXVECTOR3(this->position.x + this->TextBounds.right + 3,this->position.y + 3,0);
-		D3DXVECTOR3* Center = new D3DXVECTOR3(0,0,0);
-		m_Sprite->SetTransform(&mat);
-		m_Sprite->Draw(Blinker, NULL,Center, Pos, this->color);
+		//D3DXMatrixTransformation2D(&mat,NULL,NULL,NULL,NULL, NULL,NULL);
+		////sf::Vector3f* Pos = new sf::Vector3f(this->position.x + this->TextBounds.right + 3,this->position.y + 3,0);
+		//sf::Vector3f* Center = new sf::Vector3f(0,0,0);
+		//m_Sprite->SetTransform(&mat);
+		//m_Sprite->Draw(Blinker, NULL,Center, Pos, this->color);
 		
-		delete Pos;
-		delete Center;
+		//delete Pos;
+		//delete Center;
 
 }
 
@@ -384,6 +424,6 @@ void Textbox::Reset()
 }
 void Textbox::Release()
 {
-	if(this->Font)
-	{this->Font->Release();}
+	//if(this->Font)
+	//{this->Font->Release();}
 }

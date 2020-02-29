@@ -2,6 +2,9 @@
 
 class Map_UI_SelectPlayer
 {
+private:
+	Map_UI* m_MapUI;
+	Game* m_game;
 public:
 	enum SelectIndex
 	{
@@ -20,8 +23,8 @@ public:
 	bool MouseoverMenu = false;
 	int depth = 0;
 	int playerid = -1;
-	Map_UI_SelectPlayer(void* m_MapUI, void* m_Game);
+	Map_UI_SelectPlayer(Map_UI* m_MapUI, Game* m_Game);
 	void Update();
-	void Render();
+	void Render(float depth);
 };
 

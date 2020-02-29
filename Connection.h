@@ -1,10 +1,14 @@
-#ifndef Connection_h
-#define Connection_h
-
+#pragma once
+#include <Ptypes/pinet.h>
+#include <Ptypes/ptypes.h>
+#include <Ptypes/pstreams.h>
+#include <Ptypes/ptime.h>
+#include <Ptypes/pasync.h>
+#include <Ptypes/pport.h>
 class Connection  : public pt::thread
 {
 public:
-	LPVOID V_Game;
+	Game* V_Game;
 	bool Initialize(pt::string _IPAddress, int _port);
 	void execute();
 
@@ -30,4 +34,3 @@ public:
 	static bool ConnectionDropped;
 
 };
-#endif //Connection_h

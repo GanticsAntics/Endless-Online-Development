@@ -1,6 +1,6 @@
 #include "..\stdafx.h"
 #include "STalk.h"
-#include "..\Game.h"
+#include "..\game.h"
 
 void STalk::SendTalk(pt::ipstream* ClientStream, std::string Message,LPVOID game)
 {
@@ -8,27 +8,27 @@ void STalk::SendTalk(pt::ipstream* ClientStream, std::string Message,LPVOID game
 	PacketBuilder builder = PacketBuilder(PACKET_TALK, PACKET_REPORT);
 	builder.AddString(Message);
 	World::Send(gme, ClientStream, builder);
-	D3DCOLOR bgcol = D3DCOLOR_ARGB(150, 255, 255, 255);
-	D3DCOLOR TextCol = D3DCOLOR_ARGB(200, 0, 0, 0);
+	sf::Color bgcol = sf::Color::Color(255, 255, 255, 150);
+	sf::Color TextCol = sf::Color::Color(0, 0, 0, 200);
 	if (Message.find("<3") != Message.npos)
 	{
-		bgcol = D3DCOLOR_ARGB(150, 200, 66, 66);
-		TextCol = D3DCOLOR_ARGB(200, 255, 255, 255);
+		bgcol = sf::Color::Color(66, 200, 66, 150);
+		TextCol = sf::Color::Color(255, 255, 255, 200);
 	}
 	if (Message.find("Hotdog") != Message.npos)
 	{
-		bgcol = D3DCOLOR_ARGB(150, 66, 200, 66);
-		TextCol = D3DCOLOR_ARGB(200, 255, 255, 255);
+		bgcol = sf::Color::Color(66, 66, 200, 150);
+		TextCol = sf::Color::Color(255, 255, 255, 200);
 	}
 	if (Message.find("Gantic") != Message.npos)
 	{
-		bgcol = D3DCOLOR_ARGB(150, 66, 66, 200);
-		TextCol = D3DCOLOR_ARGB(200, 255, 255, 255);
+		bgcol = sf::Color::Color(200, 66, 66, 150);
+		TextCol = sf::Color::Color(255, 255, 255, 200);
 	}
 	if (Message.find("EODev") != Message.npos)
 	{
-		bgcol = D3DCOLOR_ARGB(150, 66, 200, 200);
-		TextCol = D3DCOLOR_ARGB(200, 255, 255, 255);
+		bgcol = sf::Color::Color(200, 66, 200, 150);
+		TextCol = sf::Color::Color(255, 255, 255, 200);
 	}
 	gme->Map_UserInterface->map_ChatBubbleHandler->AddMapMessage(Message, World::WorldCharacterID , false, bgcol, TextCol);
 }

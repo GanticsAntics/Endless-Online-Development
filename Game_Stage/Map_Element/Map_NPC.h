@@ -3,6 +3,7 @@
 class Map_NPC
 {
 	int FindWalkDirection(int dest_x, int dest_y);
+	Game* m_Game;
 public:
 	Map_NPC();
 	int Index;
@@ -23,7 +24,7 @@ public:
 	int time = 0;
 
 	int Deathcounter = 0;
-	std::vector<BYTE> Damage;
+	std::vector<unsigned char> Damage;
 
 	void NPCKill();
 	enum NPC_Stance
@@ -33,14 +34,14 @@ public:
 		Attacking,
 		Dead
 	};
-	//D3DCOLOR_ARGB Color;
+	//sf::Color::White Color;
 	NPC_Stance Stance;
 	void Initialize(LPVOID* m_game);
 	void SetStance(NPC_Stance m_Stance);
 	void MoveNPC(int FPS, int DestX,int DestY);
 	void DealDamage(short HpLeft, int damage);
 	void Update(int FPS);
-	void Render(ID3DXSprite* _Sprite, int x, int y, float depth, D3DCOLOR m_color = D3DCOLOR_ARGB(255,255,255,255));
+	void Render(sf::Sprite* _Sprite, int x, int y, float depth, sf::Color m_color = sf::Color::White );
 	~Map_NPC();
 };
 

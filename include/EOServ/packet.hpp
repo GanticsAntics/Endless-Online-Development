@@ -91,7 +91,7 @@ class PacketReader
 
 		unsigned int GetNumber(std::size_t length);
 
-		unsigned char GetByte();
+		unsigned char Getbyte();
 		unsigned char GetChar();
 		unsigned short GetShort();
 		unsigned int GetThree();
@@ -124,7 +124,7 @@ class PacketBuilder
 
 		void ReserveMore(std::size_t size_guess);
 
-		PacketBuilder &AddByte(unsigned char);
+		PacketBuilder &Addbyte(unsigned char);
 		PacketBuilder &AddChar(unsigned char);
 		PacketBuilder &AddShort(unsigned short);
 		PacketBuilder &AddThree(unsigned int);
@@ -135,7 +135,7 @@ class PacketBuilder
 		PacketBuilder &AddBreakString(const std::string &, unsigned char breakchar = 0xFF);
 
 		void AddSize(std::size_t size);
-		void InsertByte(int pos, unsigned char);
+		void Insertbyte(int pos, unsigned char);
 		void Reset(std::size_t size_guess = 0);
 
 		std::string Get() const;

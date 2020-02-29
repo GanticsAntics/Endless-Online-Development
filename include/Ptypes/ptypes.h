@@ -764,7 +764,7 @@ public:
 // counting and delete notification mechanisms. all stream classes
 // in ptypes are derived from component.
 
-// class ID's for all basic types: the first byte (least significant)
+// class ID's for all basic types: the firstunsigned char  (least significant)
 // contains the base ID, the next is for the second level of inheritance,
 // etc. total of 4 levels allowed for basic types. call classid() for an
 // object, mask out first N bytes of interest and compare with a CLASS_XXX
